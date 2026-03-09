@@ -99,6 +99,10 @@ Balance ₹ <span id="balance">0</span>
 
 <input type="number" id="amt" placeholder="Amount">
 
+<br>
+
+<input type="text" id="utr" placeholder="Enter UTR Number">
+
 <br><br>
 
 <button class="btn" onclick="sendDeposit()">Submit</button>
@@ -199,13 +203,16 @@ document.getElementById("depositBox").style.display="none"
 window.sendDeposit=async function(){
 
 let amt=parseInt(document.getElementById("amt").value)
+let utr=document.getElementById("utr").value
 
 if(!amt) return alert("Enter amount")
+if(!utr) return alert("Enter UTR Number")
 
 await addDoc(collection(db,"depositRequests"),{
 
 user:currentUser,
 amount:amt,
+utr:utr,
 status:"pending"
 
 })
