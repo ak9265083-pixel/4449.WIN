@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <title>Admin Panel</title>
@@ -13,52 +12,46 @@ padding:20px;
 }
 
 h2{
-border-bottom:2px solid #555;
-padding-bottom:5px;
+color:#00ffcc;
 }
 
-.card{
+.box{
 background:#222;
-padding:15px;
+padding:10px;
 margin:10px 0;
 border-radius:8px;
 }
 
 button{
-padding:6px 10px;
-margin:5px;
+padding:6px 12px;
+background:#00ffcc;
 border:none;
-border-radius:4px;
 cursor:pointer;
 }
-
-.approve{background:green;color:white}
-.reject{background:red;color:white}
-.result{background:orange;color:black}
-
 </style>
 
 </head>
 
 <body>
 
-<h1>Admin Control Panel</h1>
+<h1>ADMIN PANEL</h1>
 
 <h2>Deposit Requests</h2>
-<div id="depositList"></div>
+<div id="deposits"></div>
 
 <h2>Withdraw Requests</h2>
-<div id="withdrawList"></div>
-
-<h2>Set Wingo Result</h2>
-
-<input type="number" id="resultNumber" min="0" max="9">
-<button class="result" onclick="setResult()">Set Result</button>
+<div id="withdraws"></div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { 
+getFirestore,
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
 const firebaseConfig = {
 apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
@@ -66,123 +59,64 @@ authDomain: "win2-512e1.firebaseapp.com",
 projectId: "win2-512e1",
 storageBucket: "win2-512e1.firebasestorage.app",
 messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe"
+appId: "1:577913579227:web:1e073059c2d3d881720efe",
+measurementId: "G-4V1SCSMTM6"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const depositList=document.getElementById("depositList");
-const withdrawList=document.getElementById("withdrawList");
 
-/* LOAD DEPOSITS */
+// Deposit Requests
 
-const depSnap=await getDocs(collection(db,"depositRequests"));
+const depositDiv=document.getElementById("deposits")
 
-depSnap.forEach(d=>{
+const depositSnap=await getDocs(collection(db,"depositRequests"))
 
-let data=d.data();
+depositSnap.forEach(doc=>{
 
-let div=document.createElement("div");
-div.className="card";
+let data=doc.data()
 
-div.innerHTML=`
-User: ${data.user} <br>
-Amount: ₹${data.amount}
-<br>
-<button class="approve" onclick="approveDeposit('${d.id}')">Approve</button>
-<button class="reject" onclick="rejectDeposit('${d.id}')">Reject</button>
-`;
+let div=document.createElement("div")
 
-depositList.appendChild(div);
-
-});
-
-/* LOAD WITHDRAW */
-
-const withSnap=await getDocs(collection(db,"withdrawRequests"));
-
-withSnap.forEach(d=>{
-
-let data=d.data();
-
-let div=document.createElement("div");
-div.className="card";
+div.className="box"
 
 div.innerHTML=`
 User: ${data.user} <br>
-Amount: ₹${data.amount}
-<br>
-<button class="approve" onclick="approveWithdraw('${d.id}')">Approve</button>
-<button class="reject" onclick="rejectWithdraw('${d.id}')">Reject</button>
-`;
+Amount: ${data.amount} <br>
+Status: ${data.status}
+<button>Approve</button>
+`
 
-withdrawList.appendChild(div);
+depositDiv.appendChild(div)
 
-});
+})
 
-/* APPROVE DEPOSIT */
 
-window.approveDeposit=async function(id){
+// Withdraw Requests
 
-await updateDoc(doc(db,"depositRequests",id),{
-status:"approved"
-});
+const withdrawDiv=document.getElementById("withdraws")
 
-alert("Deposit Approved");
+const withdrawSnap=await getDocs(collection(db,"withdrawRequests"))
 
-}
+withdrawSnap.forEach(doc=>{
 
-/* REJECT DEPOSIT */
+let data=doc.data()
 
-window.rejectDeposit=async function(id){
+let div=document.createElement("div")
 
-await updateDoc(doc(db,"depositRequests",id),{
-status:"rejected"
-});
+div.className="box"
 
-alert("Deposit Rejected");
+div.innerHTML=`
+User: ${data.user} <br>
+Amount: ${data.amount} <br>
+Status: ${data.status}
+<button>Approve</button>
+`
 
-}
+withdrawDiv.appendChild(div)
 
-/* APPROVE WITHDRAW */
-
-window.approveWithdraw=async function(id){
-
-await updateDoc(doc(db,"withdrawRequests",id),{
-status:"approved"
-});
-
-alert("Withdraw Approved");
-
-}
-
-/* REJECT WITHDRAW */
-
-window.rejectWithdraw=async function(id){
-
-await updateDoc(doc(db,"withdrawRequests",id),{
-status:"rejected"
-});
-
-alert("Withdraw Rejected");
-
-}
-
-/* SET WINGO RESULT */
-
-window.setResult=async function(){
-
-const num=document.getElementById("resultNumber").value;
-
-await addDoc(collection(db,"wingoResults"),{
-number:num,
-time:Date.now()
-});
-
-alert("Result Set: "+num);
-
-}
+})
 
 </script>
 
