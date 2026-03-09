@@ -14,31 +14,9 @@ color:white;
 text-align:center;
 }
 
-/* result circle */
-
-.number-circle{
-width:60px;
-height:60px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-font-weight:bold;
-margin:auto;
-color:white;
-}
-
-.green{
-background:#00c853;
-}
-
-.red{
-background:#ff1744;
-}
-
-.violet{
-background:#9c27b0;
+#resultBox{
+font-size:40px;
+margin-top:20px;
 }
 
 /* popup */
@@ -98,7 +76,7 @@ margin-left:10px;
 
 <br>
 
-<div id="resultBox"></div>
+<div id="resultBox">Result: -</div>
 
 <br><br>
 
@@ -151,35 +129,14 @@ document.getElementById("coinValue").innerText = coin
 
 }
 
-
 function confirmBet(){
 
 closePopup()
 
-// random result demo
+// random result
 let num = Math.floor(Math.random()*10)
 
-showResult(num)
-
-}
-
-
-function showResult(num){
-
-let color=""
-
-if([1,3,7,9].includes(num)){
-color="green"
-}
-else if([2,4,6,8].includes(num)){
-color="red"
-}
-else{
-color="violet"
-}
-
-document.getElementById("resultBox").innerHTML=
-'<div class="number-circle '+color+'">'+num+'</div>'
+document.getElementById("resultBox").innerText="Result: "+num
 
 }
 
