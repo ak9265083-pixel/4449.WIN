@@ -1,244 +1,193 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wingo Game</title>
 
 <style>
+
 body{
+margin:0;
 font-family:Arial;
-background:#111;
+background:#9fa3ad;
+display:flex;
+justify-content:center;
+}
+
+.app{
+width:420px;
+background:white;
+min-height:100vh;
+text-align:center;
+padding-bottom:80px;
+}
+
+.header{
+background:#ff6b6b;
 color:white;
+padding:15px;
+font-size:22px;
+}
+
+.balance{
+background:#eee;
+margin:15px;
+padding:10px;
+border-radius:10px;
+}
+
+.numbers{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
 padding:20px;
 }
 
-h2{
-color:#00ffcc;
-}
-
-.box{
-background:#222;
-padding:10px;
-margin:10px 0;
-border-radius:8px;
-}
-
-button{
-padding:6px 12px;
-background:#00ffcc;
+.numbers button{
+padding:15px;
+border-radius:50%;
 border:none;
-cursor:pointer;
-margin:3px;
+font-size:18px;
+background:#eee;
 }
-</style>
 
+.result{
+font-size:50px;
+margin:20px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>ADMIN PANEL</h1>
+<div class="app">
 
-<div id="loginBox">
-<input type="password" id="pass" placeholder="Enter Admin Password">
-<button onclick="login()">Login</button>
+<div class="header">Wingo</div>
+
+<div class="balance">
+Balance ₹ <span id="balance">0</span>
 </div>
 
-<div id="panel" style="display:none">
+<div class="result" id="ball">?</div>
 
-<h2>Set Result</h2>
+<div class="numbers">
 
-<button onclick="setResult(0)">0</button>
-<button onclick="setResult(1)">1</button>
-<button onclick="setResult(2)">2</button>
-<button onclick="setResult(3)">3</button>
-<button onclick="setResult(4)">4</button>
-<button onclick="setResult(5)">5</button>
-<button onclick="setResult(6)">6</button>
-<button onclick="setResult(7)">7</button>
-<button onclick="setResult(8)">8</button>
-<button onclick="setResult(9)">9</button>
+<button onclick="bet(0)">0</button>
+<button onclick="bet(1)">1</button>
+<button onclick="bet(2)">2</button>
+<button onclick="bet(3)">3</button>
+<button onclick="bet(4)">4</button>
+<button onclick="bet(5)">5</button>
+<button onclick="bet(6)">6</button>
+<button onclick="bet(7)">7</button>
+<button onclick="bet(8)">8</button>
+<button onclick="bet(9)">9</button>
 
-<h2>Deposit Requests</h2>
-<div id="deposits"></div>
-
-<h2>Withdraw Requests</h2>
-<div id="withdraws"></div>
+</div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 import {
 getFirestore,
-collection,
-getDocs,
 doc,
+getDoc,
 updateDoc,
-getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain: "win2-512e1.firebaseapp.com",
-projectId: "win2-512e1",
-storageBucket: "win2-512e1.firebasestorage.app",
-messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe",
-measurementId: "G-4V1SCSMTM6"
+const firebaseConfig={
+apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain:"win2-512e1.firebaseapp.com",
+projectId:"win2-512e1"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig)
+const auth=getAuth(app)
+const db=getFirestore(app)
 
-window.login=function(){
+let balance=0
+let uid=""
+let currentBet=null
+let betAmount=0
 
-let p=document.getElementById("pass").value
+onAuthStateChanged(auth,async(user)=>{
 
-if(p=="@1Aankit"){
+if(user){
 
-document.getElementById("loginBox").style.display="none"
-document.getElementById("panel").style.display="block"
+uid=user.uid
 
-loadDeposits()
-loadWithdraws()
+let snap=await getDoc(doc(db,"users",uid))
+
+balance=snap.data().balance||0
+
+document.getElementById("balance").innerText=balance
+
+}
+
+})
+
+window.bet=function(num){
+
+let amt=prompt("Enter Amount")
+
+amt=parseInt(amt)
+
+if(balance<amt){
+
+alert("Low Balance")
+return
+
+}
+
+balance-=amt
+
+document.getElementById("balance").innerText=balance
+
+currentBet=num
+betAmount=amt
+
+}
+
+onSnapshot(doc(db,"wingoResults","current"),async(d)=>{
+
+let result=d.data().number
+
+document.getElementById("ball").innerText=result
+
+if(currentBet!=null){
+
+if(currentBet==result){
+
+balance+=betAmount*2
+alert("Win")
 
 }else{
 
-alert("Wrong Password")
+alert("Lose")
 
 }
 
-}
+document.getElementById("balance").innerText=balance
 
-// RESULT CONTROL
-
-window.setResult=async function(num){
-
-await updateDoc(doc(db,"system","result"),{
-value:num
+await updateDoc(doc(db,"users",uid),{
+balance:balance
 })
 
-alert("Result set "+num)
+currentBet=null
 
 }
 
-
-// DEPOSIT APPROVAL
-
-async function loadDeposits(){
-
-let div=document.getElementById("deposits")
-
-div.innerHTML=""
-
-let snap=await getDocs(collection(db,"depositRequests"))
-
-snap.forEach(d=>{
-
-let data=d.data()
-
-if(data.status!="pending") return
-
-let box=document.createElement("div")
-
-box.className="box"
-
-box.innerHTML=`
-User: ${data.user}<br>
-Amount: ${data.amount}<br>
-UTR: ${data.utr}<br>
-<button onclick="approveDeposit('${d.id}','${data.user}',${data.amount})">Approve</button>
-`
-
-div.appendChild(box)
-
 })
-
-}
-
-window.approveDeposit=async function(id,user,amount){
-
-let userRef=doc(db,"users",user)
-
-let snap=await getDoc(userRef)
-
-let bal=snap.data().balance || 0
-
-await updateDoc(userRef,{
-balance:bal+amount
-})
-
-await updateDoc(doc(db,"depositRequests",id),{
-status:"approved"
-})
-
-alert("Deposit Approved")
-
-loadDeposits()
-
-}
-
-
-// WITHDRAW APPROVAL
-
-async function loadWithdraws(){
-
-let div=document.getElementById("withdraws")
-
-div.innerHTML=""
-
-let snap=await getDocs(collection(db,"withdrawRequests"))
-
-snap.forEach(d=>{
-
-let data=d.data()
-
-if(data.status!="pending") return
-
-let box=document.createElement("div")
-
-box.className="box"
-
-box.innerHTML=`
-User: ${data.user}<br>
-Amount: ${data.amount}<br>
-UPI: ${data.upi}<br>
-<button onclick="approveWithdraw('${d.id}','${data.user}',${data.amount})">Approve</button>
-`
-
-div.appendChild(box)
-
-})
-
-}
-
-window.approveWithdraw=async function(id,user,amount){
-
-let userRef=doc(db,"users",user)
-
-let snap=await getDoc(userRef)
-
-let bal=snap.data().balance || 0
-
-if(bal<amount){
-alert("User balance low")
-return
-}
-
-await updateDoc(userRef,{
-balance:bal-amount
-})
-
-await updateDoc(doc(db,"withdrawRequests",id),{
-status:"approved"
-})
-
-alert("Withdraw Approved")
-
-loadWithdraws()
-
-}
 
 </script>
 
