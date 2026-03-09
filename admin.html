@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Admin Panel</title>
 
 <style>
@@ -12,21 +11,7 @@ font-family:Arial;
 background:#f2f2f2;
 margin:0;
 }
-<script>
-var password = prompt("Enter Admin Password");
 
-if (password !== "@1Aankit") {
-    alert("Wrong Password");
-    window.location = "index.html";
-}
-  <script>
-var password = prompt("Enter Admin Password");
-
-if (password !== "@1Aankit") {
-    alert("Wrong Password");
-    window.location = "index.html";
-}
-</script>
 .header{
 background:#ff6b6b;
 color:white;
@@ -85,11 +70,18 @@ text-align:center;
 
 <body>
 
+<script>
+var password = prompt("Enter Admin Password");
+
+if (password !== "@1Aankit") {
+    alert("Wrong Password");
+    window.location = "index.html";
+}
+</script>
+
 <div class="header">ADMIN PANEL</div>
 
 <div class="container">
-
-<!-- Stats -->
 
 <div class="stats">
 
@@ -104,8 +96,6 @@ Active Users<br>
 </div>
 
 </div>
-
-<!-- Result -->
 
 <div class="card">
 
@@ -124,22 +114,16 @@ Active Users<br>
 
 </div>
 
-<!-- Deposits -->
-
 <div class="card">
 
 <h3>Deposit Requests</h3>
-
 <div id="depositList"></div>
 
 </div>
 
-<!-- Withdraw -->
-
 <div class="card">
 
 <h3>Withdraw Requests</h3>
-
 <div id="withdrawList"></div>
 
 </div>
@@ -174,8 +158,6 @@ loadStats()
 loadDeposits()
 loadWithdraws()
 
-/* USERS */
-
 async function loadStats(){
 
 let users = await getDocs(collection(db,"users"))
@@ -195,8 +177,6 @@ if(d.balance>0) active++
 document.getElementById("activeUsers").innerText = active
 
 }
-
-/* DEPOSITS */
 
 async function loadDeposits(){
 
@@ -226,8 +206,6 @@ document.getElementById("depositList").appendChild(div)
 
 }
 
-/* WITHDRAW */
-
 async function loadWithdraws(){
 
 let snap=await getDocs(collection(db,"withdrawRequests"))
@@ -256,8 +234,6 @@ document.getElementById("withdrawList").appendChild(div)
 
 }
 
-/* APPROVE DEPOSIT */
-
 window.approveDeposit = async function(id,user,amount){
 
 let ref = doc(db,"users",user)
@@ -280,8 +256,6 @@ location.reload()
 
 }
 
-/* APPROVE WITHDRAW */
-
 window.approveWithdraw = async function(id){
 
 await updateDoc(doc(db,"withdrawRequests",id),{
@@ -293,8 +267,6 @@ alert("Withdraw Approved")
 location.reload()
 
 }
-
-/* RESULT */
 
 window.setResult = async function(num){
 
@@ -311,4 +283,3 @@ alert("Result Updated")
 
 </body>
 </html>
-
