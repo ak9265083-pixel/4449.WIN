@@ -119,7 +119,7 @@ background:white;
 border-radius:25px;
 display:flex;
 justify-content:space-around;
-padding:10px 5px;
+padding:10px;
 box-shadow:0 5px 20px rgba(0,0,0,0.25);
 }
 
@@ -129,6 +129,10 @@ flex-direction:column;
 align-items:center;
 cursor:pointer;
 transition:.3s;
+}
+
+.navBtn:hover{
+transform:scale(1.1);
 }
 
 .icon{
@@ -141,17 +145,12 @@ align-items:center;
 justify-content:center;
 font-size:22px;
 color:white;
-box-shadow:0 4px 10px rgba(0,0,0,0.25);
 }
 
 .label{
 font-size:13px;
 margin-top:4px;
 font-weight:bold;
-}
-
-.navBtn:hover{
-transform:scale(1.1);
 }
 
 </style>
@@ -198,8 +197,6 @@ Next Result In <span id="time">60</span>s
 </div>
 
 </div>
-
-<!-- bottom nav -->
 
 <div class="bottomWallet">
 
@@ -286,7 +283,6 @@ return"green";
 window.selectBet=function(v){
 
 let amt=prompt("Enter Bet Amount");
-
 if(!amt)return;
 
 amt=parseInt(amt);
@@ -297,6 +293,11 @@ alert("Low Balance");
 return;
 
 }
+
+/* bet लगाते ही balance minus */
+
+balance -= amt;
+document.getElementById("balance").innerText=balance;
 
 currentBet=v;
 betAmount=amt;
@@ -337,11 +338,9 @@ addHistory(result,color);
 
 if(currentBet!=null){
 
-balance-=betAmount;
+if(currentBet===result || currentBet===color){
 
-if(currentBet===result||currentBet===color){
-
-balance+=betAmount*2;
+balance += betAmount*2;
 alert("You Win");
 
 }else{
