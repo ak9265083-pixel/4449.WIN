@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>4449 WIN</title>
+
 <style>
 body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:center}
 .app{width:420px;background:white;min-height:100vh;text-align:center}
@@ -23,6 +23,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .betBtn{padding:10px 20px;background:#ff6b6b;color:white;border:none;border-radius:8px}
 .history{margin:15px;text-align:left}
 .historyItem{background:#eee;margin-bottom:6px;padding:8px;border-radius:6px}
+
 .bottomWallet{
 position:fixed;
 bottom:0;
@@ -45,9 +46,11 @@ font-size:16px;
 }
 </style>
 </head>
+
 <body>
 
 <div class="app">
+
 <div class="header">4449 WIN</div>
 
 <div class="wallet">Balance ₹ <span id="balance">0</span></div>
@@ -61,6 +64,7 @@ font-size:16px;
 <button class="violet" onclick="selectBet('violet')">Violet</button>
 <button class="red" onclick="selectBet('red')">Red</button>
 </div>
+
 <div class="bottomWallet">
 <button class="walletBtn" onclick="openWallet()">WALLET</button>
 <button class="walletBtn" onclick="openHelp()">HELP</button>
@@ -89,11 +93,17 @@ font-size:16px;
 <div id="historyList"></div>
 </div>
 
-
-
+</div>
 
 <script>
-let balance=parseInt(localStorage.getItem("balance")||1000)
+
+/* Balance Start from 0 */
+
+if(localStorage.getItem("balance")==null){
+localStorage.setItem("balance",0)
+}
+
+let balance=parseInt(localStorage.getItem("balance"))
 document.getElementById("balance").innerText=balance
 
 let selected=null
@@ -110,19 +120,24 @@ return"green"
 }
 
 function addHistory(num,color){
+
 let div=document.createElement("div")
 div.className="historyItem"
 div.innerHTML="Result: "+num+" ("+color+")"
+
 let list=document.getElementById("historyList")
 list.prepend(div)
+
 if(list.children.length>20){
 list.removeChild(list.lastChild)
 }
+
 }
 
 function placeBet(){
 
 let amt=parseInt(document.getElementById("amount").value)
+
 if(!selected)return alert("Select bet")
 if(!amt || amt<=0)return alert("Enter amount")
 if(balance<amt)return alert("Low balance")
@@ -131,6 +146,7 @@ balance-=amt
 
 let admin=localStorage.getItem("adminResult")
 let result=admin?parseInt(admin):Math.floor(Math.random()*10)
+
 localStorage.removeItem("adminResult")
 
 let color=getColor(result)
@@ -141,8 +157,10 @@ alert("You Win")
 }
 
 localStorage.setItem("balance",balance)
+
 document.getElementById("balance").innerText=balance
 document.getElementById("ball").innerText=result
+
 addHistory(result,color)
 
 }
@@ -170,22 +188,27 @@ time=60
 
 let admin=localStorage.getItem("adminResult")
 let result=admin?parseInt(admin):Math.floor(Math.random()*10)
+
 localStorage.removeItem("adminResult")
 
 let color=getColor(result)
 
 document.getElementById("ball").innerText=result
+
 addHistory(result,color)
 
 }
 
 },1000)
+
 function openWallet(){
 window.location.href="wallet.html"
 }
+
 function openHelp(){
 window.location.href="help.html"
 }
+
 </script>
 
 </body>
