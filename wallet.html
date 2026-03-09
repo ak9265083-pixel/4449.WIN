@@ -127,16 +127,24 @@ Balance ₹ <span id="balance">0</span>
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { 
+getFirestore, 
+doc, 
+getDoc, 
+setDoc, 
+addDoc, 
+collection 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-  authDomain: "win2-512e1.firebaseapp.com",
-  projectId: "win2-512e1",
-  storageBucket: "win2-512e1.firebasestorage.app",
-  messagingSenderId: "577913579227",
-  appId: "1:577913579227:web:1e073059c2d3d881720efe",
-  measurementId: "G-4V1SCSMTM6"
+apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain: "win2-512e1.firebaseapp.com",
+projectId: "win2-512e1",
+storageBucket: "win2-512e1.firebasestorage.app",
+messagingSenderId: "577913579227",
+appId: "1:577913579227:web:1e073059c2d3d881720efe",
+measurementId: "G-4V1SCSMTM6"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -194,35 +202,35 @@ let amt=parseInt(document.getElementById("amt").value)
 
 if(!amt) return alert("Enter amount")
 
-balance+=amt
+await addDoc(collection(db,"depositRequests"),{
 
-await updateDoc(doc(db,"users",currentUser),{
-balance:balance
+user:currentUser,
+amount:amt,
+status:"pending"
+
 })
 
-document.getElementById("balance").innerText=balance
-
-alert("Deposit added")
+alert("Deposit request sent. Wait for admin approval")
 
 }
 
 window.sendWithdraw=async function(){
 
 let amt=parseInt(document.getElementById("wamt").value)
+let upi=document.getElementById("upi").value
 
 if(!amt) return alert("Enter amount")
 
-if(amt>balance) return alert("Not enough balance")
+await addDoc(collection(db,"withdrawRequests"),{
 
-balance-=amt
+user:currentUser,
+amount:amt,
+upi:upi,
+status:"pending"
 
-await updateDoc(doc(db,"users",currentUser),{
-balance:balance
 })
 
-document.getElementById("balance").innerText=balance
-
-alert("Withdraw successful")
+alert("Withdraw request sent. Wait for admin approval")
 
 }
 
