@@ -27,6 +27,7 @@ padding:6px 12px;
 background:#00ffcc;
 border:none;
 cursor:pointer;
+margin:3px;
 }
 </style>
 
@@ -36,22 +37,46 @@ cursor:pointer;
 
 <h1>ADMIN PANEL</h1>
 
+<div id="loginBox">
+<input type="password" id="pass" placeholder="Enter Admin Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="panel" style="display:none">
+
+<h2>Set Result</h2>
+
+<button onclick="setResult(0)">0</button>
+<button onclick="setResult(1)">1</button>
+<button onclick="setResult(2)">2</button>
+<button onclick="setResult(3)">3</button>
+<button onclick="setResult(4)">4</button>
+<button onclick="setResult(5)">5</button>
+<button onclick="setResult(6)">6</button>
+<button onclick="setResult(7)">7</button>
+<button onclick="setResult(8)">8</button>
+<button onclick="setResult(9)">9</button>
+
 <h2>Deposit Requests</h2>
 <div id="deposits"></div>
 
 <h2>Withdraw Requests</h2>
 <div id="withdraws"></div>
 
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { 
+import {
 getFirestore,
 collection,
-getDocs
+getDocs,
+doc,
+updateDoc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 
 const firebaseConfig = {
 apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
@@ -66,57 +91,154 @@ measurementId: "G-4V1SCSMTM6"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+window.login=function(){
 
-// Deposit Requests
+let p=document.getElementById("pass").value
 
-const depositDiv=document.getElementById("deposits")
+if(p=="@1Aankit"){
 
-const depositSnap=await getDocs(collection(db,"depositRequests"))
+document.getElementById("loginBox").style.display="none"
+document.getElementById("panel").style.display="block"
 
-depositSnap.forEach(doc=>{
+loadDeposits()
+loadWithdraws()
 
-let data=doc.data()
+}else{
 
-let div=document.createElement("div")
+alert("Wrong Password")
 
-div.className="box"
+}
 
-div.innerHTML=`
-User: ${data.user} <br>
-Amount: ${data.amount} <br>
-Status: ${data.status}
-<button>Approve</button>
+}
+
+// RESULT CONTROL
+
+window.setResult=async function(num){
+
+await updateDoc(doc(db,"system","result"),{
+value:num
+})
+
+alert("Result set "+num)
+
+}
+
+
+// DEPOSIT APPROVAL
+
+async function loadDeposits(){
+
+let div=document.getElementById("deposits")
+
+div.innerHTML=""
+
+let snap=await getDocs(collection(db,"depositRequests"))
+
+snap.forEach(d=>{
+
+let data=d.data()
+
+if(data.status!="pending") return
+
+let box=document.createElement("div")
+
+box.className="box"
+
+box.innerHTML=`
+User: ${data.user}<br>
+Amount: ${data.amount}<br>
+UTR: ${data.utr}<br>
+<button onclick="approveDeposit('${d.id}','${data.user}',${data.amount})">Approve</button>
 `
 
-depositDiv.appendChild(div)
+div.appendChild(box)
 
 })
 
+}
 
-// Withdraw Requests
+window.approveDeposit=async function(id,user,amount){
 
-const withdrawDiv=document.getElementById("withdraws")
+let userRef=doc(db,"users",user)
 
-const withdrawSnap=await getDocs(collection(db,"withdrawRequests"))
+let snap=await getDoc(userRef)
 
-withdrawSnap.forEach(doc=>{
+let bal=snap.data().balance || 0
 
-let data=doc.data()
+await updateDoc(userRef,{
+balance:bal+amount
+})
 
-let div=document.createElement("div")
+await updateDoc(doc(db,"depositRequests",id),{
+status:"approved"
+})
 
-div.className="box"
+alert("Deposit Approved")
 
-div.innerHTML=`
-User: ${data.user} <br>
-Amount: ${data.amount} <br>
-Status: ${data.status}
-<button>Approve</button>
+loadDeposits()
+
+}
+
+
+// WITHDRAW APPROVAL
+
+async function loadWithdraws(){
+
+let div=document.getElementById("withdraws")
+
+div.innerHTML=""
+
+let snap=await getDocs(collection(db,"withdrawRequests"))
+
+snap.forEach(d=>{
+
+let data=d.data()
+
+if(data.status!="pending") return
+
+let box=document.createElement("div")
+
+box.className="box"
+
+box.innerHTML=`
+User: ${data.user}<br>
+Amount: ${data.amount}<br>
+UPI: ${data.upi}<br>
+<button onclick="approveWithdraw('${d.id}','${data.user}',${data.amount})">Approve</button>
 `
 
-withdrawDiv.appendChild(div)
+div.appendChild(box)
 
 })
+
+}
+
+window.approveWithdraw=async function(id,user,amount){
+
+let userRef=doc(db,"users",user)
+
+let snap=await getDoc(userRef)
+
+let bal=snap.data().balance || 0
+
+if(bal<amount){
+alert("User balance low")
+return
+}
+
+await updateDoc(userRef,{
+balance:bal-amount
+})
+
+await updateDoc(doc(db,"withdrawRequests",id),{
+status:"approved"
+})
+
+alert("Withdraw Approved")
+
+loadWithdraws()
+
+}
 
 </script>
 
