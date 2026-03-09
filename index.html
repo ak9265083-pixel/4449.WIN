@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -18,7 +19,6 @@ background:linear-gradient(135deg,#06123a,#0f2b8f,#1b46d1);
 overflow:hidden;
 }
 
-/* animated glow background instead of images */
 body::before{
 content:"";
 position:absolute;
@@ -36,7 +36,6 @@ pointer-events:none;
 100%{transform:translate(0,0)}
 }
 
-/* glass signup card */
 .container{
 position:relative;
 z-index:2;
@@ -144,8 +143,6 @@ font-weight:bold;
 
 .login-link a:hover{text-decoration:underline}
 
-
-/* success popup */
 .success-popup{
 position:fixed;
 top:50%;
@@ -169,16 +166,9 @@ z-index:999;
 opacity:1;
 visibility:visible;
 transform:translate(-50%,-50%) scale(1);
-animation:pop .45s ease;
 }
-
-@keyframes pop{
-0%{transform:translate(-50%,-50%) scale(.5)}
-60%{transform:translate(-50%,-50%) scale(1.1)}
-100%{transform:translate(-50%,-50%) scale(1)}
-}
-
 </style>
+
 </head>
 
 <body>
@@ -194,14 +184,11 @@ animation:pop .45s ease;
 
 <h3>Create Account</h3>
 
-<label>Email</label>
-<input type="email" class="input-box" id="email" placeholder="Enter your email">
+<label>Email</label> <input type="email" class="input-box" id="email" placeholder="Enter your email">
 
-<label>Password</label>
-<input type="password" class="input-box" id="password" placeholder="Create password">
+<label>Password</label> <input type="password" class="input-box" id="password" placeholder="Create password">
 
-<label>Invitation Code</label>
-<input type="text" class="input-box" id="invite" placeholder="Enter invitation code">
+<label>Invitation Code</label> <input type="text" class="input-box" id="invite" placeholder="Enter invitation code">
 
 <div class="checkbox">
 <input type="checkbox" id="terms">
@@ -217,32 +204,25 @@ Already have an account? <a href="login.html">Login</a>
 </div>
 </div>
 
+<div id="successPopup" class="success-popup">✅ Signup Successful</div>
+
 <script type="module">
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-  authDomain: "win2-512e1.firebaseapp.com",
-  projectId: "win2-512e1",
-  storageBucket: "win2-512e1.firebasestorage.app",
-  messagingSenderId: "577913579227",
-  appId: "1:577913579227:web:1e073059c2d3d881720efe",
-  measurementId: "G-4V1SCSMTM6"
+apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain: "win2-512e1.firebaseapp.com",
+projectId: "win2-512e1",
+storageBucket: "win2-512e1.firebasestorage.app",
+messagingSenderId: "577913579227",
+appId: "1:577913579227:web:1e073059c2d3d881720efe",
+measurementId: "G-4V1SCSMTM6"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
+const auth = getAuth(app);
 
 window.signup=function(){
 
@@ -256,32 +236,22 @@ return;
 }
 
 createUserWithEmailAndPassword(auth,email,password)
+
 .then(()=>{
-showSuccess();
+document.getElementById("successPopup").classList.add("show");
+
+setTimeout(()=>{
 window.location.href="login.html";
+},1800);
 })
+
 .catch(error=>{
 alert(error.message);
 });
 
 }
 
-
-
-window.showSuccess=function(){
-const popup=document.getElementById("successPopup");
-popup.classList.add("show");
-
-setTimeout(()=>{
-window.location.href="login.html";
-},1800);
-}
-
 </script>
-
-
-
-<div id="successPopup" class="success-popup">✅ Signup Successful</div>
 
 </body>
 </html>
