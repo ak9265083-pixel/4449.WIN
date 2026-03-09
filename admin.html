@@ -1,91 +1,190 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-<title>Admin Control</title>
+<title>Admin Panel</title>
+
+<style>
+body{
+font-family:Arial;
+background:#111;
+color:white;
+padding:20px;
+}
+
+h2{
+border-bottom:2px solid #555;
+padding-bottom:5px;
+}
+
+.card{
+background:#222;
+padding:15px;
+margin:10px 0;
+border-radius:8px;
+}
+
+button{
+padding:6px 10px;
+margin:5px;
+border:none;
+border-radius:4px;
+cursor:pointer;
+}
+
+.approve{background:green;color:white}
+.reject{background:red;color:white}
+.result{background:orange;color:black}
+
+</style>
+
 </head>
-<body style="font-family:Arial;text-align:center">
-<script>
-let pass=prompt("Enter Admin Password")
-if(pass!=="@1Aankit"){
-alert("Access Denied")
-window.location="index.html"
-}
-</script>
-<h2>Admin Result Control</h2>
-<h3>Deposit Requests</h3>
 
+<body>
+
+<h1>Admin Control Panel</h1>
+
+<h2>Deposit Requests</h2>
 <div id="depositList"></div>
-<input type="number" id="num" placeholder="0-9">
-<button onclick="setResult()">Fix Next Result</button>
-<script>
-function setResult(){
 
-let num=document.getElementById("num").value
-localStorage.setItem("adminResult",num)
-alert("Next result fixed")
-}
-function loadDeposits(){
+<h2>Withdraw Requests</h2>
+<div id="withdrawList"></div>
 
-let data=JSON.parse(localStorage.getItem("depositRequests")||"[]")
+<h2>Set Wingo Result</h2>
 
-let list=document.getElementById("depositList")
-list.innerHTML=""
+<input type="number" id="resultNumber" min="0" max="9">
+<button class="result" onclick="setResult()">Set Result</button>
 
-data.forEach((req,i)=>{
+<script type="module">
 
-let div=document.createElement("div")
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain: "win2-512e1.firebaseapp.com",
+projectId: "win2-512e1",
+storageBucket: "win2-512e1.firebasestorage.app",
+messagingSenderId: "577913579227",
+appId: "1:577913579227:web:1e073059c2d3d881720efe"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const depositList=document.getElementById("depositList");
+const withdrawList=document.getElementById("withdrawList");
+
+/* LOAD DEPOSITS */
+
+const depSnap=await getDocs(collection(db,"depositRequests"));
+
+depSnap.forEach(d=>{
+
+let data=d.data();
+
+let div=document.createElement("div");
+div.className="card";
 
 div.innerHTML=`
-<p>${req.email} - ₹${req.amount}</p>
+User: ${data.user} <br>
+Amount: ₹${data.amount}
+<br>
+<button class="approve" onclick="approveDeposit('${d.id}')">Approve</button>
+<button class="reject" onclick="rejectDeposit('${d.id}')">Reject</button>
+`;
 
-<button onclick="approve(${i})">Approve</button>
+depositList.appendChild(div);
 
-<button onclick="reject(${i})">Reject</button>
-`
+});
 
-list.appendChild(div)
+/* LOAD WITHDRAW */
 
-})
+const withSnap=await getDocs(collection(db,"withdrawRequests"));
 
-}
+withSnap.forEach(d=>{
 
-function approve(i){
+let data=d.data();
 
-let data=JSON.parse(localStorage.getItem("depositRequests")||"[]")
+let div=document.createElement("div");
+div.className="card";
 
-let req=data[i]
+div.innerHTML=`
+User: ${data.user} <br>
+Amount: ₹${data.amount}
+<br>
+<button class="approve" onclick="approveWithdraw('${d.id}')">Approve</button>
+<button class="reject" onclick="rejectWithdraw('${d.id}')">Reject</button>
+`;
 
-let balance=parseInt(localStorage.getItem("balance")||0)
+withdrawList.appendChild(div);
 
-balance+=parseInt(req.amount)
+});
 
-localStorage.setItem("balance",balance)
+/* APPROVE DEPOSIT */
 
-data.splice(i,1)
+window.approveDeposit=async function(id){
 
-localStorage.setItem("depositRequests",JSON.stringify(data))
+await updateDoc(doc(db,"depositRequests",id),{
+status:"approved"
+});
 
-loadDeposits()
-
-alert("Deposit Approved")
-
-}
-
-function reject(i){
-
-let data=JSON.parse(localStorage.getItem("depositRequests")||"[]")
-
-data.splice(i,1)
-
-localStorage.setItem("depositRequests",JSON.stringify(data))
-
-loadDeposits()
-
-alert("Deposit Rejected")
+alert("Deposit Approved");
 
 }
 
-loadDeposits()
+/* REJECT DEPOSIT */
+
+window.rejectDeposit=async function(id){
+
+await updateDoc(doc(db,"depositRequests",id),{
+status:"rejected"
+});
+
+alert("Deposit Rejected");
+
+}
+
+/* APPROVE WITHDRAW */
+
+window.approveWithdraw=async function(id){
+
+await updateDoc(doc(db,"withdrawRequests",id),{
+status:"approved"
+});
+
+alert("Withdraw Approved");
+
+}
+
+/* REJECT WITHDRAW */
+
+window.rejectWithdraw=async function(id){
+
+await updateDoc(doc(db,"withdrawRequests",id),{
+status:"rejected"
+});
+
+alert("Withdraw Rejected");
+
+}
+
+/* SET WINGO RESULT */
+
+window.setResult=async function(){
+
+const num=document.getElementById("resultNumber").value;
+
+await addDoc(collection(db,"wingoResults"),{
+number:num,
+time:Date.now()
+});
+
+alert("Result Set: "+num);
+
+}
+
 </script>
+
 </body>
 </html>
