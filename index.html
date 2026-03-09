@@ -7,7 +7,10 @@
 
 <style>
 
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+*{
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif
+}
 
 body{
 margin:0;
@@ -15,48 +18,21 @@ min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:linear-gradient(135deg,#06123a,#0f2b8f,#1b46d1);
-overflow:hidden;
+background:linear-gradient(135deg,#06123a,#1b46d1);
 }
 
-/* lighter background animation */
-
-body::before{
-content:"";
-position:absolute;
-width:140%;
-height:140%;
-background:
-radial-gradient(circle at 20% 30%,rgba(255,255,255,0.05),transparent 40%),
-radial-gradient(circle at 80% 70%,rgba(255,255,255,0.04),transparent 40%);
-animation:bgMove 30s linear infinite;
-pointer-events:none;
-}
-
-@keyframes bgMove{
-0%{transform:translate(0,0)}
-50%{transform:translate(-40px,-20px)}
-100%{transform:translate(0,0)}
-}
+/* main card */
 
 .container{
-position:relative;
-z-index:2;
 width:92%;
 max-width:380px;
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(6px);
-border-radius:20px;
-box-shadow:0 20px 60px rgba(0,0,0,0.35);
+background:#ffffff;
+border-radius:18px;
+box-shadow:0 10px 30px rgba(0,0,0,0.25);
 overflow:hidden;
-animation:cardEnter .5s ease;
-border:1px solid rgba(255,255,255,0.2);
 }
 
-@keyframes cardEnter{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
-}
+/* header */
 
 .header{
 background:linear-gradient(90deg,#ff4d6d,#ff7a7a);
@@ -70,47 +46,38 @@ color:white;
 }
 
 .logo{
-height:34px
+height:32px
 }
 
+/* content */
+
 .content{
-padding:25px;
-color:white
+padding:25px
 }
 
 h3{
 text-align:center;
 margin-top:0;
-margin-bottom:22px;
-letter-spacing:1px;
+margin-bottom:20px
 }
 
 label{
 font-size:13px;
-font-weight:bold;
-opacity:.9;
+font-weight:bold
 }
 
 .input-box{
 width:100%;
 padding:12px;
-border-radius:10px;
-border:1px solid rgba(255,255,255,0.3);
+border-radius:8px;
+border:1px solid #ccc;
 margin-top:6px;
-margin-bottom:16px;
-background:rgba(255,255,255,0.15);
-color:white;
-transition:.2s;
-}
-
-.input-box::placeholder{
-color:rgba(255,255,255,0.7)
+margin-bottom:15px;
 }
 
 .input-box:focus{
 outline:none;
-border-color:#ff7a7a;
-box-shadow:0 0 0 2px rgba(255,122,122,0.25);
+border-color:#ff6b6b
 }
 
 .checkbox{
@@ -118,66 +85,52 @@ display:flex;
 align-items:center;
 gap:8px;
 font-size:13px;
-margin-bottom:18px;
+margin-bottom:18px
 }
+
+/* button */
 
 .signup-btn{
 width:100%;
 padding:14px;
 border:none;
-border-radius:30px;
-background:linear-gradient(90deg,#ff4d6d,#ff7a7a);
+border-radius:25px;
+background:#ff5c5c;
 color:white;
 font-size:16px;
 font-weight:bold;
 cursor:pointer;
-transition:.2s;
 }
 
-.signup-btn:hover{
-transform:translateY(-2px);
-box-shadow:0 8px 18px rgba(0,0,0,0.3);
+.signup-btn:active{
+transform:scale(.98)
 }
 
 .login-link{
 text-align:center;
-margin-top:16px;
-font-size:14px;
+margin-top:15px;
+font-size:14px
 }
 
 .login-link a{
-color:#ffdede;
+color:#ff5c5c;
 text-decoration:none;
-font-weight:bold;
+font-weight:bold
 }
 
-.login-link a:hover{
-text-decoration:underline
-}
+/* popup */
 
 .success-popup{
 position:fixed;
 top:50%;
 left:50%;
-transform:translate(-50%,-50%) scale(0.8);
-background:rgba(0,0,0,0.85);
+transform:translate(-50%,-50%);
+background:black;
 color:white;
-padding:30px 40px;
-border-radius:16px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
-opacity:0;
-visibility:hidden;
-transition:all .3s ease;
-box-shadow:0 20px 60px rgba(0,0,0,0.5);
-z-index:999;
-}
-
-.success-popup.show{
-opacity:1;
-visibility:visible;
-transform:translate(-50%,-50%) scale(1);
+padding:25px 30px;
+border-radius:12px;
+font-size:18px;
+display:none;
 }
 
 </style>
@@ -221,7 +174,7 @@ Already have an account? <a href="login.html">Login</a>
 </div>
 
 <div id="successPopup" class="success-popup">
-✅ Signup Successful
+Signup Successful
 </div>
 
 <script type="module">
@@ -257,11 +210,11 @@ createUserWithEmailAndPassword(auth,email,password)
 
 .then(()=>{
 
-document.getElementById("successPopup").classList.add("show");
+document.getElementById("successPopup").style.display="block";
 
 setTimeout(()=>{
 window.location.href="login.html";
-},1800);
+},1500);
 
 })
 
