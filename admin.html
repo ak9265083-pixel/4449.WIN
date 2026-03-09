@@ -2,24 +2,15 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wingo Game</title>
+
+<title>Admin Panel</title>
 
 <style>
 
 body{
-margin:0;
 font-family:Arial;
-background:#9fa3ad;
-display:flex;
-justify-content:center;
-}
-
-.app{
-width:420px;
-background:white;
-min-height:100vh;
-text-align:center;
-padding-bottom:80px;
+background:#f2f2f2;
+margin:0;
 }
 
 .header{
@@ -27,33 +18,52 @@ background:#ff6b6b;
 color:white;
 padding:15px;
 font-size:22px;
+text-align:center;
 }
 
-.balance{
-background:#eee;
-margin:15px;
-padding:10px;
-border-radius:10px;
-}
-
-.numbers{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:10px;
+.container{
+max-width:900px;
+margin:auto;
 padding:20px;
 }
 
-.numbers button{
+.card{
+background:white;
 padding:15px;
-border-radius:50%;
-border:none;
-font-size:18px;
-background:#eee;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-.result{
-font-size:50px;
-margin:20px;
+button{
+padding:8px 15px;
+background:#ff6b6b;
+border:none;
+color:white;
+border-radius:5px;
+margin:3px;
+cursor:pointer;
+}
+
+.item{
+background:#eee;
+padding:10px;
+margin:8px 0;
+border-radius:6px;
+}
+
+.stats{
+display:flex;
+gap:20px;
+}
+
+.stat{
+background:#ff6b6b;
+color:white;
+padding:15px;
+border-radius:10px;
+flex:1;
+text-align:center;
 }
 
 </style>
@@ -61,28 +71,62 @@ margin:20px;
 
 <body>
 
-<div class="app">
+<div class="header">ADMIN PANEL</div>
 
-<div class="header">Wingo</div>
+<div class="container">
 
-<div class="balance">
-Balance ₹ <span id="balance">0</span>
+<!-- Stats -->
+
+<div class="stats">
+
+<div class="stat">
+Total Users<br>
+<span id="totalUsers">0</span>
 </div>
 
-<div class="result" id="ball">?</div>
+<div class="stat">
+Active Users<br>
+<span id="activeUsers">0</span>
+</div>
 
-<div class="numbers">
+</div>
 
-<button onclick="bet(0)">0</button>
-<button onclick="bet(1)">1</button>
-<button onclick="bet(2)">2</button>
-<button onclick="bet(3)">3</button>
-<button onclick="bet(4)">4</button>
-<button onclick="bet(5)">5</button>
-<button onclick="bet(6)">6</button>
-<button onclick="bet(7)">7</button>
-<button onclick="bet(8)">8</button>
-<button onclick="bet(9)">9</button>
+<!-- Result -->
+
+<div class="card">
+
+<h3>Set Wingo Result</h3>
+
+<button onclick="setResult(0)">0</button>
+<button onclick="setResult(1)">1</button>
+<button onclick="setResult(2)">2</button>
+<button onclick="setResult(3)">3</button>
+<button onclick="setResult(4)">4</button>
+<button onclick="setResult(5)">5</button>
+<button onclick="setResult(6)">6</button>
+<button onclick="setResult(7)">7</button>
+<button onclick="setResult(8)">8</button>
+<button onclick="setResult(9)">9</button>
+
+</div>
+
+<!-- Deposits -->
+
+<div class="card">
+
+<h3>Deposit Requests</h3>
+
+<div id="depositList"></div>
+
+</div>
+
+<!-- Withdraw -->
+
+<div class="card">
+
+<h3>Withdraw Requests</h3>
+
+<div id="withdrawList"></div>
 
 </div>
 
@@ -93,17 +137,15 @@ Balance ₹ <span id="balance">0</span>
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
-getAuth,
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-import {
 getFirestore,
+collection,
+getDocs,
 doc,
-getDoc,
 updateDoc,
-onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+getDoc,
+setDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
@@ -112,82 +154,144 @@ projectId:"win2-512e1"
 };
 
 const app=initializeApp(firebaseConfig)
-const auth=getAuth(app)
 const db=getFirestore(app)
 
-let balance=0
-let uid=""
-let currentBet=null
-let betAmount=0
+loadStats()
+loadDeposits()
+loadWithdraws()
 
-onAuthStateChanged(auth,async(user)=>{
+/* USERS */
 
-if(user){
+async function loadStats(){
 
-uid=user.uid
+let users = await getDocs(collection(db,"users"))
 
-let snap=await getDoc(doc(db,"users",uid))
+document.getElementById("totalUsers").innerText = users.size
 
-balance=snap.data().balance||0
+let active=0
 
-document.getElementById("balance").innerText=balance
+users.forEach(u=>{
+
+let d=u.data()
+
+if(d.balance>0) active++
+
+})
+
+document.getElementById("activeUsers").innerText = active
+
+}
+
+/* DEPOSITS */
+
+async function loadDeposits(){
+
+let snap=await getDocs(collection(db,"depositRequests"))
+
+snap.forEach(docSnap=>{
+
+let d=docSnap.data()
+
+if(d.status=="pending"){
+
+let div=document.createElement("div")
+
+div.className="item"
+
+div.innerHTML=
+"User: "+d.user+
+"<br>Amount: "+d.amount+
+"<br>UTR: "+d.utr+
+"<br><button onclick='approveDeposit(\""+docSnap.id+"\",\""+d.user+"\","+d.amount+")'>Approve</button>"
+
+document.getElementById("depositList").appendChild(div)
 
 }
 
 })
 
-window.bet=function(num){
-
-let amt=prompt("Enter Amount")
-
-amt=parseInt(amt)
-
-if(balance<amt){
-
-alert("Low Balance")
-return
-
 }
 
-balance-=amt
+/* WITHDRAW */
 
-document.getElementById("balance").innerText=balance
+async function loadWithdraws(){
 
-currentBet=num
-betAmount=amt
+let snap=await getDocs(collection(db,"withdrawRequests"))
 
-}
+snap.forEach(docSnap=>{
 
-onSnapshot(doc(db,"wingoResults","current"),async(d)=>{
+let d=docSnap.data()
 
-let result=d.data().number
+if(d.status=="pending"){
 
-document.getElementById("ball").innerText=result
+let div=document.createElement("div")
 
-if(currentBet!=null){
+div.className="item"
 
-if(currentBet==result){
+div.innerHTML=
+"User: "+d.user+
+"<br>Amount: "+d.amount+
+"<br>UPI: "+d.upi+
+"<br><button onclick='approveWithdraw(\""+docSnap.id+"\")'>Approve</button>"
 
-balance+=betAmount*2
-alert("Win")
-
-}else{
-
-alert("Lose")
-
-}
-
-document.getElementById("balance").innerText=balance
-
-await updateDoc(doc(db,"users",uid),{
-balance:balance
-})
-
-currentBet=null
+document.getElementById("withdrawList").appendChild(div)
 
 }
 
 })
+
+}
+
+/* APPROVE DEPOSIT */
+
+window.approveDeposit = async function(id,user,amount){
+
+let ref = doc(db,"users",user)
+
+let snap = await getDoc(ref)
+
+let bal = snap.data().balance || 0
+
+await updateDoc(ref,{
+balance:bal+amount
+})
+
+await updateDoc(doc(db,"depositRequests",id),{
+status:"approved"
+})
+
+alert("Deposit Approved")
+
+location.reload()
+
+}
+
+/* APPROVE WITHDRAW */
+
+window.approveWithdraw = async function(id){
+
+await updateDoc(doc(db,"withdrawRequests",id),{
+status:"approved"
+})
+
+alert("Withdraw Approved")
+
+location.reload()
+
+}
+
+/* RESULT */
+
+window.setResult = async function(num){
+
+await setDoc(doc(db,"wingoResults","current"),{
+number:num,
+time:Date.now()
+})
+
+alert("Result Updated")
+
+}
 
 </script>
 
