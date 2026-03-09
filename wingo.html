@@ -1,147 +1,445 @@
-```html
 <!DOCTYPE html>
+
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Wingo Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4449 WIN</title>
 
 <style>
 
 body{
+margin:0;
 font-family:Arial;
-background:#0f172a;
-color:white;
-text-align:center;
-}
-
-#resultBox{
-font-size:40px;
-margin-top:20px;
-}
-
-/* popup */
-
-.bet-popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-width:260px;
-display:none;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
-}
-
-.coin-box{
+background:#9fa3ad;
 display:flex;
 justify-content:center;
+}
+
+.app{
+width:420px;
+background:white;
+min-height:100vh;
+text-align:center;
+padding-bottom:90px;
+}
+
+.header{
+background:#ff6b6b;
+color:white;
+padding:15px;
+font-size:22px;
+font-weight:bold;
+}
+
+.wallet{
+background:#f2f2f2;
+margin:15px;
+padding:15px;
+border-radius:12px;
+font-size:18px;
+}
+
+.timer{
+background:#ff6b6b;
+color:white;
+margin:10px;
+padding:10px;
+border-radius:10px;
+font-size:18px;
+}
+
+.centerGame{
+margin:20px auto;
+width:120px;
+height:120px;
+border-radius:50%;
+background:#eee;
+display:flex;
 align-items:center;
-gap:15px;
-margin-top:15px;
+justify-content:center;
+font-size:50px;
+font-weight:bold;
 }
 
-.coin-btn{
-padding:8px 14px;
-font-size:20px;
+.colors{
+display:flex;
+gap:10px;
+padding:10px;
+}
+
+.colors button{
+flex:1;
+padding:12px;
 border:none;
-border-radius:6px;
-cursor:pointer;
-background:#334155;
 color:white;
-}
-
-.bet-btn{
-margin-top:15px;
-padding:10px 20px;
-border:none;
 border-radius:8px;
-background:#22c55e;
-color:white;
+font-size:16px;
+}
+
+.green{background:#2ecc71;}
+.red{background:#e74c3c;}
+.violet{background:#9b59b6;}
+
+.numbers{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+padding:10px;
+}
+
+.numbers button{
+padding:15px;
+border-radius:50%;
+border:none;
+font-size:18px;
+background:#eee;
 cursor:pointer;
 }
 
-.close-btn{
-background:#ef4444;
-margin-left:10px;
+.history{
+margin:15px;
+text-align:left;
+}
+
+.historyItem{
+background:#eee;
+margin-bottom:6px;
+padding:8px;
+border-radius:6px;
+}
+
+.bottomWallet{
+position:fixed;
+bottom:10px;
+left:50%;
+transform:translateX(-50%);
+width:360px;
+background:white;
+border-radius:25px;
+display:flex;
+justify-content:space-around;
+padding:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.25);
+}
+
+.navBtn{
+display:flex;
+flex-direction:column;
+align-items:center;
+cursor:pointer;
+}
+
+.icon{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#ff6b6b;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:white;
+}
+
+.label{
+font-size:13px;
+margin-top:4px;
+font-weight:bold;
+}
+
+/* POPUP */
+
+.betPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.betBox{
+background:white;
+padding:25px;
+border-radius:18px;
+width:260px;
+text-align:center;
+animation:zoomPop .35s ease;
+}
+
+@keyframes zoomPop{
+0%{transform:scale(.5);opacity:0;}
+100%{transform:scale(1);opacity:1;}
+}
+
+.betBox input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:16px;
+text-align:center;
+margin-top:10px;
+}
+
+.betBtn{
+margin-top:15px;
+padding:12px;
+background:#ff6b6b;
+color:white;
+border:none;
+width:100%;
+border-radius:10px;
+font-size:16px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h2>Wingo Game</h2>
+<div class="app">
 
-<br>
+<div class="header">4449 WIN</div>
 
-<div id="resultBox">Result: -</div>
+<div class="wallet">
+Balance ₹ <span id="balance">0</span>
+</div>
 
-<br><br>
+<div class="timer">
+Next Result In <span id="time">60</span>s
+</div>
 
-<button onclick="openPopup()">Place Bet</button>
+<div class="centerGame" id="ball">?</div>
 
-<!-- popup -->
+<div class="colors">
+<button class="green" onclick="selectBet('green')">Green</button>
+<button class="violet" onclick="selectBet('violet')">Violet</button>
+<button class="red" onclick="selectBet('red')">Red</button>
+</div>
 
-<div class="bet-popup" id="betPopup">
+<div class="numbers">
+<button onclick="selectBet(0)">0</button>
+<button onclick="selectBet(1)">1</button>
+<button onclick="selectBet(2)">2</button>
+<button onclick="selectBet(3)">3</button>
+<button onclick="selectBet(4)">4</button>
+<button onclick="selectBet(5)">5</button>
+<button onclick="selectBet(6)">6</button>
+<button onclick="selectBet(7)">7</button>
+<button onclick="selectBet(8)">8</button>
+<button onclick="selectBet(9)">9</button>
+</div>
 
-<h3>Place Bet</h3>
-
-<div class="coin-box">
-
-<button class="coin-btn" onclick="changeCoin(-1)">-</button>
-
-<div id="coinValue">1</div>
-
-<button class="coin-btn" onclick="changeCoin(1)">+</button>
+<div class="history">
+<h3>Last Results</h3>
+<div id="historyList"></div>
+</div>
 
 </div>
 
-<button class="bet-btn" onclick="confirmBet()">Confirm</button>
+<div class="bottomWallet">
 
-<button class="bet-btn close-btn" onclick="closePopup()">Close</button>
+<div class="navBtn" onclick="openWallet()">
+<div class="icon">💳</div>
+<div class="label">Wallet</div>
+</div>
+
+<div class="navBtn" onclick="openHelp()">
+<div class="icon">🎧</div>
+<div class="label">Help</div>
+</div>
+
+<div class="navBtn" onclick="logout()">
+<div class="icon">🚪</div>
+<div class="label">Logout</div>
+</div>
 
 </div>
 
+<div class="betPopup" id="betPopup">
+<div class="betBox">
 
-<script>
+<h3>Enter Bet Amount</h3>
 
-let coin = 1
+<input type="number" id="betInput" placeholder="Amount">
 
-function openPopup(){
-document.getElementById("betPopup").style.display="block"
+<button class="betBtn" onclick="placeBet()">Place Bet</button>
+
+</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {getFirestore,doc,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain: "win2-512e1.firebaseapp.com",
+projectId: "win2-512e1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let balance=0;
+let userId="";
+let currentBet=null;
+let betAmount=0;
+let selectedValue=null;
+
+onAuthStateChanged(auth, async (user)=>{
+
+if(user){
+
+userId=user.uid;
+
+let ref=doc(db,"users",userId);
+let snap=await getDoc(ref);
+
+if(snap.exists()){
+
+balance=snap.data().balance || 0;
+document.getElementById("balance").innerText=balance;
+
 }
 
-function closePopup(){
-document.getElementById("betPopup").style.display="none"
 }
 
-function changeCoin(value){
+});
 
-coin += value
+function getColor(n){
 
-if(coin < 1){
-coin = 1
+if(n==0 || n==5) return "violet";
+
+if(n==1 || n==3 || n==7 || n==9)
+return "green";
+
+if(n==2 || n==4 || n==6 || n==8)
+return "red";
+
 }
 
-document.getElementById("coinValue").innerText = coin
+window.selectBet=function(v){
+
+selectedValue=v;
+document.getElementById("betPopup").style.display="flex";
 
 }
 
-function confirmBet(){
+window.placeBet=function(){
 
-closePopup()
+let amt=parseInt(document.getElementById("betInput").value);
 
-// random result
-let num = Math.floor(Math.random()*10)
+if(balance<amt){
 
-document.getElementById("resultBox").innerText="Result: "+num
+alert("Low Balance");
+return;
 
+}
+
+balance-=amt;
+
+document.getElementById("balance").innerText=balance;
+
+currentBet=selectedValue;
+betAmount=amt;
+
+document.getElementById("betPopup").style.display="none";
+
+}
+
+function addHistory(num,color){
+
+let div=document.createElement("div");
+
+div.className="historyItem";
+div.innerHTML="Result: "+num+" ("+color+")";
+
+document.getElementById("historyList").prepend(div);
+
+}
+
+let time=60;
+
+setInterval(async ()=>{
+
+time--;
+document.getElementById("time").innerText=time;
+
+if(time<=0){
+
+time=60;
+
+/* admin result */
+
+let resultDoc = await getDoc(doc(db,"wingo","result"));
+let result = resultDoc.data().number;
+
+let color=getColor(result);
+
+document.getElementById("ball").innerText=result;
+
+addHistory(result,color);
+
+if(currentBet!=null){
+
+if(currentBet===result){
+
+let winAmount = betAmount * (result==0?2:result);
+
+balance += winAmount;
+
+alert("You Win ₹"+winAmount);
+
+}else if(currentBet===color){
+
+balance += betAmount*2;
+
+alert("Color Win ₹"+betAmount*2);
+
+}else{
+
+alert("You Lose");
+
+}
+
+document.getElementById("balance").innerText=balance;
+
+await updateDoc(doc(db,"users",userId),{
+balance:balance
+});
+
+currentBet=null;
+betAmount=0;
+
+}
+
+}
+
+},1000);
+
+window.openWallet=function(){
+window.location.href="wallet.html";
+}
+
+window.openHelp=function(){
+window.location.href="help.html";
+}
+
+window.logout=function(){
+signOut(auth);
+window.location.href="login.html";
 }
 
 </script>
 
 </body>
 </html>
-```
