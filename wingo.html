@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -107,8 +108,6 @@ padding:8px;
 border-radius:6px;
 }
 
-/* bottom nav */
-
 .bottomWallet{
 position:fixed;
 bottom:10px;
@@ -128,11 +127,6 @@ display:flex;
 flex-direction:column;
 align-items:center;
 cursor:pointer;
-transition:.3s;
-}
-
-.navBtn:hover{
-transform:scale(1.1);
 }
 
 .icon{
@@ -153,7 +147,57 @@ margin-top:4px;
 font-weight:bold;
 }
 
+/* POPUP */
+
+.betPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.betBox{
+background:white;
+padding:25px;
+border-radius:18px;
+width:260px;
+text-align:center;
+animation:zoomPop .35s ease;
+}
+
+@keyframes zoomPop{
+0%{transform:scale(.5);opacity:0;}
+100%{transform:scale(1);opacity:1;}
+}
+
+.betBox input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:16px;
+text-align:center;
+margin-top:10px;
+}
+
+.betBtn{
+margin-top:15px;
+padding:12px;
+background:#ff6b6b;
+color:white;
+border:none;
+width:100%;
+border-radius:10px;
+font-size:16px;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -217,30 +261,28 @@ Next Result In <span id="time">60</span>s
 
 </div>
 
+<div class="betPopup" id="betPopup">
+<div class="betBox">
+
+<h3>Enter Bet Amount</h3>
+
+<input type="number" id="betInput" placeholder="Amount">
+
+<button class="betBtn" onclick="placeBet()">Place Bet</button>
+
+</div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import {
-getAuth,
-onAuthStateChanged,
-signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-getDoc,
-updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {getFirestore,doc,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
 authDomain: "win2-512e1.firebaseapp.com",
-projectId: "win2-512e1",
-storageBucket: "win2-512e1.firebasestorage.app",
-messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe"
+projectId: "win2-512e1"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -251,6 +293,7 @@ let balance=0;
 let userId="";
 let currentBet=null;
 let betAmount=0;
+let selectedValue=null;
 
 onAuthStateChanged(auth, async (user)=>{
 
@@ -274,18 +317,26 @@ document.getElementById("balance").innerText=balance;
 
 function getColor(n){
 
-if(n==0||n==5)return"violet";
-if(n%2==0)return"red";
-return"green";
+if(n==0 || n==5) return "violet";
+
+if(n==1 || n==3 || n==7 || n==9)
+return "green";
+
+if(n==2 || n==4 || n==6 || n==8)
+return "red";
 
 }
 
 window.selectBet=function(v){
 
-let amt=prompt("Enter Bet Amount");
-if(!amt)return;
+selectedValue=v;
+document.getElementById("betPopup").style.display="flex";
 
-amt=parseInt(amt);
+}
+
+window.placeBet=function(){
+
+let amt=parseInt(document.getElementById("betInput").value);
 
 if(balance<amt){
 
@@ -294,15 +345,14 @@ return;
 
 }
 
-/* bet लगाते ही balance minus */
+balance-=amt;
 
-balance -= amt;
 document.getElementById("balance").innerText=balance;
 
-currentBet=v;
+currentBet=selectedValue;
 betAmount=amt;
 
-alert("Bet Placed");
+document.getElementById("betPopup").style.display="none";
 
 }
 
@@ -322,14 +372,17 @@ let time=60;
 setInterval(async ()=>{
 
 time--;
-
 document.getElementById("time").innerText=time;
 
 if(time<=0){
 
 time=60;
 
-let result=Math.floor(Math.random()*10);
+/* admin result */
+
+let resultDoc = await getDoc(doc(db,"wingo","result"));
+let result = resultDoc.data().number;
+
 let color=getColor(result);
 
 document.getElementById("ball").innerText=result;
@@ -338,10 +391,19 @@ addHistory(result,color);
 
 if(currentBet!=null){
 
-if(currentBet===result || currentBet===color){
+if(currentBet===result){
+
+let winAmount = betAmount * (result==0?2:result);
+
+balance += winAmount;
+
+alert("You Win ₹"+winAmount);
+
+}else if(currentBet===color){
 
 balance += betAmount*2;
-alert("You Win");
+
+alert("Color Win ₹"+betAmount*2);
 
 }else{
 
