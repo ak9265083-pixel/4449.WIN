@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>4449 WIN Login</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#2c0d00,#7a2d00);
+}
+
+/* LOGIN BOX */
+
+.login-container{
+
+width:360px;
+background:#ff8c3a;
+padding:35px;
+border-radius:16px;
+text-align:center;
+box-shadow:0 10px 35px rgba(0,0,0,0.4);
+
+animation:fadeIn 1s ease;
+
+}
+
+/* LOGO */
+
+.logo{
+width:220px;
+margin-bottom:20px;
+}
+
+/* INPUT */
+
+.input-field{
+
+width:100%;
+padding:12px;
+margin:10px 0;
+
+border:none;
+border-radius:6px;
+
+font-size:15px;
+
+box-sizing:border-box;
+
+outline:none;
+
+}
+
+/* BUTTON */
+
+.login-button{
+
+width:100%;
+padding:12px;
+
+border:none;
+
+border-radius:6px;
+
+background:#c23b00;
+
+color:white;
+
+font-size:16px;
+
+cursor:pointer;
+
+transition:0.3s;
+
+}
+
+.login-button:hover{
+
+transform:scale(1.05);
+
+background:#a83200;
+
+}
+
+/* LINKS */
+
+.links{
+
+margin-top:15px;
+
+font-size:13px;
+
+}
+
+.links a{
+
+color:white;
+
+text-decoration:none;
+
+}
+
+/* WELCOME SCREEN */
+
+#welcomeScreen{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:#1a0600;
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+z-index:999;
+
+}
+
+.welcome-logo{
+
+width:280px;
+
+margin-bottom:30px;
+
+}
+
+.welcome-text{
+
+font-size:70px;
+
+font-weight:bold;
+
+text-align:center;
+
+color:#ff8c3a;
+
+animation:glow 2s infinite alternate;
+
+}
+
+/* ANIMATION */
+
+@keyframes fadeIn{
+
+from{opacity:0; transform:translateY(30px);}
+
+to{opacity:1; transform:translateY(0);}
+
+}
+
+@keyframes glow{
+
+from{text-shadow:0 0 20px #ff6600;}
+
+to{text-shadow:0 0 40px #ffa64d;}
+
+}
+
+/* MOBILE */
+
+@media (max-width:600px){
+
+.login-container{
+
+width:90%;
+
+padding:25px;
+
+}
+
+.logo{
+
+width:180px;
+
+}
+
+.welcome-text{
+
+font-size:40px;
+
+}
+
+.welcome-logo{
+
+width:200px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+<img src="logo.png" class="logo">
+
+<input type="text" id="email" class="input-field" placeholder="Email">
+
+<input type="password" id="password" class="input-field" placeholder="Password">
+
+<button class="login-button" onclick="login()">Login</button>
+
+<div class="links">
+
+<a href="#">Forgot password</a> |
+
+<a href="#">Customer Service</a>
+
+</div>
+
+</div>
+
+<!-- WELCOME SCREEN -->
+
+<div id="welcomeScreen">
+
+<img src="logo.png" class="welcome-logo">
+
+<div class="welcome-text">
+
+WELCOME TO<br>4449 WIN
+
+</div>
+
+</div>
+
+<script type="module">
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+  authDomain: "win2-512e1.firebaseapp.com",
+  projectId: "win2-512e1",
+  storageBucket: "win2-512e1.firebasestorage.app",
+  messagingSenderId: "577913579227",
+  appId: "1:577913579227:web:1e073059c2d3d881720efe",
+  measurementId: "G-4V1SCSMTM6"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+window.login = function(){
+
+const email=document.getElementById("email").value;
+
+const password=document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth,email,password)
+
+.then(()=>{
+
+document.querySelector(".login-container").style.display="none";
+
+document.getElementById("welcomeScreen").style.display="flex";
+
+setTimeout(()=>{
+
+window.location.href="index.html";
+
+},4000);
+
+})
+
+.catch((error)=>{
+
+alert(error.message);
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help Centre</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#9fa3ad;
+display:flex;
+justify-content:center;
+}
+
+.app{
+width:420px;
+background:white;
+min-height:100vh;
+text-align:center;
+}
+
+.header{
+background:#ff6b6b;
+color:white;
+padding:15px;
+font-size:22px;
+font-weight:bold;
+}
+
+.box{
+margin:15px;
+background:#f2f2f2;
+padding:15px;
+border-radius:12px;
+text-align:left;
+}
+
+.title{
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.btn{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#ff6b6b;
+border:none;
+color:white;
+border-radius:8px;
+font-size:16px;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.backBtn{
+margin:15px;
+padding:12px 30px;
+background:#444;
+color:white;
+border:none;
+border-radius:25px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="header">HELP CENTRE</div>
+
+<!-- WhatsApp -->
+<div class="box">
+<div class="title">💬 Instant Support</div>
+<button class="btn" onclick="whatsapp()">WhatsApp Support</button>
+</div>
+
+<!-- Deposit Screenshot -->
+<div class="box">
+
+<div class="title">📸 Deposit Screenshot</div>
+
+<input type="text" id="upi" placeholder="Enter UPI ID">
+
+<input type="file" id="file">
+
+<button class="btn" onclick="submitDeposit()">Submit Deposit</button>
+
+</div>
+
+<!-- Support Ticket -->
+
+<div class="box">
+
+<div class="title">📩 Create Support Ticket</div>
+
+<input type="text" id="name" placeholder="Your Name">
+
+<textarea id="msg" placeholder="Write your problem"></textarea>
+
+<button class="btn" onclick="sendTicket()">Send Ticket</button>
+
+</div>
+
+<button class="backBtn" onclick="goBack()">⬅ Back</button>
+
+</div>
+
+<script>
+
+function whatsapp(){
+window.open("https://wa.me/917857801650","_blank")
+}
+
+function goBack(){
+window.location.href="index.html"
+}
+
+function submitDeposit(){
+
+let upi=document.getElementById("upi").value
+
+if(!upi) return alert("Enter UPI")
+
+alert("Deposit request sent to admin")
+
+}
+
+function sendTicket(){
+
+let name=document.getElementById("name").value
+let msg=document.getElementById("msg").value
+
+if(!name||!msg) return alert("Fill details")
+
+let tickets=JSON.parse(localStorage.getItem("tickets")||"[]")
+
+tickets.push({
+name:name,
+msg:msg,
+time:new Date().toLocaleString()
+})
+
+localStorage.setItem("tickets",JSON.stringify(tickets))
+
+alert("Ticket sent")
+
+}
+
+</script>
+
+</body>
+</html>

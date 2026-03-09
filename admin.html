@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Control</title>
+</head>
+<body style="font-family:Arial;text-align:center">
+<script>
+let pass=prompt("Enter Admin Password")
+if(pass!=="@1Aankit"){
+alert("Access Denied")
+window.location="index.html"
+}
+</script>
+<h2>Admin Result Control</h2>
+<h3>Deposit Requests</h3>
+
+<div id="depositList"></div>
+<input type="number" id="num" placeholder="0-9">
+<button onclick="setResult()">Fix Next Result</button>
+<script>
+function setResult(){
+
+let num=document.getElementById("num").value
+localStorage.setItem("adminResult",num)
+alert("Next result fixed")
+}
+function loadDeposits(){
+
+let data=JSON.parse(localStorage.getItem("depositRequests")||"[]")
+
+let list=document.getElementById("depositList")
+list.innerHTML=""
+
+data.forEach((req,i)=>{
+
+let div=document.createElement("div")
+
+div.innerHTML=`
+<p>${req.email} - ₹${req.amount}</p>
+
+<button onclick="approve(${i})">Approve</button>
+
+<button onclick="reject(${i})">Reject</button>
+`
+
+list.appendChild(div)
+
+})
+
+}
+
+function approve(i){
+
+let data=JSON.parse(localStorage.getItem("depositRequests")||"[]")
+
+let req=data[i]
+
+let balance=parseInt(localStorage.getItem("balance")||0)
+
+balance+=parseInt(req.amount)
+
+localStorage.setItem("balance",balance)
+
+data.splice(i,1)
+
+localStorage.setItem("depositRequests",JSON.stringify(data))
+
+loadDeposits()
+
+alert("Deposit Approved")
+
+}
+
+function reject(i){
+
+let data=JSON.parse(localStorage.getItem("depositRequests")||"[]")
+
+data.splice(i,1)
+
+localStorage.setItem("depositRequests",JSON.stringify(data))
+
+loadDeposits()
+
+alert("Deposit Rejected")
+
+}
+
+loadDeposits()
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>4449 WIN - Sign Up</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+margin:0;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#06123a,#0f2b8f,#1b46d1);
+overflow:hidden;
+}
+
+/* animated glow background instead of images */
+body::before{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+background:radial-gradient(circle at 20% 30%,rgba(255,255,255,0.08),transparent 40%),
+radial-gradient(circle at 80% 70%,rgba(255,255,255,0.06),transparent 40%);
+animation:bgMove 16s linear infinite;
+pointer-events:none;
+}
+
+@keyframes bgMove{
+0%{transform:translate(0,0)}
+50%{transform:translate(-80px,-40px)}
+100%{transform:translate(0,0)}
+}
+
+/* glass signup card */
+.container{
+position:relative;
+z-index:2;
+width:380px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(14px);
+border-radius:20px;
+box-shadow:0 20px 60px rgba(0,0,0,0.4);
+overflow:hidden;
+animation:cardEnter .7s ease;
+border:1px solid rgba(255,255,255,0.2);
+}
+
+@keyframes cardEnter{
+from{opacity:0;transform:translateY(30px) scale(.95)}
+to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.header{
+background:linear-gradient(90deg,#ff4d6d,#ff7a7a);
+padding:18px;
+display:flex;
+align-items:center;
+gap:10px;
+font-size:20px;
+font-weight:bold;
+color:white;
+}
+
+.logo{height:34px}
+
+.content{padding:25px;color:white}
+
+h3{
+text-align:center;
+margin-top:0;
+margin-bottom:22px;
+color:white;
+letter-spacing:1px;
+}
+
+label{
+font-size:13px;
+font-weight:bold;
+opacity:.9;
+}
+
+.input-box{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.3);
+margin-top:6px;
+margin-bottom:16px;
+background:rgba(255,255,255,0.15);
+color:white;
+transition:.25s;
+}
+
+.input-box::placeholder{color:rgba(255,255,255,0.7)}
+
+.input-box:focus{
+outline:none;
+border-color:#ff7a7a;
+box-shadow:0 0 0 3px rgba(255,122,122,0.25);
+}
+
+.checkbox{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+margin-bottom:18px;
+}
+
+.signup-btn{
+width:100%;
+padding:14px;
+border:none;
+border-radius:30px;
+background:linear-gradient(90deg,#ff4d6d,#ff7a7a);
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:.25s;
+}
+
+.signup-btn:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+
+.login-link{
+text-align:center;
+margin-top:16px;
+font-size:14px;
+}
+
+.login-link a{
+color:#ffdede;
+text-decoration:none;
+font-weight:bold;
+}
+
+.login-link a:hover{text-decoration:underline}
+
+
+/* success popup */
+.success-popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0.7);
+background:rgba(0,0,0,0.85);
+color:white;
+padding:30px 40px;
+border-radius:16px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+opacity:0;
+visibility:hidden;
+transition:all .35s ease;
+box-shadow:0 20px 60px rgba(0,0,0,0.5);
+z-index:999;
+}
+
+.success-popup.show{
+opacity:1;
+visibility:visible;
+transform:translate(-50%,-50%) scale(1);
+animation:pop .45s ease;
+}
+
+@keyframes pop{
+0%{transform:translate(-50%,-50%) scale(.5)}
+60%{transform:translate(-50%,-50%) scale(1.1)}
+100%{transform:translate(-50%,-50%) scale(1)}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<img src="logo.png" class="logo">
+<span>4449 WIN</span>
+</div>
+
+<div class="content">
+
+<h3>Create Account</h3>
+
+<label>Email</label>
+<input type="email" class="input-box" id="email" placeholder="Enter your email">
+
+<label>Password</label>
+<input type="password" class="input-box" id="password" placeholder="Create password">
+
+<label>Invitation Code</label>
+<input type="text" class="input-box" id="invite" placeholder="Enter invitation code">
+
+<div class="checkbox">
+<input type="checkbox" id="terms">
+<label for="terms">I accept Terms & Conditions</label>
+</div>
+
+<button class="signup-btn" onclick="signup()">Sign Up</button>
+
+<div class="login-link">
+Already have an account? <a href="login.html">Login</a>
+</div>
+
+</div>
+</div>
+
+<script type="module">
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+  authDomain: "win2-512e1.firebaseapp.com",
+  projectId: "win2-512e1",
+  storageBucket: "win2-512e1.firebasestorage.app",
+  messagingSenderId: "577913579227",
+  appId: "1:577913579227:web:1e073059c2d3d881720efe",
+  measurementId: "G-4V1SCSMTM6"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+
+window.signup=function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+const terms=document.getElementById("terms").checked;
+
+if(!terms){
+alert("Please accept Terms & Conditions");
+return;
+}
+
+createUserWithEmailAndPassword(auth,email,password)
+.then(()=>{
+showSuccess();
+window.location.href="login.html";
+})
+.catch(error=>{
+alert(error.message);
+});
+
+}
+
+
+
+window.showSuccess=function(){
+const popup=document.getElementById("successPopup");
+popup.classList.add("show");
+
+setTimeout(()=>{
+window.location.href="login.html";
+},1800);
+}
+
+</script>
+
+
+
+<div id="successPopup" class="success-popup">✅ Signup Successful</div>
+
+</body>
+</html>
