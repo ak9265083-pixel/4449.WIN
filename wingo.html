@@ -19,6 +19,7 @@ width:420px;
 background:white;
 min-height:100vh;
 text-align:center;
+padding-bottom:90px;
 }
 
 .header{
@@ -106,35 +107,51 @@ padding:8px;
 border-radius:6px;
 }
 
+/* bottom nav */
+
 .bottomWallet{
 position:fixed;
-bottom:0;
+bottom:10px;
 left:50%;
 transform:translateX(-50%);
-width:420px;
+width:360px;
 background:white;
-border-top:2px solid #ddd;
-padding:10px;
-text-align:center;
+border-radius:25px;
+display:flex;
+justify-content:space-around;
+padding:10px 5px;
+box-shadow:0 5px 20px rgba(0,0,0,0.25);
 }
 
-.circleBtn{
-width:60px;
-height:60px;
-border-radius:50%;
-border:none;
-font-size:24px;
-margin:10px;
-background:#ff6b6b;
-color:white;
+.navBtn{
+display:flex;
+flex-direction:column;
+align-items:center;
 cursor:pointer;
-transition:0.3s;
-box-shadow:0 4px 10px rgba(0,0,0,0.3);
+transition:.3s;
 }
 
-.circleBtn:hover{
-transform:scale(1.15);
-box-shadow:0 6px 15px rgba(0,0,0,0.4);
+.icon{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#ff6b6b;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:white;
+box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+.label{
+font-size:13px;
+margin-top:4px;
+font-weight:bold;
+}
+
+.navBtn:hover{
+transform:scale(1.1);
 }
 
 </style>
@@ -154,7 +171,7 @@ Balance ₹ <span id="balance">0</span>
 Next Result In <span id="time">60</span>s
 </div>
 
-<div class="centerGame" id="ball">0</div>
+<div class="centerGame" id="ball">?</div>
 
 <div class="colors">
 <button class="green" onclick="selectBet('green')">Green</button>
@@ -182,13 +199,24 @@ Next Result In <span id="time">60</span>s
 
 </div>
 
+<!-- bottom nav -->
+
 <div class="bottomWallet">
 
-<button class="circleBtn" onclick="openWallet()">💰</button>
+<div class="navBtn" onclick="openWallet()">
+<div class="icon">💳</div>
+<div class="label">Wallet</div>
+</div>
 
-<button class="circleBtn" onclick="openHelp()">❓</button>
+<div class="navBtn" onclick="openHelp()">
+<div class="icon">🎧</div>
+<div class="label">Help</div>
+</div>
 
-<button class="circleBtn" onclick="logout()">🚪</button>
+<div class="navBtn" onclick="logout()">
+<div class="icon">🚪</div>
+<div class="label">Logout</div>
+</div>
 
 </div>
 
@@ -196,7 +224,7 @@ Next Result In <span id="time">60</span>s
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-import { 
+import {
 getAuth,
 onAuthStateChanged,
 signOut
@@ -224,6 +252,8 @@ const db = getFirestore(app);
 
 let balance=0;
 let userId="";
+let currentBet=null;
+let betAmount=0;
 
 onAuthStateChanged(auth, async (user)=>{
 
@@ -232,13 +262,11 @@ if(user){
 userId=user.uid;
 
 let ref=doc(db,"users",userId);
-
 let snap=await getDoc(ref);
 
 if(snap.exists()){
 
 balance=snap.data().balance || 0;
-
 document.getElementById("balance").innerText=balance;
 
 }
@@ -250,26 +278,12 @@ document.getElementById("balance").innerText=balance;
 function getColor(n){
 
 if(n==0||n==5)return"violet";
-
 if(n%2==0)return"red";
-
 return"green";
 
 }
 
-function addHistory(num,color){
-
-let div=document.createElement("div");
-
-div.className="historyItem";
-
-div.innerHTML="Result: "+num+" ("+color+")";
-
-document.getElementById("historyList").prepend(div);
-
-}
-
-window.selectBet=async function(v){
+window.selectBet=function(v){
 
 let amt=prompt("Enter Bet Amount");
 
@@ -280,21 +294,54 @@ amt=parseInt(amt);
 if(balance<amt){
 
 alert("Low Balance");
-
 return;
 
 }
 
-balance-=amt;
+currentBet=v;
+betAmount=amt;
+
+alert("Bet Placed");
+
+}
+
+function addHistory(num,color){
+
+let div=document.createElement("div");
+
+div.className="historyItem";
+div.innerHTML="Result: "+num+" ("+color+")";
+
+document.getElementById("historyList").prepend(div);
+
+}
+
+let time=60;
+
+setInterval(async ()=>{
+
+time--;
+
+document.getElementById("time").innerText=time;
+
+if(time<=0){
+
+time=60;
 
 let result=Math.floor(Math.random()*10);
-
 let color=getColor(result);
 
-if(v===result||v===color){
+document.getElementById("ball").innerText=result;
 
-balance+=amt*2;
+addHistory(result,color);
 
+if(currentBet!=null){
+
+balance-=betAmount;
+
+if(currentBet===result||currentBet===color){
+
+balance+=betAmount*2;
 alert("You Win");
 
 }else{
@@ -303,64 +350,32 @@ alert("You Lose");
 
 }
 
-document.getElementById("ball").innerText=result;
-
 document.getElementById("balance").innerText=balance;
 
-addHistory(result,color);
-
 await updateDoc(doc(db,"users",userId),{
-
 balance:balance
-
 });
 
+currentBet=null;
+betAmount=0;
+
 }
-
-let time=60;
-
-setInterval(()=>{
-
-time--;
-
-document.getElementById("time").innerText=time;
-
-if(time==0){
-
-time=60;
-
-let result=Math.floor(Math.random()*10);
-
-let color=getColor(result);
-
-document.getElementById("ball").innerText=result;
-
-addHistory(result,color);
 
 }
 
 },1000);
 
 window.openWallet=function(){
-
 window.location.href="wallet.html";
-
 }
 
 window.openHelp=function(){
-
 window.location.href="help.html";
-
 }
 
 window.logout=function(){
-
 signOut(auth);
-
-alert("Logged Out");
-
 window.location.href="login.html";
-
 }
 
 </script>
