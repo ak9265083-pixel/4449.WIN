@@ -21,6 +21,7 @@ position:relative;
 }
 .header-container{
 position:relative;
+height:60px;
 }
 .header{
 background:#ff6b6b;
@@ -32,8 +33,8 @@ text-align:center;
 }
 .logo-top{
 position:absolute;
-top:-25px;
-left:15px;
+top:5px;
+left:10px;
 width:50px;
 height:50px;
 border-radius:50%;
@@ -104,6 +105,8 @@ text-align:left;
 .history-item{
 border-bottom:1px solid #ddd;
 padding:8px 0;
+display:flex;
+justify-content:space-between;
 }
 .history-pending{color:orange;font-weight:bold;}
 .history-approved{color:green;font-weight:bold;}
@@ -248,7 +251,7 @@ history.forEach(item=>{
 let statusClass = item.status==="Pending"?"history-pending":item.status==="Approved"?"history-approved":"history-rejected";
 let div=document.createElement("div");
 div.className="history-item "+statusClass;
-div.innerHTML=`ID: ${item.id} | Amount: ₹${item.amount} | Status: ${item.status}`;
+div.innerHTML=`<span>ID: ${item.id}</span><span>Amount: ₹${item.amount}</span><span>Status: ${item.status}</span>`;
 container.appendChild(div);
 });
 }
