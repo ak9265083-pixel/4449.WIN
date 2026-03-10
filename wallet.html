@@ -19,6 +19,9 @@ min-height:100vh;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
 position:relative;
 }
+.header-container{
+position:relative;
+}
 .header{
 background:#ff6b6b;
 color:white;
@@ -26,16 +29,17 @@ padding:15px;
 font-size:20px;
 font-weight:bold;
 text-align:center;
-position:relative;
 }
 .logo-top{
 position:absolute;
-top:10px;
-left:10px;
+top:-25px;
+left:15px;
 width:50px;
 height:50px;
 border-radius:50%;
 object-fit:cover;
+border:2px solid white;
+background:white;
 }
 .box{
 background:white;
@@ -110,9 +114,10 @@ padding:8px 0;
 
 <div class="app">
 
+<div class="header-container">
 <img src="logo.png" class="logo-top">
-
 <div class="header">Wallet</div>
+</div>
 
 <div class="box">Balance ₹ <span id="balance">0</span></div>
 
