@@ -3,88 +3,42 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>4449 WIN</title>
-
 <style>
 body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:center;}
 .app{width:420px;background:white;min-height:100vh;text-align:center;padding-bottom:90px;}
 .header{background:#ff6b6b;color:white;padding:15px;font-size:22px;font-weight:bold;}
 .wallet{background:#f2f2f2;margin:15px;padding:15px;border-radius:12px;font-size:18px;}
 .timer{background:#ff6b6b;color:white;margin:10px;padding:10px;border-radius:10px;font-size:18px;}
-
 .centerGame{margin:20px auto;width:120px;height:120px;border-radius:50%;background:#eee;display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:bold;position:relative;overflow:hidden;}
-
 .spinningBall{position:absolute;width:20px;height:20px;border-radius:50%;background:#ff6b6b;top:50%;left:50%;transform-origin:50% 60px;animation:spinCircle 1s linear infinite;display:none;}
-
-@keyframes spinCircle{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-
+@keyframes spinCircle{0%{transform:rotate(0deg) translateX(0);}100%{transform:rotate(360deg) translateX(0);}}
 .colors{display:flex;gap:10px;padding:10px;}
 .colors button{flex:1;padding:12px;border:none;color:white;border-radius:8px;font-size:16px;}
-
 .green{background:#2ecc71;}
 .red{background:#e74c3c;}
 .violet{background:#9b59b6;}
-
 .numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px;}
 .numbers button{padding:15px;border-radius:50%;border:none;font-size:18px;background:#eee;cursor:pointer;}
-
 .history{margin:15px;text-align:left;}
 .historyItem{background:#eee;margin-bottom:6px;padding:8px;border-radius:6px;}
-
 .bottomWallet{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:360px;background:white;border-radius:25px;display:flex;justify-content:space-around;padding:10px;box-shadow:0 5px 20px rgba(0,0,0,0.25);}
 .navBtn{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
 .icon{width:48px;height:48px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
 .label{font-size:13px;margin-top:4px;font-weight:bold;}
-
 .betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;}
-.betBox{background:white;padding:25px;border-radius:18px;width:260px;text-align:center;}
+.betBox{background:white;padding:25px;border-radius:18px;width:260px;text-align:center;animation:zoomPop .35s ease;position:relative;}
+@keyframes zoomPop{0%{transform:scale(.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
 .betBox input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px;text-align:center;margin-top:10px;}
 .betBtn{margin-top:15px;padding:12px;background:#ff6b6b;color:white;border:none;width:100%;border-radius:10px;font-size:16px;cursor:pointer;}
 .betBtnClose{background:#999;margin-top:10px;cursor:pointer;}
-
-/* WIN POPUP */
-
-.winPopup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
-}
-
-.winBox{
-background:white;
-padding:30px;
-border-radius:20px;
-text-align:center;
-animation:zoomPop .4s;
-}
-
-@keyframes zoomPop{
-0%{transform:scale(.5);opacity:0;}
-100%{transform:scale(1);opacity:1;}
-}
-
-.winText{font-size:26px;color:#2ecc71;font-weight:bold;}
-.winAmount{font-size:22px;color:#ff6b6b;margin-top:10px;font-weight:bold;}
-
 </style>
 </head>
-
 <body>
 
 <div class="app">
-
 <div class="header">4449 WIN</div>
-
 <div class="wallet">Balance <span id="balance">0</span></div>
-
 <div class="timer">Next Result In <span id="time">30</span>s</div>
-
 <div class="centerGame" id="ball">?
 <div class="spinningBall" id="spinningBall"></div>
 </div>
@@ -112,7 +66,6 @@ animation:zoomPop .4s;
 <h3>Last Results</h3>
 <div id="historyList"></div>
 </div>
-
 </div>
 
 <div class="bottomWallet">
@@ -127,16 +80,6 @@ animation:zoomPop .4s;
 <input type="number" id="betInput" placeholder="Amount">
 <button class="betBtn" onclick="placeBet()">Place Bet</button>
 <button class="betBtnClose" id="closePopupBtn">Close</button>
-</div>
-</div>
-
-<!-- WIN POPUP -->
-
-<div class="winPopup" id="winPopup">
-<div class="winBox">
-<div class="winText">🎉 YOU WIN 🎉</div>
-<div class="winAmount" id="winAmount"></div>
-<button class="betBtn" onclick="closeWin()">OK</button>
 </div>
 </div>
 
@@ -157,15 +100,6 @@ const auth=getAuth(app);
 const db=getFirestore(app);
 
 let balance=0,userId="",currentBet=null,betAmount=0,selectedValue=null;
-
-function showWin(amount){
-document.getElementById("winAmount").innerText="₹"+amount;
-document.getElementById("winPopup").style.display="flex";
-}
-
-window.closeWin=function(){
-document.getElementById("winPopup").style.display="none";
-}
 
 async function loadHistory(){
 if(!userId)return;
@@ -221,7 +155,6 @@ return;
 }
 
 balance-=amt;
-
 document.getElementById("balance").innerText=balance;
 
 currentBet=selectedValue;
@@ -234,69 +167,42 @@ document.getElementById("closePopupBtn").addEventListener("click",()=>{
 document.getElementById("betPopup").style.display="none";
 });
 
-function addHistory(num,color){
-
-if(!userId)return;
-
-const div=document.createElement("div");
-div.className="historyItem";
-
-div.innerHTML=`Result: ${num} (${color})`;
-
-document.getElementById("historyList").prepend(div);
-
-addDoc(collection(db,"wingoHistory",userId),{
-number:num,
-color:color,
-timestamp:new Date()
-});
-
-}
-
 let time=30;
-
 const spinningBall=document.getElementById("spinningBall");
 
 setInterval(async()=>{
 
 time--;
-
 document.getElementById("time").innerText=time;
 
 if(time<=0){
 
 time=30;
-
 spinningBall.style.display="block";
 
 let resultDoc=await getDoc(doc(db,"wingo","result"));
-
 let result=resultDoc.data().number;
-
 let color=getColor(result);
 
 spinningBall.style.display="none";
-
 document.getElementById("ball").innerText=result;
-
-addHistory(result,color);
 
 if(currentBet!=null){
 
 if(currentBet===result){
-
-let winAmount=betAmount*4;
+let winAmount=betAmount*2;
 balance+=winAmount;
-showWin(winAmount);
-
+alert("You Win ₹"+winAmount);
 }
 
 else if(currentBet===color){
-
-let winAmount=betAmount*4;
+let winAmount=betAmount*2;
 balance+=winAmount;
-showWin(winAmount);
+alert("Color Win ₹"+winAmount);
+}
 
+else{
+alert("You Lose");
 }
 
 document.getElementById("balance").innerText=balance;
