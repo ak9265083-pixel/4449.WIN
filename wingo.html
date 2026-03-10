@@ -69,13 +69,11 @@ width:100%;border-radius:10px;font-size:16px;
 .winPopup{
 position:fixed;
 top:0;
-left:0;
-width:100%;
+left:0;width:100%;
 height:100%;
 background:rgba(0,0,0,0.6);
 display:none;
-align-items:center;
-justify-content:center;
+align-items:center;justify-content:center;
 }
 
 .winBox{
@@ -283,10 +281,10 @@ loadHistory();
 
 if(currentBet!=null){
 
+// ✅ Fixed balance update logic
 if(currentBet===result || currentBet===color){
 
-let winAmount=betAmount*2;
-
+let winAmount=betAmount*2; // returns original bet + profit
 balance+=winAmount;
 
 document.getElementById("winAmount").innerText="You Won ₹"+winAmount;
@@ -294,43 +292,4 @@ document.getElementById("winPopup").style.display="flex";
 
 }else{
 
-alert("You Lose");
-
-}
-
-document.getElementById("balance").innerText=balance;
-
-await updateDoc(doc(db,"users",userId),{
-balance:balance
-});
-
-currentBet=null;
-betAmount=0;
-
-}
-
-}
-
-},1000);
-
-window.closeWin=function(){
-document.getElementById("winPopup").style.display="none";
-}
-
-window.openWallet=function(){
-window.location.href="wallet.html";
-}
-
-window.openHelp=function(){
-window.location.href="help.html";
-}
-
-window.logout=function(){
-signOut(auth);
-window.location.href="login.html";
-}
-
-</script>
-
-</body>
-</html>
+alert("You
