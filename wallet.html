@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wallet</title>
-
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -14,7 +11,6 @@ background:#8f939c;
 display:flex;
 justify-content:center;
 }
-
 .app{
 width:100%;
 max-width:420px;
@@ -22,7 +18,6 @@ background:#f5f5f5;
 min-height:100vh;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
 }
-
 .header{
 background:#ff6b6b;
 color:white;
@@ -31,7 +26,6 @@ font-size:20px;
 font-weight:bold;
 text-align:center;
 }
-
 .box{
 background:white;
 margin:15px;
@@ -39,7 +33,6 @@ padding:20px;
 border-radius:12px;
 text-align:center;
 }
-
 .btn{
 padding:12px 20px;
 background:#ff6b6b;
@@ -50,7 +43,6 @@ margin:10px;
 font-size:16px;
 cursor:pointer;
 }
-
 input{
 padding:10px;
 width:80%;
@@ -59,188 +51,133 @@ border-radius:6px;
 border:1px solid #ccc;
 margin:5px;
 }
-
 .qr{
 width:200px;
 display:block;
 margin:auto;
 }
-
+.history-box{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:12px;
+max-height:250px;
+overflow-y:auto;
+text-align:left;
+}
+.history-item{
+border-bottom:1px solid #ddd;
+padding:8px 0;
+}
 </style>
-
 </head>
-
 <body>
 
 <div class="app">
 
-<div class="header">
-Wallet
-</div>
+<div class="header">Wallet</div>
+
+<div class="box">Balance ₹ <span id="balance">0</span></div>
 
 <div class="box">
-Balance ₹ <span id="balance">0</span>
-</div>
-
-<div class="box">
-
 <button class="btn" onclick="showDeposit()">Deposit</button>
 <button class="btn" onclick="showWithdraw()">Withdraw</button>
-
 </div>
 
 <div id="depositBox" class="box" style="display:none">
-
 <h3>Deposit</h3>
-
-<img src="ui.png" class="qr">
-
-<br>
-
-<input type="number" id="amt" placeholder="Amount">
-
-<br>
-
-<input type="text" id="utr" placeholder="Enter UTR Number">
-
-<br><br>
-
+<img src="ui.png" class="qr"><br>
+<input type="number" id="amt" placeholder="Amount"><br>
+<input type="text" id="utr" placeholder="Enter UTR Number"><br><br>
 <button class="btn" onclick="sendDeposit()">Submit</button>
-
 </div>
 
 <div id="withdrawBox" class="box" style="display:none">
-
 <h3>Withdraw</h3>
-
-<input type="number" id="wamt" placeholder="Amount">
-
-<br>
-
-<input type="text" id="upi" placeholder="UPI ID">
-
-<br><br>
-
+<input type="number" id="wamt" placeholder="Amount"><br>
+<input type="text" id="upi" placeholder="UPI ID"><br><br>
 <button class="btn" onclick="sendWithdraw()">Submit</button>
+</div>
 
+<div class="history-box">
+<h3>Withdrawal History</h3>
+<div id="historyList"></div>
 </div>
 
 </div>
 
-<script type="module">
+<script>
+// per-user balance
+let userId = "user_123"; // replace dynamically if needed
+let balanceKey = "balance_"+userId;
+let historyKey = "withdrawals_"+userId;
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// initialize balance
+if(!localStorage.getItem(balanceKey)) localStorage.setItem(balanceKey,"9000");
+let balance = parseInt(localStorage.getItem(balanceKey));
+document.getElementById("balance").innerText = balance;
 
-import { 
-getFirestore, 
-doc, 
-getDoc, 
-setDoc, 
-addDoc, 
-collection 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// initialize history
+let history = JSON.parse(localStorage.getItem(historyKey)||"[]");
+renderHistory();
 
-const firebaseConfig = {
-apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain: "win2-512e1.firebaseapp.com",
-projectId: "win2-512e1",
-storageBucket: "win2-512e1.firebasestorage.app",
-messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe",
-measurementId: "G-4V1SCSMTM6"
+function showDeposit(){
+document.getElementById("depositBox").style.display="block";
+document.getElementById("withdrawBox").style.display="none";
+}
+function showWithdraw(){
+document.getElementById("withdrawBox").style.display="block";
+document.getElementById("depositBox").style.display="none";
+}
+
+function sendDeposit(){
+let amt = parseInt(document.getElementById("amt").value);
+let utr = document.getElementById("utr").value;
+if(!amt){alert("Enter amount");return;}
+if(!utr){alert("Enter UTR Number");return;}
+alert("Deposit request sent. Waiting for admin approval.");
+document.getElementById("amt").value="";
+document.getElementById("utr").value="";
+}
+
+function sendWithdraw(){
+let amt = parseInt(document.getElementById("wamt").value);
+let upi = document.getElementById("upi").value;
+if(!amt){alert("Enter amount");return;}
+if(amt>balance){alert("Insufficient balance");return;}
+if(!upi){alert("Enter UPI ID");return;}
+
+// deduct balance immediately
+balance -= amt;
+localStorage.setItem(balanceKey,balance);
+document.getElementById("balance").innerText = balance;
+
+// create withdrawal history
+let request = {
+id:Date.now(),
+amount: amt,
+upi: upi,
+status: "Pending"
 };
+history.unshift(request);
+localStorage.setItem(historyKey, JSON.stringify(history));
+renderHistory();
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let currentUser=""
-let balance=0
-
-onAuthStateChanged(auth, async (user)=>{
-
-if(user){
-
-currentUser=user.uid
-
-let ref=doc(db,"users",user.uid)
-
-let snap=await getDoc(ref)
-
-if(!snap.exists()){
-
-await setDoc(ref,{
-balance:0
-})
-
+alert("Withdraw request sent. Waiting for admin approval.");
+document.getElementById("wamt").value="";
+document.getElementById("upi").value="";
 }
 
-let data=(await getDoc(ref)).data()
-
-balance=data.balance
-
-document.getElementById("balance").innerText=balance
-
+function renderHistory(){
+let container = document.getElementById("historyList");
+container.innerHTML="";
+history.forEach(item=>{
+let div = document.createElement("div");
+div.className="history-item";
+div.innerHTML=`ID: ${item.id} | Amount: ₹${item.amount} | Status: ${item.status}`;
+container.appendChild(div);
+});
 }
-
-})
-
-window.showDeposit=function(){
-
-document.getElementById("depositBox").style.display="block"
-document.getElementById("withdrawBox").style.display="none"
-
-}
-
-window.showWithdraw=function(){
-
-document.getElementById("withdrawBox").style.display="block"
-document.getElementById("depositBox").style.display="none"
-
-}
-
-window.sendDeposit=async function(){
-
-let amt=parseInt(document.getElementById("amt").value)
-let utr=document.getElementById("utr").value
-
-if(!amt) return alert("Enter amount")
-if(!utr) return alert("Enter UTR Number")
-
-await addDoc(collection(db,"depositRequests"),{
-
-user:currentUser,
-amount:amt,
-utr:utr,
-status:"pending"
-
-})
-
-alert("Deposit request sent. Wait for admin approval")
-
-}
-
-window.sendWithdraw=async function(){
-
-let amt=parseInt(document.getElementById("wamt").value)
-let upi=document.getElementById("upi").value
-
-if(!amt) return alert("Enter amount")
-
-await addDoc(collection(db,"withdrawRequests"),{
-
-user:currentUser,
-amount:amt,
-upi:upi,
-status:"pending"
-
-})
-
-alert("Withdraw request sent. Wait for admin approval")
-
-}
-
 </script>
 
 </body>
