@@ -3,104 +3,37 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin Panel</title>
-
 <style>
-
-body{
-font-family:Arial;
-background:#f2f2f2;
-margin:0;
-}
-
-.header{
-background:#ff6b6b;
-color:white;
-padding:15px;
-font-size:22px;
-text-align:center;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
-
-.card{
-background:white;
-padding:15px;
-margin-bottom:20px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-button{
-padding:8px 15px;
-background:#ff6b6b;
-border:none;
-color:white;
-border-radius:5px;
-margin:3px;
-cursor:pointer;
-}
-
-.item{
-background:#eee;
-padding:10px;
-margin:8px 0;
-border-radius:6px;
-}
-
-.stats{
-display:flex;
-gap:20px;
-}
-
-.stat{
-background:#ff6b6b;
-color:white;
-padding:15px;
-border-radius:10px;
-flex:1;
-text-align:center;
-}
-
+body{font-family:Arial;background:#f2f2f2;margin:0;}
+.header{background:#ff6b6b;color:white;padding:15px;font-size:22px;text-align:center;}
+.container{max-width:900px;margin:auto;padding:20px;}
+.card{background:white;padding:15px;margin-bottom:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
+button{padding:8px 15px;background:#ff6b6b;border:none;color:white;border-radius:5px;margin:3px;cursor:pointer;}
+.item{background:#eee;padding:10px;margin:8px 0;border-radius:6px;}
+.stats{display:flex;gap:20px;}
+.stat{background:#ff6b6b;color:white;padding:15px;border-radius:10px;flex:1;text-align:center;}
+.backBtn{margin-bottom:15px;padding:12px 30px;background:#444;color:white;border:none;border-radius:25px;cursor:pointer;}
 </style>
 </head>
-
 <body>
 
 <script>
 var password = prompt("Enter Admin Password");
-
-if (password !== "@1Aankit") {
-    alert("Wrong Password");
-    window.location = "index.html";
-}
+if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.html"; }
 </script>
 
+<button class="backBtn" onclick="window.history.back()">⬅ Back</button>
 <div class="header">ADMIN PANEL</div>
 
 <div class="container">
 
 <div class="stats">
-
-<div class="stat">
-Total Users<br>
-<span id="totalUsers">0</span>
-</div>
-
-<div class="stat">
-Active Users<br>
-<span id="activeUsers">0</span>
-</div>
-
+<div class="stat">Total Users<br><span id="totalUsers">0</span></div>
+<div class="stat">Active Users<br><span id="activeUsers">0</span></div>
 </div>
 
 <div class="card">
-
 <h3>Set Wingo Result</h3>
-
 <button onclick="setResult(0)">0</button>
 <button onclick="setResult(1)">1</button>
 <button onclick="setResult(2)">2</button>
@@ -111,21 +44,16 @@ Active Users<br>
 <button onclick="setResult(7)">7</button>
 <button onclick="setResult(8)">8</button>
 <button onclick="setResult(9)">9</button>
-
 </div>
 
 <div class="card">
-
 <h3>Deposit Requests</h3>
 <div id="depositList"></div>
-
 </div>
 
 <div class="card">
-
 <h3>Withdraw Requests</h3>
 <div id="withdrawList"></div>
-
 </div>
 
 </div>
@@ -133,150 +61,94 @@ Active Users<br>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-getFirestore,
-collection,
-getDocs,
-doc,
-updateDoc,
-getDoc,
-setDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig={
-apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain:"win2-512e1.firebaseapp.com",
-projectId:"win2-512e1"
+const firebaseConfig = {
+    apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+    authDomain:"win2-512e1.firebaseapp.com",
+    projectId:"win2-512e1"
 };
 
-const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-loadStats()
-loadDeposits()
-loadWithdraws()
+// Load stats, deposits, withdraws
+loadStats();
+loadDeposits();
+loadWithdraws();
 
 async function loadStats(){
-
-let users = await getDocs(collection(db,"users"))
-
-document.getElementById("totalUsers").innerText = users.size
-
-let active=0
-
-users.forEach(u=>{
-
-let d=u.data()
-
-if(d.balance>0) active++
-
-})
-
-document.getElementById("activeUsers").innerText = active
-
+    let users = await getDocs(collection(db,"users"));
+    document.getElementById("totalUsers").innerText = users.size;
+    let active=0;
+    users.forEach(u=>{
+        if(u.data().balance>0) active++;
+    });
+    document.getElementById("activeUsers").innerText = active;
 }
 
 async function loadDeposits(){
-
-let snap=await getDocs(collection(db,"depositRequests"))
-
-snap.forEach(docSnap=>{
-
-let d=docSnap.data()
-
-if(d.status=="pending"){
-
-let div=document.createElement("div")
-
-div.className="item"
-
-div.innerHTML=
-"User: "+d.user+
-"<br>Amount: "+d.amount+
-"<br>UTR: "+d.utr+
-"<br><button onclick='approveDeposit(\""+docSnap.id+"\",\""+d.user+"\","+d.amount+")'>Approve</button>"
-
-document.getElementById("depositList").appendChild(div)
-
-}
-
-})
-
+    let snap = await getDocs(collection(db,"depositRequests"));
+    let list = document.getElementById("depositList");
+    list.innerHTML = "";
+    snap.forEach(docSnap=>{
+        let d = docSnap.data();
+        if(d.status==="pending"){
+            let div = document.createElement("div");
+            div.className="item";
+            div.innerHTML=`User: ${d.user}<br>Amount: ${d.amount}<br>UTR: ${d.utr}<br>
+            <button onclick='approveDeposit("${docSnap.id}","${d.user}",${d.amount})'>Approve</button>`;
+            list.appendChild(div);
+        }
+    });
 }
 
 async function loadWithdraws(){
-
-let snap=await getDocs(collection(db,"withdrawRequests"))
-
-snap.forEach(docSnap=>{
-
-let d=docSnap.data()
-
-if(d.status=="pending"){
-
-let div=document.createElement("div")
-
-div.className="item"
-
-div.innerHTML=
-"User: "+d.user+
-"<br>Amount: "+d.amount+
-"<br>UPI: "+d.upi+
-"<br><button onclick='approveWithdraw(\""+docSnap.id+"\")'>Approve</button>"
-
-document.getElementById("withdrawList").appendChild(div)
-
+    let snap = await getDocs(collection(db,"withdrawRequests"));
+    let list = document.getElementById("withdrawList");
+    list.innerHTML = "";
+    snap.forEach(docSnap=>{
+        let d = docSnap.data();
+        if(d.status==="pending"){
+            let div = document.createElement("div");
+            div.className="item";
+            div.innerHTML=`User: ${d.user}<br>Amount: ${d.amount}<br>UPI: ${d.upi}<br>
+            <button onclick='approveWithdraw("${docSnap.id}","${d.user}",${d.amount})'>Approve</button>`;
+            list.appendChild(div);
+        }
+    });
 }
 
-})
-
-}
-
+// Deposit approve
 window.approveDeposit = async function(id,user,amount){
-
-let ref = doc(db,"users",user)
-
-let snap = await getDoc(ref)
-
-let bal = snap.data().balance || 0
-
-await updateDoc(ref,{
-balance:bal+amount
-})
-
-await updateDoc(doc(db,"depositRequests",id),{
-status:"approved"
-})
-
-alert("Deposit Approved")
-
-location.reload()
-
+    let ref = doc(db,"users",user);
+    let snap = await getDoc(ref);
+    let bal = snap.data().balance || 0;
+    await updateDoc(ref,{balance: bal+amount});
+    await updateDoc(doc(db,"depositRequests",id),{status:"approved"});
+    alert("Deposit Approved");
+    loadDeposits();
 }
 
-window.approveWithdraw = async function(id){
-
-await updateDoc(doc(db,"withdrawRequests",id),{
-status:"approved"
-})
-
-alert("Withdraw Approved")
-
-location.reload()
-
+// Withdraw approve
+window.approveWithdraw = async function(id,user,amount){
+    let ref = doc(db,"users",user);
+    let snap = await getDoc(ref);
+    let bal = snap.data().balance || 0;
+    await updateDoc(ref,{balance: bal-amount});
+    await updateDoc(doc(db,"withdrawRequests",id),{status:"approved"});
+    alert("Withdraw Approved");
+    loadWithdraws();
 }
 
+// ✅ FIXED: Set Wingo Result
 window.setResult = async function(num){
-
-await setDoc(doc(db,"wingoResults","current"),{
-number:num,
-time:Date.now()
-})
-
-alert("Result Updated")
-
+    // Admin aur Wingo page ab same document use karenge
+    await setDoc(doc(db,"wingo","result"),{
+        number: num,
+        time: Date.now()
+    });
+    alert("Result Updated");
 }
 
 </script>
