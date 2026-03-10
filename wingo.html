@@ -25,7 +25,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .navBtn{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
 .icon{width:48px;height:48px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
 .label{font-size:13px;margin-top:4px;font-weight:bold;}
-.betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;}
+.betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;}
 .betBox{background:white;padding:25px;border-radius:18px;width:260px;text-align:center;animation:zoomPop .35s ease;position:relative;}
 @keyframes zoomPop{0%{transform:scale(.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
 .betBox input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px;text-align:center;margin-top:10px;}
@@ -73,7 +73,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 <h3>Enter Bet Amount</h3>
 <input type="number" id="betInput" placeholder="Amount">
 <button class="betBtn" onclick="placeBet()">Place Bet</button>
-<button class="betBtnClose" onclick="closeBetPopup()">Close</button>
+<button class="betBtnClose" id="closePopupBtn">Close</button>
 </div>
 </div>
 
@@ -89,7 +89,6 @@ const db = getFirestore(app);
 
 let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
 
-// Load history
 async function loadHistory(){
 if(!userId)return;
 const q=query(collection(db,"wingoHistory",userId),orderBy("timestamp","desc"),limit(20));
@@ -105,7 +104,11 @@ function getColor(n){if(n==0||n==5)return "violet"; if([1,3,7,9].includes(n))ret
 
 window.selectBet=function(v){selectedValue=v; document.getElementById("betPopup").style.display="flex";}
 window.placeBet=function(){let amt=parseInt(document.getElementById("betInput").value); if(balance<amt){alert("Low Balance"); return;} balance-=amt; document.getElementById("balance").innerText=balance; currentBet=selectedValue; betAmount=amt; document.getElementById("betPopup").style.display="none";}
-function closeBetPopup(){document.getElementById("betPopup").style.display="none";}
+
+// **Fully working close button**
+document.getElementById("closePopupBtn").addEventListener("click",()=>{
+  document.getElementById("betPopup").style.display="none";
+});
 
 function addHistory(num,color){if(!userId)return; const div=document.createElement("div"); div.className="historyItem"; div.innerHTML=`Result: ${num} (${color})`; document.getElementById("historyList").prepend(div); addDoc(collection(db,"wingoHistory",userId),{number:num,color:color,timestamp:new Date()});}
 
@@ -117,21 +120,12 @@ time--; document.getElementById("time").innerText=time;
 if(time<=0){
 time=30;
 spinningBall.style.display="block";
-
-// simulate spinning animation until result
-let spinInterval=setInterval(()=>{},10);
-
 let resultDoc=await getDoc(doc(db,"wingo","result"));
 let result=resultDoc.data().number;
 let color=getColor(result);
-
 spinningBall.style.display="none";
-clearInterval(spinInterval);
-
 document.getElementById("ball").innerText=result;
-
 addHistory(result,color);
-
 if(currentBet!=null){
 if(currentBet===result){let winAmount=betAmount*(result==0?2:result); balance+=winAmount; alert("You Win ₹"+winAmount);}
 else if(currentBet===color){balance+=betAmount*2; alert("Color Win ₹"+betAmount*2);}
@@ -147,5 +141,6 @@ window.openWallet=function(){window.location.href="wallet.html";}
 window.openHelp=function(){window.location.href="help.html";}
 window.logout=function(){signOut(auth); window.location.href="login.html";}
 </script>
+
 </body>
 </html>
