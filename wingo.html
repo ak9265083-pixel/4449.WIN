@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -162,6 +161,7 @@ justify-content:center;
 }
 
 .betBox{
+position:relative;
 background:white;
 padding:25px;
 border-radius:18px;
@@ -194,6 +194,55 @@ border:none;
 width:100%;
 border-radius:10px;
 font-size:16px;
+cursor:pointer;
+}
+
+/* Close button for bet popup */
+.closeBtn {
+position: absolute;
+top: 10px;
+right: 10px;
+background: #ff6b6b;
+color: white;
+border: none;
+border-radius: 50%;
+width: 28px;
+height: 28px;
+font-size: 16px;
+cursor: pointer;
+}
+
+/* Animated Win/Loss popup */
+.resultPopup {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) scale(0.5);
+border-radius: 20px;
+padding: 25px 35px;
+text-align: center;
+font-size: 18px;
+font-weight: bold;
+color: white;
+display: none;
+animation: popupBounce 0.5s forwards;
+box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+z-index: 9999;
+}
+
+.resultPopup.win {
+background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.resultPopup.lose {
+background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+@keyframes popupBounce {
+0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+60%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+80%  { transform: translate(-50%, -50%) scale(0.95); }
+100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 </style>
@@ -211,7 +260,7 @@ Balance ₹ <span id="balance">0</span>
 </div>
 
 <div class="timer">
-Next Result In <span id="time">60</span>s
+Next Result In <span id="time">30</span>s
 </div>
 
 <div class="centerGame" id="ball">?</div>
@@ -263,6 +312,8 @@ Next Result In <span id="time">60</span>s
 
 <div class="betPopup" id="betPopup">
 <div class="betBox">
+
+<button class="closeBtn" onclick="closeBetPopup()">✖</button>
 
 <h3>Enter Bet Amount</h3>
 
@@ -334,6 +385,10 @@ document.getElementById("betPopup").style.display="flex";
 
 }
 
+window.closeBetPopup = function() {
+  document.getElementById("betPopup").style.display = "none";
+}
+
 window.placeBet=function(){
 
 let amt=parseInt(document.getElementById("betInput").value);
@@ -356,6 +411,18 @@ document.getElementById("betPopup").style.display="none";
 
 }
 
+// Animated win/loss popup with colors
+function showResultPopup(message, isWin){
+    let popup = document.createElement("div");
+    popup.className = "resultPopup " + (isWin ? "win" : "lose");
+    popup.innerText = message;
+    document.body.appendChild(popup);
+    popup.style.display = "block";
+    setTimeout(()=>{
+        popup.remove();
+    }, 2000);
+}
+
 function addHistory(num,color){
 
 let div=document.createElement("div");
@@ -367,7 +434,8 @@ document.getElementById("historyList").prepend(div);
 
 }
 
-let time=60;
+// Timer starts from 30 seconds now
+let time=30;
 
 setInterval(async ()=>{
 
@@ -376,7 +444,7 @@ document.getElementById("time").innerText=time;
 
 if(time<=0){
 
-time=60;
+time=30;
 
 /* admin result */
 
@@ -397,17 +465,17 @@ let winAmount = betAmount * (result==0?2:result);
 
 balance += winAmount;
 
-alert("You Win ₹"+winAmount);
+showResultPopup("You Win ₹"+winAmount, true);
 
 }else if(currentBet===color){
 
 balance += betAmount*2;
 
-alert("Color Win ₹"+betAmount*2);
+showResultPopup("Color Win ₹"+betAmount*2, true);
 
 }else{
 
-alert("You Lose");
+showResultPopup("You Lose", false);
 
 }
 
