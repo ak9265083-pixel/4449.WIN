@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -195,57 +196,6 @@ border-radius:10px;
 font-size:16px;
 }
 
-/* ACCOUNT MODAL */
-.accountModal{
-display:none;
-position:fixed;
-top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6);
-justify-content:center;
-align-items:center;
-}
-
-.accountModalContent{
-background:white;
-width:320px;
-border-radius:18px;
-padding:25px;
-text-align:center;
-animation:fadeInModal 0.5s ease;
-}
-
-.accountModalContent img{
-height:32px;
-animation:bounceRotate 2s infinite;
-}
-
-@keyframes fadeInModal {0%{opacity:0;transform:translateY(-20px);}100%{opacity:1;transform:translateY(0);}}
-@keyframes bounceRotate {0%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-10px) rotate(180deg);}100%{transform:translateY(0) rotate(360deg);}}
-
-.accountModalContent .info{
-margin:10px 0;
-font-size:16px;
-}
-
-.accountModalContent .help-link{
-display:block;
-margin-top:20px;
-color:#ff5c5c;
-font-weight:bold;
-text-decoration:none;
-}
-
-.accountModalContent button{
-margin-top:15px;
-padding:12px 25px;
-border:none;
-border-radius:12px;
-background:#ff5c5c;
-color:white;
-cursor:pointer;
-font-weight:bold;
-}
-
 </style>
 
 </head>
@@ -257,7 +207,7 @@ font-weight:bold;
 <div class="header">4449 WIN</div>
 
 <div class="wallet">
-Balance <span id="balance">0</span>
+Balance ₹ <span id="balance">0</span>
 </div>
 
 <div class="timer">
@@ -309,36 +259,18 @@ Next Result In <span id="time">60</span>s
 <div class="label">Logout</div>
 </div>
 
-<!-- NEW ACCOUNT BUTTON -->
-<div class="navBtn" onclick="openAccount()">
-<div class="icon">👤</div>
-<div class="label">Account</div>
-</div>
-
 </div>
 
 <div class="betPopup" id="betPopup">
 <div class="betBox">
-<h3>Enter Bet Amount</h3>
-<input type="number" id="betInput" placeholder="Amount">
-<button class="betBtn" onclick="placeBet()">Place Bet</button>
-</div>
-</div>
 
-<!-- ACCOUNT MODAL -->
-<div class="accountModal" id="accountModal">
-  <div class="accountModalContent">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px;">
-      <img src="logo.png" alt="Logo">
-      <span style="font-weight:bold;font-size:18px;">4449 WIN</span>
-    </div>
-    <h3>My Account</h3>
-    <div class="info">User ID: <span id="accUserId"></span></div>
-    <div class="info">Balance: <span id="accBalance" class="balance">0</span></div>
-    <a href="help.html" class="help-link">Help Centre</a>
-    <button onclick="goToWallet()">Deposit</button>
-    <button onclick="closeAccount()" style="background:#999;margin-top:10px;">Close</button>
-  </div>
+<h3>Enter Bet Amount</h3>
+
+<input type="number" id="betInput" placeholder="Amount">
+
+<button class="betBtn" onclick="placeBet()">Place Bet</button>
+
+</div>
 </div>
 
 <script type="module">
@@ -364,132 +296,147 @@ let betAmount=0;
 let selectedValue=null;
 
 onAuthStateChanged(auth, async (user)=>{
-  if(user){
-    userId=user.uid;
-    let ref=doc(db,"users",userId);
-    let snap=await getDoc(ref);
-    if(snap.exists()){
-      balance=snap.data().balance || 0;
-      document.getElementById("balance").innerText=balance;
-    }
-  }
+
+if(user){
+
+userId=user.uid;
+
+let ref=doc(db,"users",userId);
+let snap=await getDoc(ref);
+
+if(snap.exists()){
+
+balance=snap.data().balance || 0;
+document.getElementById("balance").innerText=balance;
+
+}
+
+}
+
 });
 
 function getColor(n){
-  if(n==0 || n==5) return "violet";
-  if([1,3,7,9].includes(n)) return "green";
-  if([2,4,6,8].includes(n)) return "red";
+
+if(n==0 || n==5) return "violet";
+
+if(n==1 || n==3 || n==7 || n==9)
+return "green";
+
+if(n==2 || n==4 || n==6 || n==8)
+return "red";
+
 }
 
 window.selectBet=function(v){
-  selectedValue=v;
-  document.getElementById("betPopup").style.display="flex";
+
+selectedValue=v;
+document.getElementById("betPopup").style.display="flex";
+
 }
 
 window.placeBet=function(){
-  let amt=parseInt(document.getElementById("betInput").value);
-  if(balance<amt){
-    alert("Low Balance");
-    return;
-  }
-  balance-=amt;
-  document.getElementById("balance").innerText=balance;
-  currentBet=selectedValue;
-  betAmount=amt;
-  document.getElementById("betPopup").style.display="none";
+
+let amt=parseInt(document.getElementById("betInput").value);
+
+if(balance<amt){
+
+alert("Low Balance");
+return;
+
+}
+
+balance-=amt;
+
+document.getElementById("balance").innerText=balance;
+
+currentBet=selectedValue;
+betAmount=amt;
+
+document.getElementById("betPopup").style.display="none";
+
 }
 
 function addHistory(num,color){
-  let div=document.createElement("div");
-  div.className="historyItem";
-  div.innerHTML="Result: "+num+" ("+color+")";
-  document.getElementById("historyList").prepend(div);
+
+let div=document.createElement("div");
+
+div.className="historyItem";
+div.innerHTML="Result: "+num+" ("+color+")";
+
+document.getElementById("historyList").prepend(div);
+
 }
 
 let time=60;
+
 setInterval(async ()=>{
-  time--;
-  document.getElementById("time").innerText=time;
-  if(time<=0){
-    time=60;
-    let resultDoc = await getDoc(doc(db,"wingo","result"));
-    let result = resultDoc.data().number;
-    let color=getColor(result);
-    document.getElementById("ball").innerText=result;
-    addHistory(result,color);
-    if(currentBet!=null){
-      if(currentBet===result){
-        let winAmount = betAmount * (result==0?2:result);
-        balance += winAmount;
-        alert("You Win ₹"+winAmount);
-      } else if(currentBet===color){
-        balance += betAmount*2;
-        alert("Color Win ₹"+betAmount*2);
-      } else{
-        alert("You Lose");
-      }
-      document.getElementById("balance").innerText=balance;
-      await updateDoc(doc(db,"users",userId),{balance:balance});
-      currentBet=null;
-      betAmount=0;
-    }
-  }
+
+time--;
+document.getElementById("time").innerText=time;
+
+if(time<=0){
+
+time=60;
+
+/* admin result */
+
+let resultDoc = await getDoc(doc(db,"wingo","result"));
+let result = resultDoc.data().number;
+
+let color=getColor(result);
+
+document.getElementById("ball").innerText=result;
+
+addHistory(result,color);
+
+if(currentBet!=null){
+
+if(currentBet===result){
+
+let winAmount = betAmount * (result==0?2:result);
+
+balance += winAmount;
+
+alert("You Win ₹"+winAmount);
+
+}else if(currentBet===color){
+
+balance += betAmount*2;
+
+alert("Color Win ₹"+betAmount*2);
+
+}else{
+
+alert("You Lose");
+
+}
+
+document.getElementById("balance").innerText=balance;
+
+await updateDoc(doc(db,"users",userId),{
+balance:balance
+});
+
+currentBet=null;
+betAmount=0;
+
+}
+
+}
+
 },1000);
 
 window.openWallet=function(){
-  window.location.href="wallet.html";
+window.location.href="wallet.html";
 }
 
 window.openHelp=function(){
-  window.location.href="help.html";
+window.location.href="help.html";
 }
 
 window.logout=function(){
-  signOut(auth);
-  window.location.href="login.html";
-}
-
-// ACCOUNT BUTTON FUNCTIONS
-const accUserId = document.getElementById('accUserId');
-const accBalance = document.getElementById('accBalance');
-const accountModal = document.getElementById('accountModal');
-
-function openAccount(){
-  const user = auth.currentUser;
-  if(!user){
-    alert("Please login first!");
-    return;
-  }
-  const uid = user.uid;
-  accUserId.innerText = uid;
-
-  getDoc(doc(db,"users",uid)).then(snap=>{
-    if(snap.exists()){
-      let bal = snap.data().balance || 0;
-      animateAccountBalance(0, bal, 800);
-      accountModal.style.display = 'flex';
-    }
-  });
-}
-
-function closeAccount(){
-  accountModal.style.display = 'none';
-}
-
-function goToWallet(){
-  window.location.href="wallet.html";
-}
-
-function animateAccountBalance(start,end,duration){
-  let startTime=null;
-  function step(currentTime){
-    if(!startTime) startTime=currentTime;
-    let progress = currentTime - startTime;
-    let value = Math.min(Math.floor(start + (end-start)*(progress/duration)),end);
-    accBalance.innerText = value;
-    if(progress<duration) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
+signOut(auth);
+window.location.href="login.html";
 }
 
 </script>
