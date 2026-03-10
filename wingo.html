@@ -211,6 +211,18 @@ width:100%;
 border-radius:10px;
 font-size:16px;
 }
+
+.betBtnClose{
+background:#999;
+margin-top:10px;
+animation:fadeInBtn 0.5s ease;
+}
+
+@keyframes fadeInBtn{
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
 </style>
 </head>
 
@@ -279,6 +291,7 @@ Next Result In <span id="time">30</span>s
 <h3>Enter Bet Amount</h3>
 <input type="number" id="betInput" placeholder="Amount">
 <button class="betBtn" onclick="placeBet()">Place Bet</button>
+<button class="betBtn betBtnClose" onclick="closeBetPopup()">Close</button>
 </div>
 </div>
 
@@ -286,7 +299,7 @@ Next Result In <span id="time">30</span>s
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
@@ -304,7 +317,6 @@ let currentBet = null;
 let betAmount = 0;
 let selectedValue = null;
 
-// Load history from Firestore
 async function loadHistory() {
   if(!userId) return;
   const q = query(collection(db,"wingoHistory",userId), orderBy("timestamp","desc"), limit(20));
@@ -357,15 +369,17 @@ window.placeBet=function(){
   document.getElementById("betPopup").style.display="none";
 }
 
+function closeBetPopup(){
+  document.getElementById("betPopup").style.display="none";
+}
+
 function addHistory(num,color){
   if(!userId) return;
   const div = document.createElement("div");
   div.className = "historyItem";
   div.innerHTML = `Result: ${num} (${color})`;
   document.getElementById("historyList").prepend(div);
-
-  // Save to Firestore
-  const docRef = addDoc(collection(db,"wingoHistory",userId),{
+  addDoc(collection(db,"wingoHistory",userId),{
     number:num,
     color:color,
     timestamp:new Date()
@@ -382,15 +396,12 @@ setInterval(async ()=>{
   if(time <= 0){
     time=30;
 
-    // Start spinning animation
     spinningBall.style.display = "block";
 
-    // Admin result fetch
     let resultDoc = await getDoc(doc(db,"wingo","result"));
     let result = resultDoc.data().number;
     let color = getColor(result);
 
-    // Stop spinning
     spinningBall.style.display = "none";
 
     document.getElementById("ball").innerText = result;
