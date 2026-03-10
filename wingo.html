@@ -63,6 +63,27 @@ font-size:16px;text-align:center;margin-top:10px;
 margin-top:15px;padding:12px;background:#ff6b6b;color:white;border:none;
 width:100%;border-radius:10px;font-size:16px;
 }
+
+/* WIN POPUP */
+
+.winPopup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.winBox{
+background:white;
+padding:25px;
+border-radius:15px;
+text-align:center;
+}
 </style>
 </head>
 
@@ -108,6 +129,25 @@ Next Result In <span id="time">30</span>s
 
 </div>
 
+<div class="bottomWallet">
+
+<div class="navBtn" onclick="openWallet()">
+<div class="icon">💳</div>
+<div class="label">Wallet</div>
+</div>
+
+<div class="navBtn" onclick="openHelp()">
+<div class="icon">🎧</div>
+<div class="label">Help</div>
+</div>
+
+<div class="navBtn" onclick="logout()">
+<div class="icon">🚪</div>
+<div class="label">Logout</div>
+</div>
+
+</div>
+
 <div class="betPopup" id="betPopup">
 <div class="betBox">
 <h3>Enter Bet Amount</h3>
@@ -117,10 +157,18 @@ Next Result In <span id="time">30</span>s
 </div>
 </div>
 
+<div class="winPopup" id="winPopup">
+<div class="winBox">
+<h2>🎉 YOU WIN</h2>
+<p id="winAmount"></p>
+<button class="betBtn" onclick="closeWin()">OK</button>
+</div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,orderBy,limit,getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig={
@@ -148,7 +196,7 @@ const ref=doc(db,"users",userId);
 const snap=await getDoc(ref);
 
 if(snap.exists()){
-balance=snap.data().balance || 0;
+balance=snap.data().balance;
 document.getElementById("balance").innerText=balance;
 }
 
@@ -176,8 +224,6 @@ window.placeBet=function(){
 
 let amt=parseInt(document.getElementById("betInput").value);
 
-if(!amt || amt<=0)return;
-
 if(balance<amt){
 alert("Low Balance");
 return;
@@ -202,11 +248,9 @@ list.innerHTML="";
 
 snap.forEach(d=>{
 let data=d.data();
-
 let div=document.createElement("div");
 div.className="historyItem";
 div.innerHTML="Result: "+data.number+" ("+data.color+")";
-
 list.appendChild(div);
 });
 
@@ -242,13 +286,15 @@ if(currentBet!=null){
 if(currentBet===result || currentBet===color){
 
 let winAmount=betAmount*2;
+
 balance+=winAmount;
 
-alert("🎉 You Win ₹"+winAmount);
+document.getElementById("winAmount").innerText="You Won ₹"+winAmount;
+document.getElementById("winPopup").style.display="flex";
 
 }else{
 
-alert("❌ You Lose");
+alert("You Lose");
 
 }
 
@@ -266,6 +312,23 @@ betAmount=0;
 }
 
 },1000);
+
+window.closeWin=function(){
+document.getElementById("winPopup").style.display="none";
+}
+
+window.openWallet=function(){
+window.location.href="wallet.html";
+}
+
+window.openHelp=function(){
+window.location.href="help.html";
+}
+
+window.logout=function(){
+signOut(auth);
+window.location.href="login.html";
+}
 
 </script>
 
