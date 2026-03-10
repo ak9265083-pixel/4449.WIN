@@ -11,23 +11,11 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .wallet{background:#f2f2f2;margin:15px;padding:15px;border-radius:12px;font-size:18px;}
 .timer{background:#ff6b6b;color:white;margin:10px;padding:10px;border-radius:10px;font-size:18px;}
 
-.centerGame{
-margin:20px auto;width:120px;height:120px;border-radius:50%;
-background:#eee;display:flex;align-items:center;justify-content:center;
-font-size:50px;font-weight:bold;position:relative;overflow:hidden;
-}
+.centerGame{margin:20px auto;width:120px;height:120px;border-radius:50%;background:#eee;display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:bold;position:relative;overflow:hidden;}
 
-.spinningBall{
-position:absolute;width:20px;height:20px;border-radius:50%;
-background:#ff6b6b;top:50%;left:50%;
-transform-origin:50% 60px;
-animation:spinCircle 1s linear infinite;display:none;
-}
+.spinningBall{position:absolute;width:20px;height:20px;border-radius:50%;background:#ff6b6b;top:50%;left:50%;transform-origin:50% 60px;animation:spinCircle 1s linear infinite;display:none;}
 
-@keyframes spinCircle{
-0%{transform:rotate(0deg)}
-100%{transform:rotate(360deg)}
-}
+@keyframes spinCircle{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
 
 .colors{display:flex;gap:10px;padding:10px;}
 .colors button{flex:1;padding:12px;border:none;color:white;border-radius:8px;font-size:16px;}
@@ -42,56 +30,38 @@ animation:spinCircle 1s linear infinite;display:none;
 .history{margin:15px;text-align:left;}
 .historyItem{background:#eee;margin-bottom:6px;padding:8px;border-radius:6px;}
 
-.bottomWallet{
-position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
-width:360px;background:white;border-radius:25px;display:flex;
-justify-content:space-around;padding:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.25);
-}
-
+.bottomWallet{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:360px;background:white;border-radius:25px;display:flex;justify-content:space-around;padding:10px;box-shadow:0 5px 20px rgba(0,0,0,0.25);}
 .navBtn{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
-
-.icon{
-width:48px;height:48px;border-radius:50%;background:#ff6b6b;
-display:flex;align-items:center;justify-content:center;
-font-size:22px;color:white;
-}
-
+.icon{width:48px;height:48px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
 .label{font-size:13px;margin-top:4px;font-weight:bold;}
 
-.betPopup{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6);display:none;
-align-items:center;justify-content:center;z-index:9999;
-}
-
-.betBox{
-background:white;padding:25px;border-radius:18px;width:260px;text-align:center;
-}
-
-.betBox input{
-width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;
-font-size:16px;text-align:center;margin-top:10px;
-}
-
-.betBtn{
-margin-top:15px;padding:12px;background:#ff6b6b;color:white;border:none;
-width:100%;border-radius:10px;font-size:16px;cursor:pointer;
-}
-
-.betBtnClose{background:#999;margin-top:10px;}
+.betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;}
+.betBox{background:white;padding:25px;border-radius:18px;width:260px;text-align:center;}
+.betBox input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px;text-align:center;margin-top:10px;}
+.betBtn{margin-top:15px;padding:12px;background:#ff6b6b;color:white;border:none;width:100%;border-radius:10px;font-size:16px;cursor:pointer;}
+.betBtnClose{background:#999;margin-top:10px;cursor:pointer;}
 
 /* WIN POPUP */
 
 .winPopup{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.7);display:none;
-align-items:center;justify-content:center;z-index:9999;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
 }
 
 .winBox{
-background:white;padding:30px;border-radius:20px;text-align:center;
-animation:zoomPop .35s ease;
+background:white;
+padding:30px;
+border-radius:20px;
+text-align:center;
+animation:zoomPop .4s;
 }
 
 @keyframes zoomPop{
@@ -101,6 +71,7 @@ animation:zoomPop .35s ease;
 
 .winText{font-size:26px;color:#2ecc71;font-weight:bold;}
 .winAmount{font-size:22px;color:#ff6b6b;margin-top:10px;font-weight:bold;}
+
 </style>
 </head>
 
@@ -110,13 +81,9 @@ animation:zoomPop .35s ease;
 
 <div class="header">4449 WIN</div>
 
-<div class="wallet">
-Balance ₹<span id="balance">0</span>
-</div>
+<div class="wallet">Balance <span id="balance">0</span></div>
 
-<div class="timer">
-Next Result In <span id="time">30</span>s
-</div>
+<div class="timer">Next Result In <span id="time">30</span>s</div>
 
 <div class="centerGame" id="ball">?
 <div class="spinningBall" id="spinningBall"></div>
@@ -149,22 +116,9 @@ Next Result In <span id="time">30</span>s
 </div>
 
 <div class="bottomWallet">
-
-<div class="navBtn" onclick="openWallet()">
-<div class="icon">💳</div>
-<div class="label">Wallet</div>
-</div>
-
-<div class="navBtn" onclick="openHelp()">
-<div class="icon">🎧</div>
-<div class="label">Help</div>
-</div>
-
-<div class="navBtn" onclick="logout()">
-<div class="icon">🚪</div>
-<div class="label">Logout</div>
-</div>
-
+<div class="navBtn" onclick="openWallet()"><div class="icon">💳</div><div class="label">Wallet</div></div>
+<div class="navBtn" onclick="openHelp()"><div class="icon">🎧</div><div class="label">Help</div></div>
+<div class="navBtn" onclick="logout()"><div class="icon">🚪</div><div class="label">Logout</div></div>
 </div>
 
 <div class="betPopup" id="betPopup">
@@ -172,9 +126,11 @@ Next Result In <span id="time">30</span>s
 <h3>Enter Bet Amount</h3>
 <input type="number" id="betInput" placeholder="Amount">
 <button class="betBtn" onclick="placeBet()">Place Bet</button>
-<button class="betBtnClose betBtn" onclick="closePopup()">Close</button>
+<button class="betBtnClose" id="closePopupBtn">Close</button>
 </div>
 </div>
+
+<!-- WIN POPUP -->
 
 <div class="winPopup" id="winPopup">
 <div class="winBox">
@@ -188,7 +144,7 @@ Next Result In <span id="time">30</span>s
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
@@ -202,13 +158,37 @@ const db=getFirestore(app);
 
 let balance=0,userId="",currentBet=null,betAmount=0,selectedValue=null;
 
+function showWin(amount){
+document.getElementById("winAmount").innerText="₹"+amount;
+document.getElementById("winPopup").style.display="flex";
+}
+
+window.closeWin=function(){
+document.getElementById("winPopup").style.display="none";
+}
+
+async function loadHistory(){
+if(!userId)return;
+
+const q=query(collection(db,"wingoHistory",userId),orderBy("timestamp","desc"),limit(20));
+const snapshot=await getDocs(q);
+
+const list=document.getElementById("historyList");
+list.innerHTML="";
+
+snapshot.forEach(doc=>{
+const d=doc.data();
+const div=document.createElement("div");
+div.className="historyItem";
+div.innerHTML=`Result: ${d.number} (${d.color})`;
+list.appendChild(div);
+});
+}
+
 onAuthStateChanged(auth,async(user)=>{
 if(user){
-
 userId=user.uid;
-
 let ref=doc(db,"users",userId);
-
 let snap=await getDoc(ref);
 
 if(snap.exists()){
@@ -216,6 +196,7 @@ balance=snap.data().balance||0;
 document.getElementById("balance").innerText=balance;
 }
 
+loadHistory();
 }
 });
 
@@ -228,10 +209,6 @@ if([2,4,6,8].includes(n))return"red";
 window.selectBet=function(v){
 selectedValue=v;
 document.getElementById("betPopup").style.display="flex";
-}
-
-window.closePopup=function(){
-document.getElementById("betPopup").style.display="none";
 }
 
 window.placeBet=function(){
@@ -250,17 +227,30 @@ document.getElementById("balance").innerText=balance;
 currentBet=selectedValue;
 betAmount=amt;
 
-closePopup();
-
+document.getElementById("betPopup").style.display="none";
 }
 
-function showWin(amount){
-document.getElementById("winAmount").innerText="₹"+amount;
-document.getElementById("winPopup").style.display="flex";
-}
+document.getElementById("closePopupBtn").addEventListener("click",()=>{
+document.getElementById("betPopup").style.display="none";
+});
 
-window.closeWin=function(){
-document.getElementById("winPopup").style.display="none";
+function addHistory(num,color){
+
+if(!userId)return;
+
+const div=document.createElement("div");
+div.className="historyItem";
+
+div.innerHTML=`Result: ${num} (${color})`;
+
+document.getElementById("historyList").prepend(div);
+
+addDoc(collection(db,"wingoHistory",userId),{
+number:num,
+color:color,
+timestamp:new Date()
+});
+
 }
 
 let time=30;
@@ -279,7 +269,9 @@ time=30;
 
 spinningBall.style.display="block";
 
-let result=Math.floor(Math.random()*10);
+let resultDoc=await getDoc(doc(db,"wingo","result"));
+
+let result=resultDoc.data().number;
 
 let color=getColor(result);
 
@@ -287,14 +279,22 @@ spinningBall.style.display="none";
 
 document.getElementById("ball").innerText=result;
 
+addHistory(result,color);
+
 if(currentBet!=null){
 
-if(currentBet===result||currentBet===color){
+if(currentBet===result){
 
 let winAmount=betAmount*4;
-
 balance+=winAmount;
+showWin(winAmount);
 
+}
+
+else if(currentBet===color){
+
+let winAmount=betAmount*4;
+balance+=winAmount;
 showWin(winAmount);
 
 }
