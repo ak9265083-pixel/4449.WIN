@@ -4,27 +4,118 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wallet</title>
 <style>
-body{margin:0;font-family:Arial;background:#8f939c;display:flex;justify-content:center;}
-.app{width:100%;max-width:420px;background:#f5f5f5;min-height:100vh;box-shadow:0 0 20px rgba(0,0,0,0.3);position:relative;}
-.header-container{position:relative;height:60px;}
-.header{background:#ff6b6b;color:white;padding:15px;font-size:20px;font-weight:bold;text-align:center;}
-.logo-top{position:absolute;top:5px;left:10px;width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid white;background:white;}
-.box{background:white;margin:15px;padding:20px;border-radius:12px;text-align:center;}
-.btn{padding:12px 20px;background:#ff6b6b;color:white;border:none;border-radius:8px;margin:10px;font-size:16px;cursor:pointer;transition:.3s;}
+body{
+margin:0;
+font-family:Arial;
+background:#8f939c;
+display:flex;
+justify-content:center;
+}
+.app{
+width:100%;
+max-width:420px;
+background:#f5f5f5;
+min-height:100vh;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+position:relative;
+}
+.header-container{
+position:relative;
+height:60px;
+}
+.header{
+background:#ff6b6b;
+color:white;
+padding:15px;
+font-size:20px;
+font-weight:bold;
+text-align:center;
+}
+.logo-top{
+position:absolute;
+top:5px;
+left:10px;
+width:50px;
+height:50px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid white;
+background:white;
+}
+.box{
+background:white;
+margin:15px;
+padding:20px;
+border-radius:12px;
+text-align:center;
+}
+.btn{
+padding:12px 20px;
+background:#ff6b6b;
+color:white;
+border:none;
+border-radius:8px;
+margin:10px;
+font-size:16px;
+cursor:pointer;
+transition:.3s;
+}
 .btn:hover{transform:scale(1.05);}
-input{padding:10px;width:80%;max-width:250px;border-radius:6px;border:1px solid #ccc;margin:5px;}
-.history-box{background:white;margin:15px;padding:15px;border-radius:12px;max-height:250px;overflow-y:auto;text-align:left;}
-.history-item{border-bottom:1px solid #ddd;padding:8px 0;display:flex;justify-content:space-between;}
+input{
+padding:10px;
+width:80%;
+max-width:250px;
+border-radius:6px;
+border:1px solid #ccc;
+margin:5px;
+}
+.qr{
+width:200px;
+display:block;
+margin:auto;
+}
+.bet-popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+width:300px;
+display:none;
+box-shadow:0 0 20px rgba(0,0,0,0.6);
+animation:zoomPop .4s ease;
+color:white;
+text-align:center;
+}
+@keyframes zoomPop{
+0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}
+100%{transform:translate(-50%,-50%) scale(1);opacity:1;}
+}
+.history-box{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:12px;
+max-height:250px;
+overflow-y:auto;
+text-align:left;
+}
+.history-item{
+border-bottom:1px solid #ddd;
+padding:8px 0;
+display:flex;
+justify-content:space-between;
+}
 .history-pending{color:orange;font-weight:bold;}
 .history-approved{color:green;font-weight:bold;}
 .history-rejected{color:red;font-weight:bold;}
-.backBtn{margin:15px;padding:12px 30px;background:#444;color:white;border:none;border-radius:25px;cursor:pointer;}
 </style>
 </head>
 <body>
 
 <div class="app">
-<button class="backBtn" onclick="window.history.back()">⬅ Back</button>
 
 <div class="header-container">
 <img src="logo.png" class="logo-top">
@@ -57,90 +148,119 @@ input{padding:10px;width:80%;max-width:250px;border-radius:6px;border:1px solid 
 <h3>Withdrawal History</h3>
 <div id="historyList"></div>
 </div>
+
+<div class="bet-popup" id="popupMessage"></div>
+
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth,onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, onSnapshot, query, where, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain:"win2-512e1.firebaseapp.com",
-projectId:"win2-512e1"
+apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain: "win2-512e1.firebaseapp.com",
+projectId: "win2-512e1",
+storageBucket: "win2-512e1.firebasestorage.app",
+messagingSenderId: "577913579227",
+appId: "1:577913579227:web:1e073059c2d3d881720efe",
+measurementId: "G-4V1SCSMTM6"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser="", balance=0;
+let currentUser="";
+let balance=0;
+let history = [];
 
-onAuthStateChanged(auth, async user=>{
-    if(user){
-        currentUser = user.uid;
-        const userRef = doc(db,"users",currentUser);
-        onSnapshot(userRef, snap=>{
-            if(snap.exists()){
-                balance = snap.data().balance || 0;
-                document.getElementById("balance").innerText = balance;
-            }
-        });
-
-        const historyQuery = query(collection(db,"withdrawRequests"), where("user","==",currentUser), orderBy("time","desc"));
-        onSnapshot(historyQuery, snapshot=>{
-            let container = document.getElementById("historyList");
-            container.innerHTML="";
-            snapshot.forEach(docSnap=>{
-                let d = docSnap.data();
-                let statusClass = d.status==="pending"?"history-pending":d.status==="approved"?"history-approved":"history-rejected";
-                let div = document.createElement("div");
-                div.className = "history-item "+statusClass;
-                div.innerHTML = `<span>ID:${docSnap.id}</span> <span>Amount:₹${d.amount}</span> <span>Status:${d.status}</span>`;
-                container.appendChild(div);
-            });
-        });
-    }
+onAuthStateChanged(auth, async (user)=>{
+if(user){
+currentUser = user.uid;
+let ref = doc(db,"users",user.uid);
+let snap = await getDoc(ref);
+if(!snap.exists()){
+await setDoc(ref,{balance:0});
+}
+let data=(await getDoc(ref)).data();
+balance=data.balance;
+document.getElementById("balance").innerText=balance;
+}
 });
 
-window.showDeposit = function(){
-    document.getElementById("depositBox").style.display="block";
-    document.getElementById("withdrawBox").style.display="none";
+window.showDeposit=function(){
+document.getElementById("depositBox").style.display="block";
+document.getElementById("withdrawBox").style.display="none";
 }
-window.showWithdraw = function(){
-    document.getElementById("withdrawBox").style.display="block";
-    document.getElementById("depositBox").style.display="none";
-}
-
-window.sendDeposit = async function(){
-    let amt = parseInt(document.getElementById("amt").value);
-    let utr = document.getElementById("utr").value;
-    if(!amt || !utr){ alert("Enter details"); return; }
-    await addDoc(collection(db,"depositRequests"),{
-        user: currentUser,
-        amount: amt,
-        utr: utr,
-        status: "pending",
-        time: Date.now()
-    });
-    alert("Deposit request sent. Waiting for admin approval");
-    document.getElementById("amt").value=""; document.getElementById("utr").value="";
+window.showWithdraw=function(){
+document.getElementById("withdrawBox").style.display="block";
+document.getElementById("depositBox").style.display="none";
 }
 
-window.sendWithdraw = async function(){
-    let amt = parseInt(document.getElementById("wamt").value);
-    let upi = document.getElementById("upi").value;
-    if(!amt || !upi){ alert("Enter details"); return; }
-    if(amt>balance){ alert("Insufficient balance"); return; }
-    await addDoc(collection(db,"withdrawRequests"),{
-        user: currentUser,
-        amount: amt,
-        upi: upi,
-        status: "pending",
-        time: Date.now()
-    });
-    alert("Withdraw request sent. Waiting for admin approval");
-    document.getElementById("wamt").value=""; document.getElementById("upi").value="";
+window.sendDeposit=async function(){
+let amt=parseInt(document.getElementById("amt").value);
+let utr=document.getElementById("utr").value;
+if(!amt) return alert("Enter amount");
+if(!utr) return alert("Enter UTR Number");
+await addDoc(collection(db,"depositRequests"),{
+user:currentUser,
+amount:amt,
+utr:utr,
+status:"pending"
+});
+showPopup("Deposit request sent. Waiting for admin approval");
+document.getElementById("amt").value="";
+document.getElementById("utr").value="";
+}
+
+window.sendWithdraw=async function(){
+let amt=parseInt(document.getElementById("wamt").value);
+let upi=document.getElementById("upi").value;
+if(!amt) return alert("Enter amount");
+if(amt>balance) return alert("Insufficient balance");
+if(!upi) return alert("Enter UPI ID");
+
+// Deduct balance immediately
+balance -= amt;
+document.getElementById("balance").innerText=balance;
+
+// Add to history
+let request = {id:Date.now(),amount:amt,upi:upi,status:"Pending"};
+history.unshift(request);
+renderHistory();
+
+// Add to Firebase collection
+await addDoc(collection(db,"withdrawRequests"),{
+user:currentUser,
+amount:amt,
+upi:upi,
+status:"pending"
+});
+
+showPopup("Withdraw request sent. Waiting for admin approval");
+document.getElementById("wamt").value="";
+document.getElementById("upi").value="";
+}
+
+function renderHistory(){
+let container=document.getElementById("historyList");
+container.innerHTML="";
+history.forEach(item=>{
+let statusClass = item.status==="Pending"?"history-pending":item.status==="Approved"?"history-approved":"history-rejected";
+let div=document.createElement("div");
+div.className="history-item "+statusClass;
+div.innerHTML=`<span>ID: ${item.id}</span><span>Amount: ₹${item.amount}</span><span>Status: ${item.status}</span>`;
+container.appendChild(div);
+});
+}
+
+function showPopup(msg){
+let popup=document.getElementById("popupMessage");
+popup.innerText=msg;
+popup.style.display="block";
+setTimeout(()=>{popup.style.display="none"},3000);
 }
 </script>
 
