@@ -1,15 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>4449 WIN Login</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial, Helvetica, sans-serif;
@@ -125,9 +121,7 @@ font-size:40px;
 width:200px;
 }
 }
-
 </style>
-
 </head>
 
 <body>
@@ -144,7 +138,8 @@ width:200px;
 
 <div class="links">
 <a href="#">Forgot password</a> |
-<a href="sign.html">Sign Up</a>
+<!-- Correct Sign Up path -->
+<a href="signup.html">Sign Up</a>
 </div>
 
 </div>
@@ -160,7 +155,6 @@ WELCOME TO<br>4449 WIN
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -183,9 +177,7 @@ const email=document.getElementById("email").value;
 const password=document.getElementById("password").value;
 
 signInWithEmailAndPassword(auth,email,password)
-
 .then(()=>{
-
 document.querySelector(".login-container").style.display="none";
 document.getElementById("welcomeScreen").style.display="flex";
 
@@ -194,15 +186,12 @@ window.location.href="wingo.html";
 },3000);
 
 })
-
 .catch((error)=>{
 alert(error.message);
 });
 
 }
-
 </script>
 
 </body>
 </html>
-
