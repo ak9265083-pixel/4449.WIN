@@ -5,47 +5,14 @@
 <title>4449 WIN</title>
 
 <style>
+body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:center;}
+.app{width:420px;background:white;min-height:100vh;text-align:center;padding-bottom:90px;}
 
-body{
-margin:0;
-font-family:Arial;
-background:#9fa3ad;
-display:flex;
-justify-content:center;
-}
+.header{background:#ff6b6b;color:white;padding:15px;font-size:22px;font-weight:bold;}
 
-.app{
-width:420px;
-background:white;
-min-height:100vh;
-text-align:center;
-padding-bottom:90px;
-}
+.wallet{background:#f2f2f2;margin:15px;padding:15px;border-radius:12px;font-size:18px;}
 
-.header{
-background:#ff6b6b;
-color:white;
-padding:15px;
-font-size:22px;
-font-weight:bold;
-}
-
-.wallet{
-background:#f2f2f2;
-margin:15px;
-padding:15px;
-border-radius:12px;
-font-size:18px;
-}
-
-.timer{
-background:#ff6b6b;
-color:white;
-margin:10px;
-padding:10px;
-border-radius:10px;
-font-size:18px;
-}
+.timer{background:#ff6b6b;color:white;margin:10px;padding:10px;border-radius:10px;font-size:18px;}
 
 .centerGame{
 margin:20px auto;
@@ -80,11 +47,7 @@ display:none;
 100%{transform:rotate(360deg)}
 }
 
-.colors{
-display:flex;
-gap:10px;
-padding:10px;
-}
+.colors{display:flex;gap:10px;padding:10px;}
 
 .colors button{
 flex:1;
@@ -115,10 +78,7 @@ background:#eee;
 cursor:pointer;
 }
 
-.history{
-margin:15px;
-text-align:left;
-}
+.history{margin:15px;text-align:left;}
 
 .historyItem{
 background:#eee;
@@ -126,6 +86,8 @@ margin-bottom:6px;
 padding:8px;
 border-radius:6px;
 }
+
+/* bottom navigation */
 
 .bottomWallet{
 position:fixed;
@@ -165,6 +127,8 @@ font-size:13px;
 margin-top:4px;
 font-weight:bold;
 }
+
+/* bet popup */
 
 .betPopup{
 position:fixed;
@@ -234,10 +198,10 @@ background:white;
 padding:30px;
 border-radius:20px;
 text-align:center;
-animation:zoom .4s;
+animation:zoomPop .35s ease;
 }
 
-@keyframes zoom{
+@keyframes zoomPop{
 0%{transform:scale(.5);opacity:0;}
 100%{transform:scale(1);opacity:1;}
 }
@@ -272,7 +236,9 @@ Balance ₹<span id="balance">0</span>
 Next Result In <span id="time">30</span>s
 </div>
 
-<div class="centerGame" id="ball">?</div>
+<div class="centerGame" id="ball">?
+<div class="spinningBall" id="spinningBall"></div>
+</div>
 
 <div class="colors">
 <button class="green" onclick="selectBet('green')">Green</button>
@@ -300,28 +266,46 @@ Next Result In <span id="time">30</span>s
 
 </div>
 
-<!-- BET POPUP -->
+<!-- bottom buttons -->
+
+<div class="bottomWallet">
+
+<div class="navBtn" onclick="openWallet()">
+<div class="icon">💳</div>
+<div class="label">Wallet</div>
+</div>
+
+<div class="navBtn" onclick="openHelp()">
+<div class="icon">🎧</div>
+<div class="label">Help</div>
+</div>
+
+<div class="navBtn" onclick="logout()">
+<div class="icon">🚪</div>
+<div class="label">Logout</div>
+</div>
+
+</div>
+
+<!-- bet popup -->
 
 <div class="betPopup" id="betPopup">
-
 <div class="betBox">
 
 <h3>Enter Bet Amount</h3>
 
-<input type="number" id="betInput">
+<input type="number" id="betInput" placeholder="Amount">
 
 <button class="betBtn" onclick="placeBet()">Place Bet</button>
 
 <button class="betBtn betBtnClose" onclick="closePopup()">Close</button>
 
 </div>
-
 </div>
 
-<!-- WIN POPUP -->
+<!-- win popup -->
 
 <div class="winPopup" id="winPopup">
-
 <div class="winBox">
 
 <div class="winText">🎉 YOU WIN 🎉</div>
@@ -331,7 +315,6 @@ Next Result In <span id="time">30</span>s
 <button class="betBtn" onclick="closeWin()">OK</button>
 
 </div>
-
 </div>
 
 <script>
@@ -352,17 +335,12 @@ if([2,4,6,8].includes(n))return"red"
 }
 
 function selectBet(v){
-
 selectedValue=v
-
 document.getElementById("betPopup").style.display="flex"
-
 }
 
 function closePopup(){
-
 document.getElementById("betPopup").style.display="none"
-
 }
 
 function placeBet(){
@@ -370,11 +348,8 @@ function placeBet(){
 let amt=parseInt(document.getElementById("betInput").value)
 
 if(balance<amt){
-
 alert("Low Balance")
-
 return
-
 }
 
 balance-=amt
@@ -382,7 +357,6 @@ balance-=amt
 document.getElementById("balance").innerText=balance
 
 currentBet=selectedValue
-
 betAmount=amt
 
 closePopup()
@@ -390,17 +364,12 @@ closePopup()
 }
 
 function showWin(amount){
-
 document.getElementById("winAmount").innerText="₹"+amount
-
 document.getElementById("winPopup").style.display="flex"
-
 }
 
 function closeWin(){
-
 document.getElementById("winPopup").style.display="none"
-
 }
 
 function addHistory(num,color){
@@ -417,6 +386,8 @@ document.getElementById("historyList").prepend(div)
 
 let time=30
 
+const spinningBall=document.getElementById("spinningBall")
+
 setInterval(()=>{
 
 time--
@@ -427,9 +398,15 @@ if(time<=0){
 
 time=30
 
+spinningBall.style.display="block"
+
+setTimeout(()=>{
+
 let result=Math.floor(Math.random()*10)
 
 let color=getColor(result)
+
+spinningBall.style.display="none"
 
 document.getElementById("ball").innerText=result
 
@@ -450,16 +427,29 @@ showWin(winAmount)
 document.getElementById("balance").innerText=balance
 
 currentBet=null
-
 betAmount=0
-
-}
 
 }
 
 },1000)
 
+}
+
+},1000)
+
+function openWallet(){
+window.location.href="wallet.html"
+}
+
+function openHelp(){
+window.location.href="help.html"
+}
+
+function logout(){
+window.location.href="login.html"
+}
+
 </script>
 
 </body>
-  </html>
+</html>
