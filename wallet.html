@@ -20,27 +20,21 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .header { background: rgba(22, 27, 34, 0.95); padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); position: sticky; top: 0; z-index: 1000; }
 .logo-top { position: absolute; top: 8px; left: 15px; width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); background: white; }
 
-/* Balance Box */
 .box { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 #balance { font-size: 32px; color: var(--primary); font-weight: 900; text-shadow: 0 0 15px rgba(0,242,255,0.4); display: block; margin-top: 5px; }
 
-/* Buttons */
 .btn { padding: 12px 25px; background: transparent; color: var(--primary); border: 1px solid var(--primary); border-radius: 12px; margin: 10px 5px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
 .btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
 .btn-submit { background: var(--primary); color: black; width: 90%; margin-top: 20px; border: none; }
 
-/* Package Grid */
 .pkg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; padding: 0 15px; }
 .pkg-card { background: rgba(255, 0, 122, 0.1); border: 1px solid var(--secondary); padding: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
 .pkg-card:active { transform: scale(0.95); }
-.pkg-card.active { background: var(--secondary); color: white; }
 .pkg-amt { font-weight: bold; font-size: 16px; display: block;}
 .pkg-bonus { font-size: 10px; color: #00ffaa; text-transform: uppercase; display: block;}
 
-/* Inputs */
 input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0, 242, 255, 0.2); color: white; border-radius: 10px; margin: 8px 0; outline: none; text-align: center; }
 
-/* History */
 .history-box { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass); text-align: left; }
 .history-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; }
 .history-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -50,10 +44,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
 .history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
 
-/* Popup */
 .bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); }
-
-/* Total Display */
 #totalDisplay { margin-top: 10px; font-size: 14px; font-weight: bold; color: #00ffaa; display: none; }
 </style>
 </head>
@@ -79,13 +70,12 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
     <div id="withdrawBox" class="box" style="display:none; border-color: var(--primary);">
         <h3 style="color:var(--primary); font-size: 14px; margin-top:0;">WITHDRAWAL REQUEST</h3>
         <input type="number" id="wamt" placeholder="Enter Amount">
-        <input type="text" id="upi" placeholder="Enter UPI ID (e.g. name@upi)">
+        <input type="text" id="upi" placeholder="Enter UPI ID">
         <button class="btn btn-submit" onclick="sendWithdraw()">Confirm Withdrawal</button>
     </div>
 
     <div id="depositBox" class="box" style="display:none; border-color: var(--secondary);">
         <h3 style="color:var(--secondary); font-size: 14px; margin-top:0;">DEPOSIT PACKAGES</h3>
-        
         <div class="pkg-grid">
             <div class="pkg-card" onclick="selectPkg(100)">
                 <span class="pkg-amt">₹100</span>
@@ -104,7 +94,6 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
                 <span class="pkg-bonus">+50% BONUS</span>
             </div>
         </div>
-
         <img src="ui.png" style="width:150px; border:2px solid white; border-radius:10px; margin:10px 0;">
         <input type="number" id="amt" placeholder="Amount" oninput="calculatePreview()">
         <input type="text" id="utr" placeholder="12 Digit UTR Number">
@@ -113,7 +102,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
     </div>
 
     <div class="history-box">
-        <h3 style="color:var(--primary); font-size: 12px; margin-top:0; border-bottom:1px solid var(--glass); padding-bottom:10px;">WITHDRAWAL HISTORY</h3>
+        <h3 style="color:var(--primary); font-size: 12px; margin-top:0; border-bottom:1px solid var(--glass); padding-bottom:10px;">TRANSACTION HISTORY</h3>
         <div id="historyList">
             <p style="font-size:12px; opacity:0.5; text-align:center;">Loading history...</p>
         </div>
@@ -143,8 +132,8 @@ let balance = 0;
 onAuthStateChanged(auth, async (user) => {
     if(user) {
         currentUser = user.uid;
-        let ref = doc(db, "users", user.uid);
-        let snap = await getDoc(ref);
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
         if(snap.exists()) {
             balance = snap.data().balance || 0;
             document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
@@ -165,116 +154,94 @@ window.calculatePreview = () => {
     else if(amt === 200) bonus = amt * 0.25;
     else if(amt === 300) bonus = amt * 0.30;
     else if(amt === 500) bonus = amt * 0.50;
-
     let total = amt + bonus;
     let display = document.getElementById("totalDisplay");
-    if(amt > 0) {
-        display.style.display = "block";
-        document.getElementById("finalAmtVal").innerText = total;
-    } else {
-        display.style.display = "none";
-    }
+    if(amt > 0) { display.style.display = "block"; document.getElementById("finalAmtVal").innerText = total; }
+    else { display.style.display = "none"; }
 };
 
-window.showDeposit = () => {
-    document.getElementById("depositBox").style.display = "block";
-    document.getElementById("withdrawBox").style.display = "none";
-};
+window.showDeposit = () => { document.getElementById("depositBox").style.display = "block"; document.getElementById("withdrawBox").style.display = "none"; };
+window.showWithdraw = () => { document.getElementById("withdrawBox").style.display = "block"; document.getElementById("depositBox").style.display = "none"; };
 
-window.showWithdraw = () => {
-    document.getElementById("withdrawBox").style.display = "block";
-    document.getElementById("depositBox").style.display = "none";
-};
-
-// --- WITHDRAWAL FIX FOR ADMIN LOADING ---
+// --- WITHDRAWAL FIX: Simplified for Admin ---
 window.sendWithdraw = async () => {
     let amt = parseInt(document.getElementById("wamt").value);
     let upi = document.getElementById("upi").value;
-    
     if(!amt || !upi) return showPopup("Please enter all details!");
     if(amt < 100) return showPopup("Min Withdraw ₹100");
     if(amt > balance) return showPopup("Insufficient Credits!");
 
     try {
-        // User balance update (immediately)
         balance -= amt;
         document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         await updateDoc(doc(db, "users", currentUser), { balance: balance });
 
-        // Withdrawal Request with clean fields for Admin
+        // Using simple fields to avoid loading issues in Admin Panel
         await addDoc(collection(db, "withdrawRequests"), {
             user: currentUser,
             amount: amt,
             upi: upi,
             status: "pending",
-            type: "withdrawal", // Added for easier filtering
-            timestamp: Date.now(), // Fixed numeric timestamp for easy admin sorting
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            time: Date.now() // For index-free sorting
         });
 
         showPopup("Request Sent Successfully!");
         document.getElementById("wamt").value = "";
         document.getElementById("upi").value = "";
         loadWithdrawHistory(); 
-    } catch (e) {
-        console.error(e);
-        showPopup("Error: Check Connection");
-    }
+    } catch (e) { showPopup("Error: Check Connection"); }
 };
 
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
-
     let bonus = 0;
     if(amt === 100) bonus = amt * 0.20;
     else if(amt === 200) bonus = amt * 0.25;
     else if(amt === 300) bonus = amt * 0.30;
     else if(amt === 500) bonus = amt * 0.50;
-
     let finalAmount = amt + bonus;
 
     try {
         await addDoc(collection(db, "depositRequests"), {
             user: currentUser,
             amount: finalAmount, 
-            baseAmount: amt,
-            bonus: bonus,
             utr: utr,
             status: "pending",
-            timestamp: Date.now(),
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            time: Date.now()
         });
-        
         showPopup("Deposit Request Sent!");
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
         document.getElementById("totalDisplay").style.display = "none";
-    } catch (e) {
-        showPopup("Error submitting deposit");
-    }
+    } catch (e) { showPopup("Error submitting deposit"); }
 };
 
+// --- FIX: Loading history WITHOUT complex queries to avoid Admin Loading stall ---
 async function loadWithdrawHistory() {
     try {
-        let q = query(collection(db, "withdrawRequests"), where("user", "==", currentUser));
-        let snap = await getDocs(q);
+        const snap = await getDocs(collection(db, "withdrawRequests"));
         let container = document.getElementById("historyList");
         container.innerHTML = "";
 
-        if (snap.empty) {
-            container.innerHTML = "<p style='font-size:12px; opacity:0.4; text-align:center;'>No transaction history found.</p>";
+        let docsArray = [];
+        snap.forEach(d => {
+            let data = d.data();
+            if(data.user === currentUser) docsArray.push(data);
+        });
+
+        if (docsArray.length === 0) {
+            container.innerHTML = "<p style='font-size:12px; opacity:0.4; text-align:center;'>No history found.</p>";
             return;
         }
 
-        let docsArray = [];
-        snap.forEach(d => docsArray.push(d.data()));
-        // Sorting using local timestamp to avoid index errors
-        docsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        docsArray.sort((a, b) => (b.time || 0) - (a.time || 0));
 
         docsArray.forEach(d => {
-            let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Syncing...";
+            let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
             let status = d.status || "pending";
             let div = document.createElement("div");
             div.className = "history-item";
@@ -288,15 +255,12 @@ async function loadWithdrawHistory() {
             `;
             container.appendChild(div);
         });
-    } catch (e) {
-        console.log(e);
-    }
+    } catch (e) { console.log(e); }
 }
 
 function showPopup(msg) {
     let p = document.getElementById("popupMessage");
-    p.innerText = msg;
-    p.style.display = "block";
+    p.innerText = msg; p.style.display = "block";
     setTimeout(() => { p.style.display = "none"; }, 3000);
 }
 </script>
