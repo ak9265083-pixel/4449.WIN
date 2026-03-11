@@ -149,7 +149,6 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Select Package Logic
 window.selectPkg = (val) => {
     document.getElementById("amt").value = val;
 };
@@ -194,13 +193,12 @@ window.sendWithdraw = async () => {
     }
 };
 
-// --- FIX: Updated Send Deposit with immediate Balance + Bonus Credit ---
+// --- FIX: Logic changed to send Bonus to Admin for Approval ---
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
     
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
-    if(utr.length < 12) return showPopup("Enter valid 12-digit UTR!");
 
     // Bonus Logic
     let bonus = 0;
@@ -212,35 +210,28 @@ window.sendDeposit = async () => {
     let finalAmount = amt + bonus;
 
     try {
-        // 1. Record the request in the database
+        // Sirf depositRequests mein data add hoga, status "pending" rahega.
+        // Jab aap Admin Panel se is UTR ko check karke approve karoge, 
+        // tab finalAmount (Amt + Bonus) credit hona chahiye.
         await addDoc(collection(db, "depositRequests"), {
             user: currentUser,
             amount: amt,
             bonus: bonus,
-            totalWithBonus: finalAmount,
+            totalWithBonus: finalAmount, // Admin ko dikhega kitna dena hai
             utr: utr,
-            status: "approved", // Set to approved because we are adding balance immediately
+            status: "pending", 
             createdAt: serverTimestamp()
         });
-
-        // 2. UPDATE THE BALANCE (Adding bonus to the current balance)
-        balance += finalAmount;
-        await updateDoc(doc(db, "users", currentUser), { balance: balance });
-
-        // 3. Update the UI
-        document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         
-        let msg = bonus > 0 ? `Deposit Added! Bonus ₹${bonus} credited.` : "Deposit Added!";
+        let msg = bonus > 0 ? `Request Sent! (Bonus: ₹${bonus})` : "Request Sent!";
         showPopup(msg);
         
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
     } catch (e) {
-        console.error(e);
-        showPopup("Error: Transaction Failed");
+        showPopup("Error submitting deposit");
     }
 };
-// --- END FIX ---
 
 async function loadWithdrawHistory() {
     try {
