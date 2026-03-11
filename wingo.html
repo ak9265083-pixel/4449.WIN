@@ -2,433 +2,509 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wallet</title>
+<title>4449 WIN</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#8f939c;
+background:#9fa3ad;
 display:flex;
 justify-content:center;
 }
 
 .app{
-width:100%;
-max-width:420px;
-background:#f5f5f5;
+width:420px;
+background:white;
 min-height:100vh;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-position:relative;
-}
-
-.header-container{
-position:relative;
-height:60px;
+text-align:center;
+padding-bottom:90px;
 }
 
 .header{
 background:#ff6b6b;
 color:white;
 padding:15px;
-font-size:20px;
+font-size:22px;
 font-weight:bold;
-text-align:center;
 }
 
-.logo-top{
-position:absolute;
-top:5px;
-left:10px;
-width:50px;
-height:50px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid white;
-background:white;
-}
-
-.box{
-background:white;
+.wallet{
+background:#f2f2f2;
 margin:15px;
-padding:20px;
+padding:15px;
 border-radius:12px;
-text-align:center;
+font-size:18px;
 }
 
-.btn{
-padding:12px 20px;
+.timer{
 background:#ff6b6b;
 color:white;
-border:none;
-border-radius:8px;
 margin:10px;
-font-size:16px;
-cursor:pointer;
-transition:.3s;
-}
-
-.btn:hover{
-transform:scale(1.05);
-}
-
-input{
 padding:10px;
-width:80%;
-max-width:250px;
-border-radius:6px;
-border:1px solid #ccc;
-margin:5px;
-}
-
-.qr{
-width:200px;
-display:block;
-margin:auto;
-}
-
-/* PACKAGE */
-
-.package-container{
-display:flex;
-justify-content:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:10px;
-}
-
-.pkg{
-background:#ff6b6b;
-color:white;
-padding:12px;
 border-radius:10px;
-width:90px;
-cursor:pointer;
+font-size:18px;
+}
+
+.centerGame{
+margin:20px auto;
+width:120px;
+height:120px;
+border-radius:50%;
+background:#eee;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:50px;
 font-weight:bold;
-transition:.3s;
-box-shadow:0 5px 10px rgba(0,0,0,0.2);
-animation:fadeUp .4s ease;
 }
 
-.pkg:hover{
-transform:scale(1.1);
-background:#ff3b3b;
+.colors{
+display:flex;
+gap:10px;
+padding:10px;
 }
 
-@keyframes fadeUp{
-0%{opacity:0;transform:translateY(10px);}
-100%{opacity:1;transform:translateY(0);}
+.colors button{
+flex:1;
+padding:12px;
+border:none;
+color:white;
+border-radius:8px;
+font-size:16px;
+}
+
+.green{background:#2ecc71;}
+.red{background:#e74c3c;}
+.violet{background:#9b59b6;}
+
+.numbers{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:8px;
+padding:10px;
+}
+
+.numbers button{
+padding:15px;
+border-radius:50%;
+border:none;
+font-size:18px;
+background:#eee;
+cursor:pointer;
+}
+
+.history{
+margin:15px;
+text-align:left;
+}
+
+.historyItem{
+background:#eee;
+margin-bottom:6px;
+padding:8px;
+border-radius:6px;
+}
+
+.bottomWallet{
+position:fixed;
+bottom:10px;
+left:50%;
+transform:translateX(-50%);
+width:360px;
+background:white;
+border-radius:25px;
+display:flex;
+justify-content:space-around;
+padding:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.25);
+}
+
+.navBtn{
+display:flex;
+flex-direction:column;
+align-items:center;
+cursor:pointer;
+}
+
+.icon{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#ff6b6b;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:white;
+}
+
+.label{
+font-size:13px;
+margin-top:4px;
+font-weight:bold;
 }
 
 /* POPUP */
 
-.bet-popup{
+.betPopup{
 position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-width:300px;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
 display:none;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
-animation:zoomPop .4s ease;
-color:white;
+align-items:center;
+justify-content:center;
+}
+
+.betBox{
+position:relative;
+background:white;
+padding:25px;
+border-radius:18px;
+width:260px;
 text-align:center;
+animation:zoomPop .35s ease;
 }
 
 @keyframes zoomPop{
-0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}
-100%{transform:translate(-50%,-50%) scale(1);opacity:1;}
+0%{transform:scale(.5);opacity:0;}
+100%{transform:scale(1);opacity:1;}
 }
 
-/* HISTORY */
-
-.history-box{
-background:white;
-margin:15px;
-padding:15px;
-border-radius:12px;
-max-height:250px;
-overflow-y:auto;
-text-align:left;
+.betBox input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:16px;
+text-align:center;
+margin-top:10px;
 }
 
-.history-item{
-border-bottom:1px solid #ddd;
-padding:10px 0;
-display:flex;
-justify-content:space-between;
-animation:fadeHistory .4s ease;
+.betBtn{
+margin-top:15px;
+padding:12px;
+background:#ff6b6b;
+color:white;
+border:none;
+width:100%;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
 }
 
-@keyframes fadeHistory{
-0%{opacity:0;transform:translateX(-10px);}
-100%{opacity:1;transform:translateX(0);}
+/* Close button for bet popup */
+.closeBtn {
+position: absolute;
+top: 10px;
+right: 10px;
+background: #ff6b6b;
+color: white;
+border: none;
+border-radius: 50%;
+width: 28px;
+height: 28px;
+font-size: 16px;
+cursor: pointer;
 }
 
-.history-pending{color:orange;font-weight:bold;}
-.history-approved{color:green;font-weight:bold;}
-.history-rejected{color:red;font-weight:bold;}
+/* Animated Win/Loss popup */
+.resultPopup {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) scale(0.5);
+border-radius: 20px;
+padding: 25px 35px;
+text-align: center;
+font-size: 18px;
+font-weight: bold;
+color: white;
+display: none;
+animation: popupBounce 0.5s forwards;
+box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+z-index: 9999;
+}
+
+.resultPopup.win {
+background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.resultPopup.lose {
+background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+@keyframes popupBounce {
+0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+60%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+80%  { transform: translate(-50%, -50%) scale(0.95); }
+100% { transform: translate(-50%, -50%) scale(1); }
+}
 
 </style>
+
 </head>
 
 <body>
 
 <div class="app">
 
-<div class="header-container">
-<img src="logo.png" class="logo-top">
-<div class="header">Wallet</div>
-</div>
+<div class="header">4449 WIN</div>
 
-<div class="box">
+<div class="wallet">
 Balance ₹ <span id="balance">0</span>
 </div>
 
-<div class="box">
-<button class="btn" onclick="showDeposit()">Deposit</button>
-<button class="btn" onclick="showWithdraw()">Withdraw</button>
+<div class="timer">
+Next Result In <span id="time">30</span>s
 </div>
 
-<!-- DEPOSIT -->
+<div class="centerGame" id="ball">?</div>
 
-<div id="depositBox" class="box" style="display:none">
-
-<h3>Select Package</h3>
-
-<div class="package-container">
-
-<div class="pkg" onclick="selectPkg(100,20)">
-₹100<br><small>+20%</small>
+<div class="colors">
+<button class="green" onclick="selectBet('green')">Green</button>
+<button class="violet" onclick="selectBet('violet')">Violet</button>
+<button class="red" onclick="selectBet('red')">Red</button>
 </div>
 
-<div class="pkg" onclick="selectPkg(200,20)">
-₹200<br><small>+20%</small>
+<div class="numbers">
+<button onclick="selectBet(0)">0</button>
+<button onclick="selectBet(1)">1</button>
+<button onclick="selectBet(2)">2</button>
+<button onclick="selectBet(3)">3</button>
+<button onclick="selectBet(4)">4</button>
+<button onclick="selectBet(5)">5</button>
+<button onclick="selectBet(6)">6</button>
+<button onclick="selectBet(7)">7</button>
+<button onclick="selectBet(8)">8</button>
+<button onclick="selectBet(9)">9</button>
 </div>
 
-<div class="pkg" onclick="selectPkg(500,50)">
-₹500<br><small>+50%</small>
-</div>
-
-</div>
-
-<h3>Deposit</h3>
-
-<img src="ui.png" class="qr"><br>
-
-<input type="number" id="amt" placeholder="Amount"><br>
-
-<input type="text" id="utr" placeholder="Enter UTR Number"><br><br>
-
-<div id="bonusPreview"></div>
-
-<button class="btn" onclick="sendDeposit()">Submit</button>
-
-</div>
-
-<!-- WITHDRAW -->
-
-<div id="withdrawBox" class="box" style="display:none">
-
-<h3>Withdraw</h3>
-
-<input type="number" id="wamt" placeholder="Amount"><br>
-
-<input type="text" id="upi" placeholder="UPI ID"><br><br>
-
-<button class="btn" onclick="sendWithdraw()">Submit</button>
-
-</div>
-
-<!-- HISTORY -->
-
-<div class="history-box">
-<h3>Withdrawal History</h3>
+<div class="history">
+<h3>Last Results</h3>
 <div id="historyList"></div>
 </div>
 
-<div class="bet-popup" id="popupMessage"></div>
+</div>
 
+<div class="bottomWallet">
+
+<div class="navBtn" onclick="openWallet()">
+<div class="icon">💳</div>
+<div class="label">Wallet</div>
+</div>
+
+<div class="navBtn" onclick="openHelp()">
+<div class="icon">🎧</div>
+<div class="label">Help</div>
+</div>
+
+<div class="navBtn" onclick="logout()">
+<div class="icon">🚪</div>
+<div class="label">Logout</div>
+</div>
+
+</div>
+
+<div class="betPopup" id="betPopup">
+<div class="betBox">
+
+<button class="closeBtn" onclick="closeBetPopup()">✖</button>
+
+<h3>Enter Bet Amount</h3>
+
+<input type="number" id="betInput" placeholder="Amount">
+
+<button class="betBtn" onclick="placeBet()">Place Bet</button>
+
+</div>
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {getFirestore,doc,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
 authDomain: "win2-512e1.firebaseapp.com",
-projectId: "win2-512e1",
-storageBucket: "win2-512e1.firebasestorage.app",
-messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe"
+projectId: "win2-512e1"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser="";
 let balance=0;
+let userId="";
+let currentBet=null;
+let betAmount=0;
+let selectedValue=null;
 
 onAuthStateChanged(auth, async (user)=>{
 
 if(user){
 
-currentUser=user.uid;
+userId=user.uid;
 
-let ref=doc(db,"users",user.uid);
-
+let ref=doc(db,"users",userId);
 let snap=await getDoc(ref);
 
-if(!snap.exists()){
-await setDoc(ref,{balance:0});
-}
+if(snap.exists()){
 
-let data=(await getDoc(ref)).data();
-
-balance=data.balance;
-
+balance=snap.data().balance || 0;
 document.getElementById("balance").innerText=balance;
 
-loadWithdrawHistory();
+}
 
 }
 
 });
 
-window.showDeposit=function(){
-document.getElementById("depositBox").style.display="block";
-document.getElementById("withdrawBox").style.display="none";
-}
+function getColor(n){
 
-window.showWithdraw=function(){
-document.getElementById("withdrawBox").style.display="block";
-document.getElementById("depositBox").style.display="none";
-}
+if(n==0 || n==5) return "violet";
 
-window.selectPkg=function(amount,bonus){
+if(n==1 || n==3 || n==7 || n==9)
+return "green";
 
-document.getElementById("amt").value=amount;
-
-let bonusAmount=(amount*bonus)/100;
-
-let total=amount+bonusAmount;
-
-document.getElementById("bonusPreview").innerHTML=
-"Bonus ₹"+bonusAmount+" | Total Credit ₹"+total;
-
-showPopup("Package Selected ₹"+amount);
+if(n==2 || n==4 || n==6 || n==8)
+return "red";
 
 }
 
-window.sendDeposit=async function(){
+window.selectBet=function(v){
 
-let amt=parseInt(document.getElementById("amt").value);
-
-let utr=document.getElementById("utr").value;
-
-if(!amt) return alert("Enter amount");
-
-if(!utr) return alert("Enter UTR Number");
-
-await addDoc(collection(db,"depositRequests"),{
-user:currentUser,
-amount:amt,
-utr:utr,
-status:"pending"
-});
-
-showPopup("Deposit request sent. Waiting for admin approval");
-
-document.getElementById("amt").value="";
-document.getElementById("utr").value="";
-document.getElementById("bonusPreview").innerHTML="";
+selectedValue=v;
+document.getElementById("betPopup").style.display="flex";
 
 }
 
-window.sendWithdraw=async function(){
+window.closeBetPopup = function() {
+  document.getElementById("betPopup").style.display = "none";
+}
 
-let amt=parseInt(document.getElementById("wamt").value);
+window.placeBet=function(){
 
-let upi=document.getElementById("upi").value;
+let amt=parseInt(document.getElementById("betInput").value);
 
-if(!amt) return alert("Enter amount");
+if(balance<amt){
 
-if(amt>balance) return alert("Insufficient balance");
+alert("Low Balance");
+return;
 
-if(!upi) return alert("Enter UPI ID");
+}
 
 balance-=amt;
 
 document.getElementById("balance").innerText=balance;
 
-await addDoc(collection(db,"withdrawRequests"),{
-user:currentUser,
-amount:amt,
-upi:upi,
-status:"pending"
-});
+currentBet=selectedValue;
+betAmount=amt;
 
-showPopup("Withdraw request sent. Waiting for admin approval");
-
-document.getElementById("wamt").value="";
-document.getElementById("upi").value="";
-
-loadWithdrawHistory();
+document.getElementById("betPopup").style.display="none";
 
 }
 
-async function loadWithdrawHistory(){
+// Animated win/loss popup with colors
+function showResultPopup(message, isWin){
+    let popup = document.createElement("div");
+    popup.className = "resultPopup " + (isWin ? "win" : "lose");
+    popup.innerText = message;
+    document.body.appendChild(popup);
+    popup.style.display = "block";
+    setTimeout(()=>{
+        popup.remove();
+    }, 2000);
+}
 
-let q=query(collection(db,"withdrawRequests"),where("user","==",currentUser));
-
-let snap=await getDocs(q);
-
-let container=document.getElementById("historyList");
-
-container.innerHTML="";
-
-snap.forEach(docSnap=>{
-
-let d=docSnap.data();
-
-let statusText="Pending";
-
-if(d.status==="approved") statusText="Success";
-if(d.status==="rejected") statusText="Rejected";
-
-let statusClass=d.status==="pending"?"history-pending":
-d.status==="approved"?"history-approved":"history-rejected";
+function addHistory(num,color){
 
 let div=document.createElement("div");
 
-div.className="history-item "+statusClass;
+div.className="historyItem";
+div.innerHTML="Result: "+num+" ("+color+")";
 
-div.innerHTML=`<span>₹${d.amount}</span><span>${statusText}</span>`;
-
-container.appendChild(div);
-
-});
+document.getElementById("historyList").prepend(div);
 
 }
 
-function showPopup(msg){
+// Timer starts from 30 seconds now
+let time=30;
 
-let popup=document.getElementById("popupMessage");
+setInterval(async ()=>{
 
-popup.innerText=msg;
+time--;
+document.getElementById("time").innerText=time;
 
-popup.style.display="block";
+if(time<=0){
 
-setTimeout(()=>{popup.style.display="none"},3000);
+time=30;
 
+/* admin result */
+
+let resultDoc = await getDoc(doc(db,"wingo","result"));
+let result = resultDoc.data().number;
+
+let color=getColor(result);
+
+document.getElementById("ball").innerText=result;
+
+addHistory(result,color);
+
+if(currentBet!=null){
+
+if(currentBet===result){
+
+let winAmount = betAmount * (result==0?2:result);
+
+balance += winAmount;
+
+showResultPopup("You Win ₹"+winAmount, true);
+
+}else if(currentBet===color){
+
+balance += betAmount*2;
+
+showResultPopup("Color Win ₹"+betAmount*2, true);
+
+}else{
+
+showResultPopup("You Lose", false);
+
+}
+
+document.getElementById("balance").innerText=balance;
+
+await updateDoc(doc(db,"users",userId),{
+balance:balance
+});
+
+currentBet=null;
+betAmount=0;
+
+}
+
+}
+
+},1000);
+
+window.openWallet=function(){
+window.location.href="wallet.html";
+}
+
+window.openHelp=function(){
+window.location.href="help.html";
+}
+
+window.logout=function(){
+signOut(auth);
+window.location.href="login.html";
 }
 
 </script>
