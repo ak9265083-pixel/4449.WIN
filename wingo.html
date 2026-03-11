@@ -33,7 +33,6 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 }
 .numbers button:hover { transform: translateY(-3px) scale(1.05); }
 
-/* Ball Color Schemes */
 .ball-0 { background: linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%); } 
 .ball-1, .ball-3, .ball-7, .ball-9 { background: radial-gradient(circle at 30% 30%, #58d68d, #27ae60); } 
 .ball-2, .ball-4, .ball-6, .ball-8 { background: radial-gradient(circle at 30% 30%, #ec7063, #c0392b); } 
@@ -44,17 +43,28 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .big{background: #f39c12;}
 .small{background: #3498db;}
 
-.history{margin:15px;text-align:left;max-height:250px;overflow-y:auto;}
-.historyItem{background:#eee;margin-bottom:6px;padding:10px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;opacity:0;transform:translateY(10px);animation: fadeIn 0.5s forwards;}
-@keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
+/* History Tabs */
+.history-tabs{display:flex; margin:15px; border-bottom: 2px solid #eee;}
+.tab-btn{flex:1; padding: 10px; cursor:pointer; font-weight: bold; color: #777; border:none; background:none;}
+.tab-btn.active{color: #ff6b6b; border-bottom: 2px solid #ff6b6b;}
+
+.history{margin:15px;text-align:left;max-height:300px;overflow-y:auto;}
+.historyItem{background:#eee;margin-bottom:6px;padding:10px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;}
 .colorGreen{background:#2ecc71; color:white; padding: 2px 8px; border-radius: 4px;}
 .colorRed{background:#e74c3c; color:white; padding: 2px 8px; border-radius: 4px;}
 .colorViolet{background:#9b59b6; color:white; padding: 2px 8px; border-radius: 4px;}
-.bigTag{background:#f39c12;color:white;padding:3px 10px;border-radius:6px;font-weight:bold;font-size:13px;text-transform:uppercase;}
+.bigTag{background:#f39c12;color:white;padding:3px 10px;border-radius:6px;font-weight:bold;font-size:12px;text-transform:uppercase;}
+
+/* Bet History Specific */
+.betWin{color: #27ae60;}
+.betLose{color: #e74c3c;}
+.betPending{color: #f39c12;}
+
 .bottomWallet{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:360px;background:white;border-radius:25px;display:flex;justify-content:space-around;padding:10px;box-shadow:0 5px 20px rgba(0,0,0,0.25);z-index:1000;}
 .navBtn{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
 .icon{width:48px;height:48px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
 .label{font-size:13px;margin-top:4px;font-weight:bold;}
+
 .betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:2000;}
 .betBox{position:relative;background:white;padding:25px;border-radius:18px;width:260px;text-align:center;animation:zoomPop .35s ease;}
 @keyframes zoomPop{0%{transform:scale(.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
@@ -100,25 +110,24 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
     <button class="ball-9" onclick="selectBet(9)">9</button>
   </div>
   
-  <div class="history">
-    <h3>Last Results</h3>
+  <div class="history-tabs">
+    <button class="tab-btn active" id="gameTab" onclick="switchTab('game')">Game History</button>
+    <button class="tab-btn" id="betTab" onclick="switchTab('bet')">My Bets</button>
+  </div>
+
+  <div class="history" id="gameHistoryBox">
     <div id="historyList"></div>
+  </div>
+
+  <div class="history" id="myBetBox" style="display:none;">
+    <div id="myBetList"></div>
   </div>
 </div>
 
 <div class="bottomWallet">
-  <div class="navBtn" onclick="openWallet()">
-    <div class="icon">💳</div>
-    <div class="label">Wallet</div>
-  </div>
-  <div class="navBtn" onclick="openHelp()">
-    <div class="icon">🎧</div>
-    <div class="label">Help</div>
-  </div>
-  <div class="navBtn" onclick="logout()">
-    <div class="icon">🚪</div>
-    <div class="label">Logout</div>
-  </div>
+  <div class="navBtn" onclick="openWallet()"><div class="icon">💳</div><div class="label">Wallet</div></div>
+  <div class="navBtn" onclick="openHelp()"><div class="icon">🎧</div><div class="label">Help</div></div>
+  <div class="navBtn" onclick="logout()"><div class="icon">🚪</div><div class="label">Logout</div></div>
 </div>
 
 <div class="betPopup" id="betPopup">
@@ -133,37 +142,68 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore,doc,getDoc,updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,where,orderBy,limit,onSnapshot,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
-let lastResults = JSON.parse(localStorage.getItem("lastResults")||"[]");
+let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, currentBetId=null;
 let timerTime = parseInt(localStorage.getItem("timerTime")||"30");
-let timerInterval = null;
+let lastUsedAdminResult = null;
 
-// Ye variable track karega ki admin ka kaunsa result hum use kar chuke hain
-let lastUsedAdminResult = null; 
+// Tab Switching
+window.switchTab = (type) => {
+  if(type === 'game'){
+    document.getElementById('gameHistoryBox').style.display = 'block';
+    document.getElementById('myBetBox').style.display = 'none';
+    document.getElementById('gameTab').classList.add('active');
+    document.getElementById('betTab').classList.remove('active');
+  } else {
+    document.getElementById('gameHistoryBox').style.display = 'none';
+    document.getElementById('myBetBox').style.display = 'block';
+    document.getElementById('gameTab').classList.remove('active');
+    document.getElementById('betTab').classList.add('active');
+  }
+}
 
-function renderHistory(){
-  const historyList=document.getElementById("historyList");
-  historyList.innerHTML="";
-  lastResults.forEach(item=>{
-    let div=document.createElement("div");
-    div.className="historyItem";
-    let colorClass=item.color==="green"?"colorGreen":item.color==="red"?"colorRed":"colorViolet";
-    div.innerHTML=`Result ${item.num} (<span class="${colorClass}">${item.color}</span>) <span class="bigTag">${item.bigsmall}</span>`;
+// Global History Listener
+const historyQuery = query(collection(db, "history"), orderBy("createdAt", "desc"), limit(10));
+onSnapshot(historyQuery, (snapshot) => {
+  const historyList = document.getElementById("historyList");
+  historyList.innerHTML = "";
+  snapshot.forEach((doc) => {
+    const item = doc.data();
+    let div = document.createElement("div");
+    div.className = "historyItem";
+    let colorClass = item.color === "green" ? "colorGreen" : item.color === "red" ? "colorRed" : "colorViolet";
+    div.innerHTML = `Result ${item.num} (<span class="${colorClass}">${item.color}</span>) <span class="bigTag">${item.bigsmall}</span>`;
     historyList.appendChild(div);
   });
+});
+
+// My Bets Listener
+function listenToMyBets(uid) {
+  const betQuery = query(collection(db, "userBets"), where("uid", "==", uid), orderBy("createdAt", "desc"), limit(10));
+  onSnapshot(betQuery, (snapshot) => {
+    const myBetList = document.getElementById("myBetList");
+    myBetList.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const bet = doc.data();
+      let div = document.createElement("div");
+      div.className = "historyItem";
+      let statusClass = bet.status === "Win" ? "betWin" : (bet.status === "Lose" ? "betLose" : "betPending");
+      div.innerHTML = `Bet: <b>${bet.selection}</b> | ₹${bet.amount} | <span class="${statusClass}">${bet.status} ${bet.payout ? '₹'+bet.payout : ''}</span>`;
+      myBetList.appendChild(div);
+    });
+  });
 }
-renderHistory();
 
 onAuthStateChanged(auth,user=>{
   if(user){
     userId=user.uid;
+    listenToMyBets(userId);
     const ref=doc(db,"users",userId);
     getDoc(ref).then(snap=>{ if(snap.exists()){ balance=parseInt(snap.data().balance)||0; document.getElementById("balance").innerText=balance; }});
   }
@@ -174,42 +214,42 @@ function getBigSmall(n){ return n>=5?"BIG":"SMALL"; }
 
 window.selectBet=v=>{ selectedValue=v; document.getElementById("betPopup").style.display="flex"; }
 window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="none"; }
-window.placeBet=()=>{
+
+window.placeBet= async ()=>{
   let amt=parseInt(document.getElementById("betInput").value);
-  if(balance<amt){ alert("Low Balance"); return; }
-  balance-=amt; currentBet=selectedValue; betAmount=amt;
+  if(balance<amt || amt <= 0){ alert("Invalid Amount or Low Balance"); return; }
+  
+  balance-=amt; 
+  currentBet=selectedValue; 
+  betAmount=amt;
   document.getElementById("balance").innerText=balance;
   document.getElementById("betPopup").style.display="none";
+
+  // Bet ko Firebase mein save karein
+  try {
+    const docRef = await addDoc(collection(db, "userBets"), {
+      uid: userId,
+      selection: selectedValue,
+      amount: amt,
+      status: "Pending",
+      createdAt: serverTimestamp()
+    });
+    currentBetId = docRef.id; // Timer khatam hone par update karne ke liye ID
+    await updateDoc(doc(db,"users",userId),{balance:balance});
+  } catch(e) { console.log(e); }
 }
 
 function spawnConfetti(){for(let i=0;i<50;i++){let c=document.createElement("div");c.className="confetti";c.style.left=Math.random()*window.innerWidth+"px";c.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;c.style.animationDuration=(Math.random()*2+1)+"s";document.body.appendChild(c);setTimeout(()=>c.remove(),2500);}}
-
 function showResultPopup(msg,win){let p=document.createElement("div");p.className="resultPopup "+(win?"win":"lose");p.innerText=msg;document.body.appendChild(p);p.style.display="block";if(win) spawnConfetti();setTimeout(()=>p.remove(),2500);}
 
-function addHistory(num,color,bigsmall){
-  lastResults.unshift({num,color,bigsmall});
-  if(lastResults.length>10) lastResults.pop();
-  localStorage.setItem("lastResults",JSON.stringify(lastResults));
-  renderHistory();
-}
-
-// Updated Function: Naya result aane par hi admin wala result lega, warna Random dega
 async function fetchAdminResult(){ 
   try{ 
     let r=await getDoc(doc(db,"wingo","result")); 
     let adminValue = r.data().number;
-    
-    // Agar Firebase ka number pichli baar jaisa hi hai, to random return karo
-    if(adminValue === lastUsedAdminResult) {
-       return Math.floor(Math.random()*10);
-    } else {
-       // Agar naya number hai, to ise save kar lo aur wahi result dikhao
-       lastUsedAdminResult = adminValue;
-       return adminValue;
-    }
-  }catch(e){ 
-    return Math.floor(Math.random()*10); 
-  } 
+    if(adminValue === lastUsedAdminResult) return Math.floor(Math.random()*10);
+    lastUsedAdminResult = adminValue;
+    return adminValue;
+  }catch(e){ return Math.floor(Math.random()*10); } 
 }
 
 async function timerTick(){
@@ -220,34 +260,48 @@ async function timerTick(){
     timerTime=30; localStorage.setItem("timerTime",timerTime);
     let ball=document.getElementById("ball");
     ball.classList.add("animate");
+    
     let result=await fetchAdminResult();
     let color=getColor(result);
     let bigsmall=getBigSmall(result);
+    
+    // Add to Global History
+    await addDoc(collection(db, "history"), { num: result, color, bigsmall, createdAt: serverTimestamp() });
+
     setTimeout(()=>{
       ball.innerText=result;
       if(result===0) ball.style.background = "linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%)";
       else if(result===5) ball.style.background = "linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%)";
       else if(color==="green") ball.style.background = "radial-gradient(circle at 30% 30%, #58d68d, #27ae60)";
       else ball.style.background = "radial-gradient(circle at 30% 30%, #ec7063, #c0392b)";
-      
       ball.style.color="white";
       ball.classList.remove("animate");
     },500);
-    addHistory(result,color,bigsmall);
-    if(currentBet!=null){
-      if(currentBet===result){ balance+=betAmount*(result==0?2:9); showResultPopup("You Win ₹"+(betAmount*(result==0?2:9)),true);}
-      else if(currentBet===color){ balance+=betAmount*2; showResultPopup("Color Win ₹"+(betAmount*2),true);}
-      else if(currentBet===bigsmall.toLowerCase()){ balance+=betAmount*2; showResultPopup("Big/Small Win ₹"+(betAmount*2),true);}
-      else{ showResultPopup("You Lose",false);}
+
+    if(currentBetId){
+      let win = false;
+      let payout = 0;
+      if(currentBet===result){ win=true; payout=betAmount*9; }
+      else if(currentBet===color){ win=true; payout=betAmount*2; }
+      else if(currentBet===bigsmall.toLowerCase()){ win=true; payout=betAmount*2; }
+      
+      if(win){
+        balance += payout;
+        showResultPopup("Win ₹"+payout, true);
+        await updateDoc(doc(db,"userBets",currentBetId), {status: "Win", payout: payout});
+      } else {
+        showResultPopup("Lose", false);
+        await updateDoc(doc(db,"userBets",currentBetId), {status: "Lose", payout: 0});
+      }
+      
       document.getElementById("balance").innerText=balance;
       await updateDoc(doc(db,"users",userId),{balance:balance});
-      currentBet=null; betAmount=0;
+      currentBetId=null; currentBet=null;
     }
   }
 }
 
-timerInterval=setInterval(timerTick,1000);
-
+setInterval(timerTick,1000);
 window.openWallet=()=>{ window.location.href="wallet.html"; }
 window.openHelp=()=>{ window.location.href="help.html"; }
 window.logout=()=>{ signOut(auth); window.location.href="login.html"; }
