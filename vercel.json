@@ -1,9 +1,0 @@
-{
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/((?!register|login|admin|help|wallet|wingo|refer).*)",
-      "destination": "/index.html"
-    }
-  ]
-}
