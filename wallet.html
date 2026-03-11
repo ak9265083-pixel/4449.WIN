@@ -6,107 +6,85 @@
 
 <style>
 :root { 
-    --primary: #00f2ff; /* Neon Cyan */
-    --secondary: #ff007a; /* Neon Pink */
+    --primary: #00f2ff;
+    --secondary: #ff007a;
     --bg: #0b0e14; 
     --card-bg: #161b22; 
     --glass: rgba(255, 255, 255, 0.05);
 }
 
 body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
-
-.app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 50px; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; }
+.app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 50px; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; overflow-x: hidden; }
 
 /* Header */
-.header-container { position: sticky; top: 0; z-index: 1000; }
-.header { background: rgba(22, 27, 34, 0.95); padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
-.logo-top { position: absolute; top: 8px; left: 15px; width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); background: white; z-index: 1001; }
+.header { background: rgba(22, 27, 34, 0.95); padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); position: sticky; top: 0; z-index: 1000; }
+.logo-top { position: absolute; top: 8px; left: 15px; width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); background: white; }
 
 /* Balance Box */
 .box { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 #balance { font-size: 32px; color: var(--primary); font-weight: 900; text-shadow: 0 0 15px rgba(0,242,255,0.4); display: block; margin-top: 5px; }
 
 /* Buttons */
-.btn { padding: 12px 25px; background: transparent; color: var(--primary); border: 1px solid var(--primary); border-radius: 12px; margin: 10px 5px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
+.btn { padding: 12px 25px; background: transparent; color: var(--primary); border: 1px solid var(--primary); border-radius: 12px; margin: 10px 5px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
 .btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
-.btn-submit { background: var(--primary); color: black; width: 80%; margin-top: 20px; }
+.btn-submit { background: var(--primary); color: black; width: 90%; margin-top: 20px; border: none; }
 
 /* Inputs */
-input { padding: 12px; width: 85%; background: #0b0e14; border: 1px solid rgba(0, 242, 255, 0.2); color: white; border-radius: 10px; margin: 8px 0; outline: none; transition: 0.3s; text-align: center; }
-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0, 242, 255, 0.2); color: white; border-radius: 10px; margin: 8px 0; outline: none; text-align: center; }
 
-/* Package Tiles */
-.package-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-.pkg { background: var(--card-bg); border: 1px solid var(--glass); padding: 15px 5px; border-radius: 12px; cursor: pointer; transition: 0.3s; }
-.pkg:hover { border-color: var(--secondary); box-shadow: 0 0 15px rgba(255,0,122,0.3); transform: translateY(-3px); }
-.pkg b { color: var(--primary); font-size: 16px; }
-.pkg small { color: var(--secondary); display: block; font-weight: bold; margin-top: 4px; }
-
-/* History Section */
+/* History */
 .history-box { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass); text-align: left; }
-.history-box h3 { color: var(--primary); font-size: 14px; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
-.history-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 0; display: flex; flex-direction: column; gap: 4px; }
-.history-row { display: flex; justify-content: space-between; align-items: center; }
-.history-details { font-size: 11px; opacity: 0.6; color: #8b949e; }
+.history-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; }
+.history-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.history-details { font-size: 11px; color: #8b949e; margin-top: 2px; }
 
-.history-pending { color: #fccf31; }
-.history-approved { color: #2ecc71; }
-.history-rejected { color: #e74c3c; }
+.history-pending { color: #fccf31; text-shadow: 0 0 5px #fccf31; }
+.history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
+.history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
 
-/* QR Code */
-.qr { width: 160px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); margin: 15px auto; border-radius: 10px; border: 2px solid white; }
-
-/* Popup Message */
-.bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); animation: slideDown 0.4s ease; }
-@keyframes slideDown { from { top: -50px; } to { top: 20px; } }
-
+/* Popup */
+.bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); }
 </style>
 </head>
 
 <body>
 
 <div class="app">
-    <div class="header-container">
+    <div class="header">
         <img src="logo.png" class="logo-top">
-        <div class="header">ACCOUNT WALLET</div>
+        <span>ACCOUNT WALLET</span>
     </div>
 
     <div class="box">
-        <span style="font-size: 12px; opacity: 0.7; letter-spacing: 1px;">AVAILABLE BALANCE</span>
+        <span style="font-size: 11px; opacity: 0.6; letter-spacing: 2px;">WALLET BALANCE</span>
         <span id="balance">₹ 0.00</span>
     </div>
 
-    <div style="display: flex; justify-content: center; gap: 5px;">
-        <button class="btn" onclick="showDeposit()">Deposit</button>
-        <button class="btn" onclick="showWithdraw()">Withdraw</button>
+    <div style="display: flex; justify-content: center; padding: 0 10px;">
+        <button class="btn" style="flex:1" onclick="showDeposit()">Deposit</button>
+        <button class="btn" style="flex:1" onclick="showWithdraw()">Withdraw</button>
     </div>
 
-    <div id="depositBox" class="box" style="display:none; border-color: var(--secondary);">
-        <h3 style="color:var(--secondary); font-size: 14px;">SELECT RECHARGE AMOUNT</h3>
-        <div class="package-container">
-            <div class="pkg" onclick="selectPkg(100,20)"><b>₹100</b><small>+20% Bonus</small></div>
-            <div class="pkg" onclick="selectPkg(200,20)"><b>₹200</b><small>+20% Bonus</small></div>
-            <div class="pkg" onclick="selectPkg(500,50)"><b>₹500</b><small>+50% Bonus</small></div>
-        </div>
-        
-        <img src="ui.png" class="qr">
-        <input type="number" id="amt" placeholder="Enter Amount">
-        <input type="text" id="utr" placeholder="Enter 12-Digit UTR Number">
-        <div id="bonusPreview" style="font-size:12px; margin-top:10px; color: var(--primary);"></div>
-        <button class="btn btn-submit" onclick="sendDeposit()" style="border-color: var(--secondary); color: var(--secondary);">Submit Deposit</button>
-    </div>
-
-    <div id="withdrawBox" class="box" style="display:none">
-        <h3 style="color:var(--primary); font-size: 14px;">WITHDRAW CREDITS</h3>
+    <div id="withdrawBox" class="box" style="display:none; border-color: var(--primary);">
+        <h3 style="color:var(--primary); font-size: 14px; margin-top:0;">WITHDRAWAL REQUEST</h3>
         <input type="number" id="wamt" placeholder="Enter Amount">
-        <input type="text" id="upi" placeholder="Enter UPI ID (e.g. name@okaxis)">
-        <p style="font-size: 10px; opacity: 0.5;">*Withdrawal usually takes 1-2 hours.</p>
+        <input type="text" id="upi" placeholder="Enter UPI ID (e.g. name@upi)">
         <button class="btn btn-submit" onclick="sendWithdraw()">Confirm Withdrawal</button>
     </div>
 
+    <div id="depositBox" class="box" style="display:none; border-color: var(--secondary);">
+        <h3 style="color:var(--secondary); font-size: 14px; margin-top:0;">DEPOSIT CREDITS</h3>
+        <img src="ui.png" style="width:150px; border:2px solid white; border-radius:10px; margin:10px 0;">
+        <input type="number" id="amt" placeholder="Amount">
+        <input type="text" id="utr" placeholder="12 Digit UTR Number">
+        <button class="btn btn-submit" onclick="sendDeposit()" style="background:var(--secondary);">Submit Deposit</button>
+    </div>
+
     <div class="history-box">
-        <h3>Transaction History</h3>
-        <div id="historyList"></div>
+        <h3 style="color:var(--primary); font-size: 12px; margin-top:0; border-bottom:1px solid var(--glass); padding-bottom:10px;">WITHDRAWAL HISTORY</h3>
+        <div id="historyList">
+            <p style="font-size:12px; opacity:0.5; text-align:center;">Loading history...</p>
+        </div>
     </div>
 
     <div class="bet-popup" id="popupMessage"></div>
@@ -115,7 +93,7 @@ input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,255,
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
@@ -135,9 +113,10 @@ onAuthStateChanged(auth, async (user) => {
         currentUser = user.uid;
         let ref = doc(db, "users", user.uid);
         let snap = await getDoc(ref);
-        if(!snap.exists()) { await setDoc(ref, {balance: 0}); }
-        balance = snap.data().balance || 0;
-        document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+        if(snap.exists()) {
+            balance = snap.data().balance || 0;
+            document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+        }
         loadWithdrawHistory();
     }
 });
@@ -152,17 +131,42 @@ window.showWithdraw = () => {
     document.getElementById("depositBox").style.display = "none";
 };
 
-window.selectPkg = (amount, bonus) => {
-    document.getElementById("amt").value = amount;
-    let bonusAmt = (amount * bonus) / 100;
-    document.getElementById("bonusPreview").innerHTML = `🎁 Extra Bonus: ₹${bonusAmt} | Total: ₹${amount + bonusAmt}`;
-    showPopup("Selected: ₹" + amount);
+window.sendWithdraw = async () => {
+    let amt = parseInt(document.getElementById("wamt").value);
+    let upi = document.getElementById("upi").value;
+    
+    if(!amt || !upi) return showPopup("Please enter all details!");
+    if(amt < 100) return showPopup("Min Withdraw ₹100");
+    if(amt > balance) return showPopup("Insufficient Credits!");
+
+    try {
+        // 1. Update Balance in App & Firestore
+        balance -= amt;
+        document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+        await updateDoc(doc(db, "users", currentUser), { balance: balance });
+
+        // 2. Save to history
+        await addDoc(collection(db, "withdrawRequests"), {
+            user: currentUser,
+            amount: amt,
+            upi: upi,
+            status: "pending",
+            createdAt: serverTimestamp()
+        });
+
+        showPopup("Request Sent Successfully!");
+        document.getElementById("wamt").value = "";
+        document.getElementById("upi").value = "";
+        loadWithdrawHistory(); // Refresh List
+    } catch (e) {
+        showPopup("Error: Check Connection");
+    }
 };
 
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
-    if(!amt || !utr) return showPopup("Fill all details!");
+    if(!amt || !utr) return showPopup("Enter Amount & UTR!");
 
     await addDoc(collection(db, "depositRequests"), {
         user: currentUser,
@@ -176,52 +180,42 @@ window.sendDeposit = async () => {
     document.getElementById("utr").value = "";
 };
 
-window.sendWithdraw = async () => {
-    let amt = parseInt(document.getElementById("wamt").value);
-    let upi = document.getElementById("upi").value;
-    if(!amt || !upi) return showPopup("Fill all details!");
-    if(amt > balance) return showPopup("Insufficient Balance!");
-
-    balance -= amt;
-    document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
-
-    await addDoc(collection(db, "withdrawRequests"), {
-        user: currentUser,
-        amount: amt,
-        upi: upi,
-        status: "pending",
-        createdAt: serverTimestamp()
-    });
-    showPopup("Withdrawal Requested!");
-    document.getElementById("wamt").value = "";
-    document.getElementById("upi").value = "";
-    loadWithdrawHistory();
-};
-
 async function loadWithdrawHistory() {
-    let q = query(collection(db, "withdrawRequests"), where("user", "==", currentUser), orderBy("createdAt", "desc"));
-    let snap = await getDocs(q);
-    let container = document.getElementById("historyList");
-    container.innerHTML = "";
+    try {
+        let q = query(collection(db, "withdrawRequests"), where("user", "==", currentUser));
+        let snap = await getDocs(q);
+        let container = document.getElementById("historyList");
+        container.innerHTML = "";
 
-    snap.forEach(docSnap => {
-        let d = docSnap.data();
-        let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
-        let statusText = d.status.toUpperCase();
-        let statusClass = "history-" + d.status;
+        if (snap.empty) {
+            container.innerHTML = "<p style='font-size:12px; opacity:0.4; text-align:center;'>No transaction history found.</p>";
+            return;
+        }
 
-        let div = document.createElement("div");
-        div.className = "history-item";
-        div.innerHTML = `
-            <div class="history-row">
-                <span style="font-weight:bold; color:white;">₹${d.amount}</span>
-                <span class="${statusClass}" style="font-size:12px; font-weight:900;">${statusText}</span>
-            </div>
-            <div class="history-details">UPI: ${d.upi}</div>
-            <div class="history-details">${date}</div>
-        `;
-        container.appendChild(div);
-    });
+        let docsArray = [];
+        snap.forEach(d => docsArray.push(d.data()));
+        
+        // Sorting manually: Latest first
+        docsArray.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        docsArray.forEach(d => {
+            let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Syncing...";
+            let status = d.status || "pending";
+            let div = document.createElement("div");
+            div.className = "history-item";
+            div.innerHTML = `
+                <div class="history-row">
+                    <span style="font-weight:900; color:white; font-size:16px;">₹${d.amount}</span>
+                    <span class="history-${status}" style="font-size:11px; font-weight:bold; letter-spacing:1px;">${status.toUpperCase()}</span>
+                </div>
+                <div class="history-details">UPI: ${d.upi}</div>
+                <div class="history-details" style="opacity:0.4;">${date}</div>
+            `;
+            container.appendChild(div);
+        });
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 function showPopup(msg) {
