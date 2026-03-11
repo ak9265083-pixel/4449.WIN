@@ -2,49 +2,103 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Dashboard - 4449 WIN</title>
+<title>Admin Panel | 4449 WIN</title>
 <style>
-:root { --primary: #ff6b6b; --dark: #2c3e50; --light: #ecf0f1; --success: #2ecc71; --issue: #f39c12; }
-body{font-family: 'Segoe UI', Arial; background: var(--light); margin:0; display: flex; flex-direction: column; min-height: 100vh;}
+:root { 
+    --primary: #00f2ff; 
+    --secondary: #ff007a; 
+    --bg: #0b0e14; 
+    --card-bg: #161b22; 
+    --success: #2ecc71;
+    --glass: rgba(255, 255, 255, 0.05);
+}
 
-/* Header Style - Logo and Text aligned */
-.header{background: var(--primary); color:white; padding:10px 20px; font-size:22px; font-weight:bold; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; }
-.header-logo { width: 45px; height: 45px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; box-shadow: 0 0 8px rgba(0,0,0,0.2); }
+body {
+    font-family: 'Segoe UI', Arial; 
+    background: var(--bg); 
+    color: white; 
+    margin: 0; 
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh;
+}
 
-.nav-bar { display: flex; background: white; justify-content: space-around; padding: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; }
-.nav-item { padding: 8px 15px; cursor: pointer; border-radius: 20px; font-weight: 600; color: var(--dark); transition: 0.3s; margin: 2px; }
-.nav-item.active { background: var(--primary); color: white; }
+/* Header */
+.header {
+    background: var(--card-bg); 
+    padding: 15px 25px; 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    border-bottom: 2px solid var(--primary);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+}
+.header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
+.header span { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--primary); }
 
-.container{max-width:1000px; margin:20px auto; padding:0 15px; flex: 1;}
-.card{background:white; padding:20px; margin-bottom:20px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); animation: slideUp 0.5s ease;}
+/* Nav Bar */
+.nav-bar { 
+    display: flex; 
+    background: #05070a; 
+    justify-content: space-around; 
+    padding: 10px; 
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid var(--glass);
+}
+.nav-item { 
+    padding: 10px 20px; cursor: pointer; border-radius: 12px; 
+    font-weight: 600; color: #8b949e; transition: 0.3s; 
+}
+.nav-item.active { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
 
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
+.card { 
+    background: var(--card-bg); padding: 20px; margin-bottom: 20px; 
+    border-radius: 20px; border: 1px solid var(--glass);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
-.stats{display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;}
-.stat{background: white; padding:15px; border-radius:12px; text-align:center; border-left: 5px solid var(--primary);}
-.stat b { font-size: 22px; color: var(--primary); }
+/* Stats */
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+.stat { 
+    background: var(--card-bg); padding: 20px; border-radius: 15px; 
+    text-align: center; border-top: 4px solid var(--secondary); 
+}
+.stat b { font-size: 28px; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
 
-.search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 16px; box-sizing: border-box;}
+/* Result Buttons */
+.result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.result-grid button { 
+    padding: 15px; background: #0b0e14; border: 1px solid var(--primary); 
+    color: var(--primary); border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+.result-grid button:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
 
-button{padding:10px 18px; background: var(--primary); border:none; color:white; border-radius:8px; cursor:pointer; font-weight: 600;}
-.edit-btn{background:#3498db; font-size: 12px;}
-.del-btn{background:#e74c3c; font-size: 12px; margin-left: 5px;}
-.view-btn{background: var(--issue); font-size: 12px;}
+/* Tables */
+.search-box { 
+    width: 100%; padding: 12px; background: #05070a; border: 1px solid var(--glass); 
+    border-radius: 10px; color: white; margin-bottom: 15px; outline: none;
+}
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
+td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 
-table{width:100%; border-collapse:collapse; margin-top:10px;}
-th,td{text-align:left; padding:12px; border-bottom:1px solid #eee; font-size:14px;}
-th{color: #7f8c8d; text-transform: uppercase; font-size: 11px;}
+.ref-badge { 
+    background: rgba(255, 0, 122, 0.1); color: var(--secondary); 
+    padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;
+}
 
-.online-status{color: var(--success); font-weight:bold; font-size: 12px;}
-.offline-status{color:#95a5a6; font-size: 12px;}
+.edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
+.del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; }
 
 .section { display: none; }
-.section.active { display: block; }
+.section.active { display: block; animation: fadeIn 0.5s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.item-request { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
-.issue-card { background: #fffcf5; border-left: 4px solid var(--issue); padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-
-.screenshot-img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; }
+.item-request { 
+    background: #05070a; padding: 15px; border-radius: 12px; margin-bottom: 10px; 
+    display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary);
+}
 </style>
 </head>
 <body>
@@ -55,28 +109,28 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
 </script>
 
 <div class="header">
-    <img src="logo.png" alt="4449 WIN Logo" class="header-logo">
+    <img src="logo.png" alt="Logo" class="header-logo">
     <span>4449 WIN ADMIN</span>
 </div>
 
 <div class="nav-bar">
-    <div class="nav-item active" onclick="showSection('dash')">Dashboard</div>
+    <div class="nav-item active" onclick="showSection('dash')">Dash</div>
     <div class="nav-item" onclick="showSection('users')">Users</div>
-    <div class="nav-item" onclick="showSection('deposits')">Deposits</div>
-    <div class="nav-item" onclick="showSection('withdraws')">Withdraws</div>
-    <div class="nav-item" onclick="showSection('issues')">User Issues ⚠️</div>
+    <div class="nav-item" onclick="showSection('deposits')">Deposit</div>
+    <div class="nav-item" onclick="showSection('withdraws')">Withdraw</div>
+    <div class="nav-item" onclick="showSection('issues')">Support</div>
 </div>
 
 <div class="container">
 
     <div id="dash" class="section active">
         <div class="stats">
-            <div class="stat">Total Users<br><b id="totalUsers">0</b></div>
-            <div class="stat">Online Now<br><b id="activeUsers">0</b></div>
+            <div class="stat">TOTAL USERS<br><b id="totalUsers">0</b></div>
+            <div class="stat">ONLINE NOW<br><b id="activeUsers">0</b></div>
         </div>
         <div class="card">
-            <h3>🎯 Set Next Result</h3>
-            <div style="display: grid; grid-template-columns: repeat(5, 2fr); gap: 8px;">
+            <h3 style="color:var(--primary)">🎯 CONTROL NEXT RESULT</h3>
+            <div class="result-grid">
                 <button onclick="setResult(0)">0</button><button onclick="setResult(1)">1</button>
                 <button onclick="setResult(2)">2</button><button onclick="setResult(3)">3</button>
                 <button onclick="setResult(4)">4</button><button onclick="setResult(5)">5</button>
@@ -88,11 +142,11 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
 
     <div id="users" class="section">
         <div class="card">
-            <h3>👥 User Management</h3>
-            <input type="text" id="userSearch" class="search-box" placeholder="Search users..." onkeyup="searchUser()">
+            <h3>👥 USER DATABASE</h3>
+            <input type="text" id="userSearch" class="search-box" placeholder="Search by UID or Email...">
             <div style="overflow-x:auto;">
                 <table>
-                    <thead><tr><th>Status</th><th>User ID</th><th>Balance</th><th>Action</th></tr></thead>
+                    <thead><tr><th>Status</th><th>User Info</th><th>Balance</th><th>Refers</th><th>Action</th></tr></thead>
                     <tbody id="userTableBody"></tbody>
                 </table>
             </div>
@@ -100,36 +154,23 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     </div>
 
     <div id="deposits" class="section">
-        <div class="card">
-            <h3>💰 Pending Deposits</h3>
-            <div id="depositList">Loading...</div>
-        </div>
+        <div class="card"><h3>💰 DEPOSIT REQUESTS</h3><div id="depositList">Loading...</div></div>
     </div>
 
     <div id="withdraws" class="section">
-        <div class="card">
-            <h3>💸 Pending Withdrawals</h3>
-            <div id="withdrawList">Loading...</div>
-        </div>
+        <div class="card"><h3>💸 WITHDRAW REQUESTS</h3><div id="withdrawList">Loading...</div></div>
     </div>
 
     <div id="issues" class="section">
-        <div class="card">
-            <h3 style="color: var(--issue);">📩 Support Tickets</h3>
-            <div id="ticketList">Loading tickets...</div>
-        </div>
-
-        <div class="card">
-            <h3 style="color: var(--issue);">📸 Uploaded Screenshots</h3>
-            <div id="screenshotList">Loading screenshots...</div>
-        </div>
+        <div class="card"><h3>📩 TICKETS</h3><div id="ticketList"></div></div>
+        <div class="card"><h3>📸 SCREENSHOTS</h3><div id="screenshotList"></div></div>
     </div>
 
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
@@ -148,26 +189,62 @@ window.setResult = async (num) => {
     alert("Result set to: " + num);
 };
 
-// Listeners
-onSnapshot(collection(db, "users"), (snap) => {
+// Listeners & REFERRAL LOGIC
+onSnapshot(collection(db, "users"), async (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = ""; let online = 0;
     document.getElementById("totalUsers").innerText = snap.size;
-    snap.forEach(docSnap => {
-        const u = docSnap.data();
+
+    // Pehle saare users ka referral count nikalte hain
+    const usersData = [];
+    snap.forEach(d => usersData.push({id: d.id, ...d.data()}));
+
+    for (const u of usersData) {
+        // Count how many people used this user's referral code
+        const q = query(collection(db, "users"), where("invitedBy", "==", u.referralCode || "---"));
+        const refSnap = await getDocs(q);
+        const refCount = refSnap.size;
+
+        // --- BONUS LOGIC: 10 refers = 500 Credits ---
+        if(refCount >= 10 && !u.referralBonusClaimed) {
+            await updateDoc(doc(db, "users", u.id), {
+                balance: (u.balance || 0) + 500,
+                referralBonusClaimed: true
+            });
+            console.log("Bonus given to: " + u.id);
+        }
+
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         if(isOnline) online++;
+
         body.innerHTML += `<tr>
-            <td>${isOnline ? '<span class="online-status">●</span>' : '<span class="offline-status">○</span>'}</td>
-            <td><small>${docSnap.id}</small></td>
+            <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
+            <td><small>${u.email || u.id}</small><br><small style="color:var(--primary)">${u.id.substring(0,8)}</small></td>
             <td>₹${u.balance || 0}</td>
-            <td><button class="edit-btn" onclick="editBal('${docSnap.id}', ${u.balance})">Edit</button></td>
+            <td><span class="ref-badge">${refCount} Refs</span></td>
+            <td><button class="edit-btn" onclick="editBal('${u.id}', ${u.balance})">Edit</button></td>
         </tr>`;
-    });
+    }
     document.getElementById("activeUsers").innerText = online;
 });
 
-// Deposits & Withdraws
+// Approve Functions
+window.approveDeposit = async (id, user, amt) => {
+    const ref = doc(db,"users",user);
+    const snap = await getDoc(ref);
+    if(snap.exists()){
+        await updateDoc(ref, {balance: (snap.data().balance || 0) + amt});
+        await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
+        alert("Deposit Approved!");
+    }
+};
+
+window.editBal = async (uid, old) => {
+    let n = prompt("New Balance for " + uid, old);
+    if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
+};
+
+// Requests Listener
 function listenRequests(coll, elementId, action) {
     onSnapshot(collection(db, coll), (snap) => {
         const list = document.getElementById(elementId);
@@ -176,8 +253,8 @@ function listenRequests(coll, elementId, action) {
             const data = d.data();
             if(data.status === "pending") {
                 list.innerHTML += `<div class="item-request">
-                    <div><b>₹${data.amount}</b><br><small>${data.user}</small><br><small>${data.utr || data.upi || ''}</small></div>
-                    <button onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
+                    <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
+                    <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
                 </div>`;
             }
         });
@@ -186,67 +263,21 @@ function listenRequests(coll, elementId, action) {
 listenRequests("depositRequests", "depositList", "approveDeposit");
 listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
 
-// --- SUPPORT ISSUES LOGIC ---
-
-// Listen to Tickets
+// Support Section
 onSnapshot(collection(db, "tickets"), (snap) => {
     const list = document.getElementById("ticketList");
     list.innerHTML = "";
-    if(snap.empty) list.innerHTML = "<p>No tickets.</p>";
     snap.forEach(d => {
         const t = d.data();
-        list.innerHTML += `<div class="issue-card">
-            <b>User:</b> ${t.name} <small>(${t.uid})</small><br>
-            <b>Issue:</b> ${t.message}<br>
-            <small style="color:gray">${t.timestamp?.toDate().toLocaleString() || ''}</small><br><br>
-            <button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Solve & Delete</button>
-        </div>`;
-    });
-});
-
-// Listen to Screenshots
-onSnapshot(collection(db, "supportUploads"), (snap) => {
-    const list = document.getElementById("screenshotList");
-    list.innerHTML = "";
-    if(snap.empty) list.innerHTML = "<p>No screenshots.</p>";
-    snap.forEach(d => {
-        const s = d.data();
-        list.innerHTML += `<div class="issue-card" style="display:flex; gap:15px; align-items:center;">
-            <img src="${s.imageUrl}" class="screenshot-img" onclick="window.open('${s.imageUrl}')">
-            <div>
-                <b>UPI:</b> ${s.upi}<br>
-                <b>Type:</b> ${s.type}<br>
-                <b>UID:</b> ${s.uid}<br>
-                <button class="del-btn" style="margin-top:5px;" onclick="deleteDocData('supportUploads','${d.id}')">Delete</button>
-            </div>
+        list.innerHTML += `<div class="item-request" style="flex-direction:column; align-items:flex-start;">
+            <p><b>User:</b> ${t.name} | <b>Message:</b> ${t.message}</p>
+            <button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button>
         </div>`;
     });
 });
 
 window.deleteDocData = async (coll, id) => {
-    if(confirm("Mark as solved and delete?")) {
-        await deleteDoc(doc(db, coll, id));
-        alert("Removed.");
-    }
-};
-
-window.editBal = async (uid, old) => {
-    let n = prompt("New Balance:", old);
-    if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
-};
-
-window.approveDeposit = async (id, user, amt) => {
-    let ref = doc(db,"users",user);
-    let snap = await getDoc(ref);
-    let bal = snap.data().balance || 0;
-    await updateDoc(ref, {balance: bal + amt});
-    await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
-    alert("Approved!");
-};
-
-window.approveWithdraw = async (id, user, amt) => {
-    await updateDoc(doc(db,"withdrawRequests",id), {status:"approved"});
-    alert("Withdrawal Approved!");
+    if(confirm("Delete this?")) await deleteDoc(doc(db, coll, id));
 };
 </script>
 </body>
