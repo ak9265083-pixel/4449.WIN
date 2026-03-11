@@ -64,91 +64,149 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, getDocs, doc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-    authDomain:"win2-512e1.firebaseapp.com",
-    projectId:"win2-512e1"
+apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain:"win2-512e1.firebaseapp.com",
+projectId:"win2-512e1"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Load stats, deposits, withdraws
 loadStats();
 loadDeposits();
 loadWithdraws();
 
 async function loadStats(){
-    let users = await getDocs(collection(db,"users"));
-    document.getElementById("totalUsers").innerText = users.size;
-    let active=0;
-    users.forEach(u=>{
-        if(u.data().balance>0) active++;
-    });
-    document.getElementById("activeUsers").innerText = active;
+let users = await getDocs(collection(db,"users"));
+document.getElementById("totalUsers").innerText = users.size;
+
+let active=0;
+users.forEach(u=>{
+if(u.data().balance>0) active++;
+});
+document.getElementById("activeUsers").innerText = active;
 }
 
 async function loadDeposits(){
-    let snap = await getDocs(collection(db,"depositRequests"));
-    let list = document.getElementById("depositList");
-    list.innerHTML = "";
-    snap.forEach(docSnap=>{
-        let d = docSnap.data();
-        if(d.status==="pending"){
-            let div = document.createElement("div");
-            div.className="item";
-            div.innerHTML=`User: ${d.user}<br>Amount: ${d.amount}<br>UTR: ${d.utr}<br>
-            <button onclick='approveDeposit("${docSnap.id}","${d.user}",${d.amount})'>Approve</button>`;
-            list.appendChild(div);
-        }
-    });
+let snap = await getDocs(collection(db,"depositRequests"));
+let list = document.getElementById("depositList");
+list.innerHTML = "";
+
+snap.forEach(docSnap=>{
+let d = docSnap.data();
+
+if(d.status==="pending"){
+
+let div = document.createElement("div");
+
+div.className="item";
+
+div.innerHTML=`User: ${d.user}<br>
+Amount: ${d.amount}<br>
+UTR: ${d.utr}<br>
+<button onclick='approveDeposit("${docSnap.id}","${d.user}",${d.amount})'>Approve</button>`;
+
+list.appendChild(div);
+
+}
+
+});
 }
 
 async function loadWithdraws(){
-    let snap = await getDocs(collection(db,"withdrawRequests"));
-    let list = document.getElementById("withdrawList");
-    list.innerHTML = "";
-    snap.forEach(docSnap=>{
-        let d = docSnap.data();
-        if(d.status==="pending"){
-            let div = document.createElement("div");
-            div.className="item";
-            div.innerHTML=`User: ${d.user}<br>Amount: ${d.amount}<br>UPI: ${d.upi}<br>
-            <button onclick='approveWithdraw("${docSnap.id}","${d.user}",${d.amount})'>Approve</button>`;
-            list.appendChild(div);
-        }
-    });
+
+let snap = await getDocs(collection(db,"withdrawRequests"));
+
+let list = document.getElementById("withdrawList");
+
+list.innerHTML = "";
+
+snap.forEach(docSnap=>{
+
+let d = docSnap.data();
+
+if(d.status==="pending"){
+
+let div = document.createElement("div");
+
+div.className="item";
+
+div.innerHTML=`User: ${d.user}<br>
+Amount: ${d.amount}<br>
+UPI: ${d.upi}<br>
+<button onclick='approveWithdraw("${docSnap.id}","${d.user}",${d.amount})'>Approve</button>`;
+
+list.appendChild(div);
+
 }
 
-// Deposit approve
+});
+
+}
+
+/* DEPOSIT APPROVE WITH BONUS */
+
 window.approveDeposit = async function(id,user,amount){
-    let ref = doc(db,"users",user);
-    let snap = await getDoc(ref);
-    let bal = snap.data().balance || 0;
-    await updateDoc(ref,{balance: bal+amount});
-    await updateDoc(doc(db,"depositRequests",id),{status:"approved"});
-    alert("Deposit Approved");
-    loadDeposits();
+
+let ref = doc(db,"users",user);
+
+let snap = await getDoc(ref);
+
+let bal = snap.data().balance || 0;
+
+let bonus = 0;
+
+if(amount == 100) bonus = amount * 0.20;
+if(amount == 200) bonus = amount * 0.20;
+if(amount == 500) bonus = amount * 0.50;
+
+let total = amount + bonus;
+
+await updateDoc(ref,{balance: bal + total});
+
+await updateDoc(doc(db,"depositRequests",id),{status:"approved"});
+
+alert("Deposit Approved With Bonus");
+
+loadDeposits();
+
 }
 
-// Withdraw approve
+/* WITHDRAW APPROVE SAFE */
+
 window.approveWithdraw = async function(id,user,amount){
-    let ref = doc(db,"users",user);
-    let snap = await getDoc(ref);
-    let bal = snap.data().balance || 0;
-    await updateDoc(ref,{balance: bal-amount});
-    await updateDoc(doc(db,"withdrawRequests",id),{status:"approved"});
-    alert("Withdraw Approved");
-    loadWithdraws();
+
+let ref = doc(db,"users",user);
+
+let snap = await getDoc(ref);
+
+let bal = snap.data().balance || 0;
+
+let newBal = bal - amount;
+
+if(newBal < 0){
+newBal = 0;
 }
 
-// ✅ FIXED: Set Wingo Result
+await updateDoc(ref,{balance: newBal});
+
+await updateDoc(doc(db,"withdrawRequests",id),{status:"approved"});
+
+alert("Withdraw Approved");
+
+loadWithdraws();
+
+}
+
 window.setResult = async function(num){
-    // Admin aur Wingo page ab same document use karenge
-    await setDoc(doc(db,"wingo","result"),{
-        number: num,
-        time: Date.now()
-    });
-    alert("Result Updated");
+
+await setDoc(doc(db,"wingo","result"),{
+number:num,
+time:Date.now()
+});
+
+alert("Result Updated");
+
 }
 
 </script>
