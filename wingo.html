@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>4449 WIN</title>
-
 <style>
 body{
   margin:0;
@@ -69,10 +68,12 @@ body{
   box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1),
               inset 5px 5px 15px rgba(255,255,255,0.7),
               0 5px 15px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
 }
 .centerGame.animate {
   transform: rotateY(360deg) scale(1.2);
+  box-shadow: 0 0 20px #ff6b6b, 0 0 35px #ff3b3b inset;
 }
 .colors{
   display:flex;
@@ -300,11 +301,25 @@ body{
   from{opacity:0; transform: translateY(10px);}
   to{opacity:1; transform: translateY(0);}
 }
+/* Confetti Styles */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  top: -10px;
+  z-index: 99999;
+  opacity: 0.8;
+  pointer-events:none;
+  animation: fall 2s linear forwards;
+}
+@keyframes fall{
+  0% {transform: translateY(0) rotate(0deg);}
+  100% {transform: translateY(500px) rotate(720deg);}
+}
 </style>
-
 </head>
 <body>
-
 <div class="app">
   <div class="header">
     <img src="logo.png" alt="logo"> 4449 WIN
@@ -373,26 +388,19 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, lastResults=[];
-let timerTime = localStorage.getItem("timerTime") ? parseInt(localStorage.getItem("timerTime")) : 30;
+let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, lastResults=[], timerTime=30;
 
-// Load history & balance from localStorage
-if(localStorage.getItem("gameHistory")) lastResults = JSON.parse(localStorage.getItem("gameHistory"));
-if(localStorage.getItem("balance")) balance = parseInt(localStorage.getItem("balance"));
-document.getElementById("balance").innerText = balance;
-
-function renderHistory(){
-  let historyList = document.getElementById("historyList");
-  historyList.innerHTML="";
-  for(let item of lastResults){
-    let div = document.createElement("div");
-    div.className="historyItem";
-    let colorClass = item.color==="green"?"colorGreen":item.color==="red"?"colorRed":"colorViolet";
-    div.innerHTML=`Result ${item.num} (<span class="colorBox ${colorClass}">${item.color}</span>) <span class="bigTag">${item.bigsmall}</span>`;
-    historyList.appendChild(div);
+onAuthStateChanged(auth, async (user)=>{
+  if(user){
+    userId=user.uid;
+    let ref = doc(db,"users",userId);
+    let snap = await getDoc(ref);
+    if(snap.exists()){
+      balance = parseInt(snap.data().balance) || 0;
+      document.getElementById("balance").innerText = balance;
+    }
   }
-}
-renderHistory();
+});
 
 function getColor(n){ if(n==0||n==5) return "violet"; if([1,3,7,9].includes(n)) return "green"; return "red"; }
 function getBigSmall(n){ return (n>=5)?"BIG":"SMALL"; }
@@ -402,10 +410,23 @@ window.closeBetPopup=function(){ document.getElementById("betPopup").style.displ
 window.placeBet=function(){
   let amt=parseInt(document.getElementById("betInput").value);
   if(balance<amt){ alert("Low Balance"); return; }
-  balance-=amt; currentBet=selectedValue; betAmount=amt;
-  document.getElementById("balance").innerText=balance;
-  localStorage.setItem("balance",balance);
+  balance -= amt;
+  currentBet=selectedValue;
+  betAmount=amt;
+  document.getElementById("balance").innerText = balance;
   document.getElementById("betPopup").style.display="none";
+}
+
+function spawnConfetti(){
+  for(let i=0;i<50;i++){
+    let conf=document.createElement("div");
+    conf.className="confetti";
+    conf.style.left=Math.random()*window.innerWidth+"px";
+    conf.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+    conf.style.animationDuration= (Math.random()*2+1) + "s";
+    document.body.appendChild(conf);
+    setTimeout(()=>conf.remove(),2500);
+  }
 }
 
 function showResultPopup(msg,win){
@@ -414,14 +435,22 @@ function showResultPopup(msg,win){
   popup.innerText=msg;
   document.body.appendChild(popup);
   popup.style.display="block";
+  if(win) spawnConfetti();
   setTimeout(()=>popup.remove(),2500);
 }
 
 function addHistory(num,color,bigsmall){
   lastResults.unshift({num,color,bigsmall});
   if(lastResults.length>10) lastResults.pop();
-  localStorage.setItem("gameHistory",JSON.stringify(lastResults));
-  renderHistory();
+  let historyList = document.getElementById("historyList");
+  historyList.innerHTML="";
+  for(let item of lastResults){
+    let div=document.createElement("div");
+    div.className="historyItem";
+    let colorClass = item.color==="green"?"colorGreen":item.color==="red"?"colorRed":"colorViolet";
+    div.innerHTML=`Result ${item.num} (<span class="colorBox ${colorClass}">${item.color}</span>) <span class="bigTag">${item.bigsmall}</span>`;
+    historyList.appendChild(div);
+  }
 }
 
 async function fetchAdminResult(){
@@ -434,29 +463,26 @@ async function fetchAdminResult(){
 async function timerTick(){
   document.getElementById("time").innerText = timerTime;
   timerTime--;
-  localStorage.setItem("timerTime",timerTime);
   if(timerTime<0){
     timerTime=30;
-    localStorage.setItem("timerTime",timerTime);
-    document.getElementById("ball").classList.add("animate");
+    let ballElem=document.getElementById("ball");
+    ballElem.classList.add("animate");
     let result = await fetchAdminResult();
     let color = getColor(result);
     let bigsmall = getBigSmall(result);
     setTimeout(()=>{
-      let ball = document.getElementById("ball");
-      ball.innerText = result;
-      ball.style.color = color;
-      ball.classList.remove("animate");
+      ballElem.innerText = result;
+      ballElem.style.color=color;
+      ballElem.classList.remove("animate");
     },500);
     addHistory(result,color,bigsmall);
-
     if(currentBet!=null){
-      if(currentBet===result){ balance += betAmount*(result==0?2:result); showResultPopup("You Win ₹"+(betAmount*(result==0?2:result)),true);}
+      if(currentBet===result){ balance+=betAmount*(result==0?2:result); showResultPopup("You Win ₹"+(betAmount*(result==0?2:result)),true);}
       else if(currentBet===color){ balance+=betAmount*2; showResultPopup("Color Win ₹"+(betAmount*2),true);}
       else if(currentBet===bigsmall.toLowerCase()){ balance+=betAmount*2; showResultPopup("Big/Small Win ₹"+(betAmount*2),true);}
       else{ showResultPopup("You Lose",false);}
       document.getElementById("balance").innerText = balance;
-      localStorage.setItem("balance",balance);
+      await updateDoc(doc(db,"users",userId),{balance:balance});
       currentBet=null; betAmount=0;
     }
   }
@@ -467,7 +493,6 @@ setInterval(timerTick,1000);
 window.openWallet=function(){ window.location.href="wallet.html"; }
 window.openHelp=function(){ window.location.href="help.html"; }
 window.logout=function(){ signOut(auth); window.location.href="login.html"; }
-
 </script>
 </body>
 </html>
