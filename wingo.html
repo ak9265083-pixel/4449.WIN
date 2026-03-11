@@ -194,14 +194,14 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,orderBy,limit,onSnapshot,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,orderBy,limit,onSnapshot,serverTimestamp,setDoc,increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
+let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, firstBetDone=false;
 
 window.copyUID = () => {
     navigator.clipboard.writeText(userId);
@@ -231,6 +231,7 @@ onAuthStateChanged(auth, user => {
       if(snap.exists()){ 
           const data = snap.data();
           balance=data.balance||0; 
+          firstBetDone = data.firstBetDone || false; // Status check
           document.getElementById("balance").innerText="₹ " + balance.toFixed(2); 
           document.getElementById("myReferCode").innerText = data.referralCode || user.uid.substring(0,6).toUpperCase();
       }
@@ -257,10 +258,22 @@ window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="no
 window.placeBet=async()=>{
   let amt=parseInt(document.getElementById("betInput").value);
   if(balance<amt || amt<=0){ alert("Inadequate Credits!"); return; }
-  balance-=amt; document.getElementById("balance").innerText="₹ "+balance.toFixed(2);
+  
+  balance-=amt; 
+  document.getElementById("balance").innerText="₹ "+balance.toFixed(2);
   document.getElementById("betPopup").style.display="none";
-  currentBet=selectedValue; betAmount=amt;
-  await updateDoc(doc(db,"users",userId), {balance:balance});
+  currentBet=selectedValue; 
+  betAmount=amt;
+
+  // UPDATED LOGIC: Jab user ₹20+ ki bet lagaye
+  let updateData = { balance: balance };
+  
+  if (amt >= 20 && !firstBetDone) {
+      updateData.firstBetDone = true;
+      // Isse refer karne wale ka mission progress badh jayega
+  }
+
+  await updateDoc(doc(db,"users",userId), updateData);
 }
 
 async function processResult(){
