@@ -27,7 +27,6 @@ body {
     overflow: hidden;
 }
 
-/* Background Animation */
 body::before {
     content: "";
     position: fixed;
@@ -36,7 +35,6 @@ body::before {
     z-index: -1;
 }
 
-/* Main Container */
 .container {
     width: 92%;
     max-width: 400px;
@@ -53,7 +51,6 @@ body::before {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Header with Logo */
 .header {
     background: rgba(22, 27, 34, 0.95);
     padding: 18px 25px;
@@ -81,7 +78,6 @@ body::before {
     text-transform: uppercase;
 }
 
-/* Content */
 .content { padding: 30px; }
 
 h3 {
@@ -137,7 +133,6 @@ label {
     height: 18px;
 }
 
-/* Signup Button */
 .signup-btn {
     width: 100%;
     padding: 16px;
@@ -162,7 +157,6 @@ label {
 
 .signup-btn:active { transform: scale(0.96); }
 
-/* Bottom Link */
 .login-link {
     text-align: center;
     margin-top: 20px;
@@ -179,7 +173,6 @@ label {
 
 .login-link a:hover { text-shadow: 0 0 8px var(--secondary); }
 
-/* Popup Animation */
 .success-popup {
     position: fixed;
     top: 50%;
@@ -260,6 +253,7 @@ const db = getFirestore(app);
 window.signup = function() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const inviteCode = document.getElementById("invite").value.trim();
     const terms = document.getElementById("terms").checked;
 
     if (!email || !password) {
@@ -276,11 +270,16 @@ window.signup = function() {
     .then(async (userCredential) => {
         const user = userCredential.user;
         
-        // Firestore mein naya user profile banayein (0 Balance ke sath)
+        // Generate Unique Referral Code for this user (First 6 chars of UID)
+        const myReferralCode = user.uid.substring(0, 6).toUpperCase();
+
+        // Firestore mein naya user profile banayein
         await setDoc(doc(db, "users", user.uid), {
             email: email,
             balance: 0,
             uid: user.uid,
+            referralCode: myReferralCode, // User ka apna code
+            invitedBy: inviteCode || "NONE", // Kisne invite kiya
             createdAt: serverTimestamp()
         });
 
