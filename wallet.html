@@ -52,6 +52,9 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 
 /* Popup */
 .bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); }
+
+/* New Total Display Style */
+#totalDisplay { margin-top: 10px; font-size: 14px; font-weight: bold; color: #00ffaa; display: none; }
 </style>
 </head>
 
@@ -103,9 +106,11 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
         </div>
 
         <img src="ui.png" style="width:150px; border:2px solid white; border-radius:10px; margin:10px 0;">
-        <input type="number" id="amt" placeholder="Amount">
+        <input type="number" id="amt" placeholder="Amount" oninput="calculatePreview()">
         <input type="text" id="utr" placeholder="12 Digit UTR Number">
         <button class="btn btn-submit" onclick="sendDeposit()" style="background:var(--secondary);">Submit Deposit</button>
+        
+        <div id="totalDisplay">Final Amount to Receive: ₹ <span id="finalAmtVal">0</span></div>
     </div>
 
     <div class="history-box">
@@ -149,8 +154,30 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+// Select Package Logic
 window.selectPkg = (val) => {
     document.getElementById("amt").value = val;
+    window.calculatePreview(); // Show total immediately on click
+};
+
+// --- NEW: Calculate Preview to show below Submit Button ---
+window.calculatePreview = () => {
+    let amt = parseInt(document.getElementById("amt").value) || 0;
+    let bonus = 0;
+    if(amt === 100) bonus = amt * 0.20;
+    else if(amt === 200) bonus = amt * 0.25;
+    else if(amt === 300) bonus = amt * 0.30;
+    else if(amt === 500) bonus = amt * 0.50;
+
+    let total = amt + bonus;
+    let display = document.getElementById("totalDisplay");
+    
+    if(amt > 0) {
+        display.style.display = "block";
+        document.getElementById("finalAmtVal").innerText = total;
+    } else {
+        display.style.display = "none";
+    }
 };
 
 window.showDeposit = () => {
@@ -193,14 +220,13 @@ window.sendWithdraw = async () => {
     }
 };
 
-// --- FIX: Logic changed to send Bonus to Admin for Approval ---
+// --- FIXED: Sending 'amount' as the total so Admin Panel approves full value ---
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
     
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
 
-    // Bonus Logic
     let bonus = 0;
     if(amt === 100) bonus = amt * 0.20;
     else if(amt === 200) bonus = amt * 0.25;
@@ -210,24 +236,23 @@ window.sendDeposit = async () => {
     let finalAmount = amt + bonus;
 
     try {
-        // Sirf depositRequests mein data add hoga, status "pending" rahega.
-        // Jab aap Admin Panel se is UTR ko check karke approve karoge, 
-        // tab finalAmount (Amt + Bonus) credit hona chahiye.
         await addDoc(collection(db, "depositRequests"), {
             user: currentUser,
-            amount: amt,
+            // Hum 'amount' field mein hi total bhej rahe hain 
+            // taaki aapka Admin jab ise approve kare toh pura amount add ho.
+            amount: finalAmount, 
+            baseAmount: amt,
             bonus: bonus,
-            totalWithBonus: finalAmount, // Admin ko dikhega kitna dena hai
             utr: utr,
-            status: "pending", 
+            status: "pending",
             createdAt: serverTimestamp()
         });
         
-        let msg = bonus > 0 ? `Request Sent! (Bonus: ₹${bonus})` : "Request Sent!";
-        showPopup(msg);
+        showPopup("Deposit Request Sent!");
         
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
+        document.getElementById("totalDisplay").style.display = "none";
     } catch (e) {
         showPopup("Error submitting deposit");
     }
