@@ -33,18 +33,17 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 }
 .numbers button:hover { transform: translateY(-3px) scale(1.05); }
 
-/* Ball Color Schemes from Screenshot */
-.ball-0 { background: linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%); } /* Red-Violet */
-.ball-1, .ball-3, .ball-7, .ball-9 { background: radial-gradient(circle at 30% 30%, #58d68d, #27ae60); } /* Green */
-.ball-2, .ball-4, .ball-6, .ball-8 { background: radial-gradient(circle at 30% 30%, #ec7063, #c0392b); } /* Red */
-.ball-5 { background: linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%); } /* Green-Violet */
+/* Ball Color Schemes */
+.ball-0 { background: linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%); } 
+.ball-1, .ball-3, .ball-7, .ball-9 { background: radial-gradient(circle at 30% 30%, #58d68d, #27ae60); } 
+.ball-2, .ball-4, .ball-6, .ball-8 { background: radial-gradient(circle at 30% 30%, #ec7063, #c0392b); } 
+.ball-5 { background: linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%); } 
 
 .bigsmall{display:flex;gap:15px;padding:10px 15px;margin-top:10px;}
 .bigsmall button{flex:1;padding:15px;font-weight:bold;border:none;border-radius:10px;cursor:pointer;font-size:18px;color:white;box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
 .big{background: #f39c12;}
 .small{background: #3498db;}
 
-/* Rest of the CSS remains same as original */
 .history{margin:15px;text-align:left;max-height:250px;overflow-y:auto;}
 .historyItem{background:#eee;margin-bottom:6px;padding:10px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;opacity:0;transform:translateY(10px);animation: fadeIn 0.5s forwards;}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
@@ -132,7 +131,6 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 </div>
 
 <script type="module">
-// Firebase logic remains identical to your provided code
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore,doc,getDoc,updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -146,6 +144,9 @@ let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
 let lastResults = JSON.parse(localStorage.getItem("lastResults")||"[]");
 let timerTime = parseInt(localStorage.getItem("timerTime")||"30");
 let timerInterval = null;
+
+// Ye variable track karega ki admin ka kaunsa result hum use kar chuke hain
+let lastUsedAdminResult = null; 
 
 function renderHistory(){
   const historyList=document.getElementById("historyList");
@@ -192,7 +193,24 @@ function addHistory(num,color,bigsmall){
   renderHistory();
 }
 
-async function fetchAdminResult(){ try{ let r=await getDoc(doc(db,"wingo","result")); return r.data().number; }catch(e){ return Math.floor(Math.random()*10); } }
+// Updated Function: Naya result aane par hi admin wala result lega, warna Random dega
+async function fetchAdminResult(){ 
+  try{ 
+    let r=await getDoc(doc(db,"wingo","result")); 
+    let adminValue = r.data().number;
+    
+    // Agar Firebase ka number pichli baar jaisa hi hai, to random return karo
+    if(adminValue === lastUsedAdminResult) {
+       return Math.floor(Math.random()*10);
+    } else {
+       // Agar naya number hai, to ise save kar lo aur wahi result dikhao
+       lastUsedAdminResult = adminValue;
+       return adminValue;
+    }
+  }catch(e){ 
+    return Math.floor(Math.random()*10); 
+  } 
+}
 
 async function timerTick(){
   document.getElementById("time").innerText=timerTime;
@@ -207,7 +225,6 @@ async function timerTick(){
     let bigsmall=getBigSmall(result);
     setTimeout(()=>{
       ball.innerText=result;
-      // Change center ball color based on result
       if(result===0) ball.style.background = "linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%)";
       else if(result===5) ball.style.background = "linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%)";
       else if(color==="green") ball.style.background = "radial-gradient(circle at 30% 30%, #58d68d, #27ae60)";
@@ -218,7 +235,7 @@ async function timerTick(){
     },500);
     addHistory(result,color,bigsmall);
     if(currentBet!=null){
-      if(currentBet===result){ balance+=betAmount*(result==0?2:result); showResultPopup("You Win ₹"+(betAmount*(result==0?2:result)),true);}
+      if(currentBet===result){ balance+=betAmount*(result==0?2:9); showResultPopup("You Win ₹"+(betAmount*(result==0?2:9)),true);}
       else if(currentBet===color){ balance+=betAmount*2; showResultPopup("Color Win ₹"+(betAmount*2),true);}
       else if(currentBet===bigsmall.toLowerCase()){ balance+=betAmount*2; showResultPopup("Big/Small Win ₹"+(betAmount*2),true);}
       else{ showResultPopup("You Lose",false);}
