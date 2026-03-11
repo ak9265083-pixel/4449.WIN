@@ -168,6 +168,12 @@ padding:25px;
 border-radius:18px;
 width:260px;
 text-align:center;
+animation:zoomPop .35s ease;
+}
+
+@keyframes zoomPop{
+0%{transform:scale(.5);opacity:0;}
+100%{transform:scale(1);opacity:1;}
 }
 
 .betBox input{
@@ -206,26 +212,36 @@ font-size:16px;
 cursor:pointer;
 }
 
+/* RESULT POPUP */
+
 .resultPopup{
 position:fixed;
 top:50%;
 left:50%;
-transform:translate(-50%,-50%);
+transform:translate(-50%,-50%) scale(0.5);
 border-radius:20px;
 padding:25px 35px;
 text-align:center;
 font-size:18px;
 font-weight:bold;
 color:white;
+animation:popupBounce .5s forwards;
 z-index:9999;
 }
 
-.win{
+.resultPopup.win{
 background:linear-gradient(135deg,#2ecc71,#27ae60);
 }
 
-.lose{
+.resultPopup.lose{
 background:linear-gradient(135deg,#e74c3c,#c0392b);
+}
+
+@keyframes popupBounce{
+0%{transform:translate(-50%,-50%) scale(.3);opacity:0;}
+60%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
+80%{transform:translate(-50%,-50%) scale(.95);}
+100%{transform:translate(-50%,-50%) scale(1);}
 }
 
 </style>
@@ -273,6 +289,27 @@ Next Result In <span id="time">30</span>s
 
 </div>
 
+<!-- bottom buttons -->
+
+<div class="bottomWallet">
+
+<div class="navBtn" onclick="openWallet()">
+<div class="icon">💳</div>
+<div class="label">Wallet</div>
+</div>
+
+<div class="navBtn" onclick="openHelp()">
+<div class="icon">🎧</div>
+<div class="label">Help</div>
+</div>
+
+<div class="navBtn" onclick="logout()">
+<div class="icon">🚪</div>
+<div class="label">Logout</div>
+</div>
+
+</div>
+
 <div class="betPopup" id="betPopup">
 <div class="betBox">
 
@@ -287,255 +324,194 @@ Next Result In <span id="time">30</span>s
 </div>
 </div>
 
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-
-import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-import {getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,orderBy,limit,getDocs}
-
-from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-const firebaseConfig={
-apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain:"win2-512e1.firebaseapp.com",
-projectId:"win2-512e1"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-
-let balance=0;
-let userId="";
-let currentBet=null;
-let betAmount=0;
-let selectedValue=null;
-
-onAuthStateChanged(auth,async(user)=>{
-
-if(user){
-
-userId=user.uid;
-
-let snap=await getDoc(doc(db,"users",userId));
-
-if(snap.exists()){
-
-balance=snap.data().balance||0;
-
-document.getElementById("balance").innerText=balance;
-
-}
-
-}
-
-});
+let balance=1000
+let currentBet=null
+let betAmount=0
+let selectedValue=null
 
 function getColor(n){
 
-if(n==0||n==5) return "violet";
-
-if(n==1||n==3||n==7||n==9) return "green";
-
-return "red";
+if(n==0||n==5) return "violet"
+if(n==1||n==3||n==7||n==9) return "green"
+return "red"
 
 }
 
-window.selectBet=function(v){
+function selectBet(v){
 
-selectedValue=v;
-
-document.getElementById("betPopup").style.display="flex";
-
-}
-
-window.closeBetPopup=function(){
-
-document.getElementById("betPopup").style.display="none";
+selectedValue=v
+document.getElementById("betPopup").style.display="flex"
 
 }
 
-window.placeBet=function(){
+function closeBetPopup(){
 
-let amt=parseInt(document.getElementById("betInput").value);
+document.getElementById("betPopup").style.display="none"
+
+}
+
+function placeBet(){
+
+let amt=parseInt(document.getElementById("betInput").value)
 
 if(balance<amt){
 
-alert("Low Balance");
-
-return;
+alert("Low Balance")
+return
 
 }
 
-balance-=amt;
+balance-=amt
+document.getElementById("balance").innerText=balance
 
-document.getElementById("balance").innerText=balance;
+currentBet=selectedValue
+betAmount=amt
 
-currentBet=selectedValue;
-
-betAmount=amt;
-
-closeBetPopup();
+closeBetPopup()
 
 }
 
 function showResultPopup(msg,win){
 
-let popup=document.createElement("div");
+let popup=document.createElement("div")
 
-popup.className="resultPopup "+(win?"win":"lose");
+popup.className="resultPopup "+(win?"win":"lose")
 
-popup.innerText=msg;
+popup.innerText=msg
 
-document.body.appendChild(popup);
+document.body.appendChild(popup)
 
 setTimeout(()=>{
 
-popup.remove();
+popup.remove()
 
-},2000);
+},2000)
 
 }
 
 function animateBall(num){
 
-let ball=document.getElementById("ball");
+let ball=document.getElementById("ball")
 
-ball.innerText=num;
+ball.style.transform="rotate(360deg) scale(1.2)"
+
+setTimeout(()=>{
+
+ball.innerText=num
+ball.style.transform="rotate(0deg) scale(1)"
+
+},300)
 
 }
 
 function addHistory(num,color){
 
-let div=document.createElement("div");
+let div=document.createElement("div")
 
-div.className="historyItem";
+div.className="historyItem"
 
-div.innerHTML="Result: "+num+" ("+color+")";
+div.innerHTML="Result: "+num+" ("+color+")"
 
-let box=document.getElementById("historyList");
+let box=document.getElementById("historyList")
 
-box.prepend(div);
+box.prepend(div)
 
 if(box.children.length>10){
 
-box.removeChild(box.lastChild);
+box.removeChild(box.lastChild)
 
 }
 
 }
-
-async function saveHistory(num,color){
-
-await addDoc(collection(db,"wingo_history"),{
-
-number:num,
-
-color:color,
-
-time:Date.now()
-
-});
-
-}
-
-async function loadHistory(){
-
-let q=query(collection(db,"wingo_history"),orderBy("time","desc"),limit(10));
-
-let snap=await getDocs(q);
-
-snap.forEach(doc=>{
-
-let data=doc.data();
-
-addHistory(data.number,data.color);
-
-});
-
-}
-
-loadHistory();
 
 function generateResult(){
 
-return Math.floor(Math.random()*10);
+return Math.floor(Math.random()*10)
 
 }
 
-let roundTime=30;
+let roundTime=30
 
 function getRemainingTime(){
 
-let now=Math.floor(Date.now()/1000);
+let now=Math.floor(Date.now()/1000)
 
-return roundTime-(now%roundTime);
+return roundTime-(now%roundTime)
 
 }
 
-setInterval(async()=>{
+setInterval(()=>{
 
-let time=getRemainingTime();
+let time=getRemainingTime()
 
-document.getElementById("time").innerText=time;
+document.getElementById("time").innerText=time
 
 if(time==1){
 
-let result=generateResult();
+let result=generateResult()
 
-let color=getColor(result);
+let color=getColor(result)
 
-animateBall(result);
+animateBall(result)
 
-addHistory(result,color);
-
-saveHistory(result,color);
+addHistory(result,color)
 
 if(currentBet!=null){
 
 if(currentBet===result){
 
-let winAmount=betAmount*(result==0?2:result);
+let winAmount=betAmount*(result==0?2:result)
 
-balance+=winAmount;
+balance+=winAmount
 
-showResultPopup("You Win ₹"+winAmount,true);
+showResultPopup("You Win ₹"+winAmount,true)
 
 }
 
 else if(currentBet===color){
 
-balance+=betAmount*2;
+balance+=betAmount*2
 
-showResultPopup("Color Win ₹"+betAmount*2,true);
+showResultPopup("Color Win ₹"+betAmount*2,true)
 
 }
 
 else{
 
-showResultPopup("You Lose",false);
+showResultPopup("You Lose",false)
 
 }
 
-document.getElementById("balance").innerText=balance;
+document.getElementById("balance").innerText=balance
 
-await updateDoc(doc(db,"users",userId),{
-
-balance:balance
-
-});
-
-currentBet=null;
-
-betAmount=0;
+currentBet=null
+betAmount=0
 
 }
 
 }
 
-},1000);
+},1000)
+
+function openWallet(){
+
+window.location.href="wallet.html"
+
+}
+
+function openHelp(){
+
+window.location.href="help.html"
+
+}
+
+function logout(){
+
+window.location.href="login.html"
+
+}
 
 </script>
 
