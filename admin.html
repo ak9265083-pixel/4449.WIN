@@ -200,16 +200,12 @@ window.filterUsers = function() {
     let input = document.getElementById("userSearch").value.toUpperCase();
     let table = document.getElementById("userTableBody");
     let tr = table.getElementsByTagName("tr");
-
     for (let i = 0; i < tr.length; i++) {
-        let td = tr[i].getElementsByTagName("td")[1]; // User Info column
+        let td = tr[i].getElementsByTagName("td")[1]; 
         if (td) {
             let txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(input) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
+            if (txtValue.toUpperCase().indexOf(input) > -1) { tr[i].style.display = ""; } 
+            else { tr[i].style.display = "none"; }
         }
     }
 }
@@ -219,7 +215,6 @@ onSnapshot(collection(db, "users"), async (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = ""; let online = 0;
     document.getElementById("totalUsers").innerText = snap.size;
-
     const usersData = [];
     snap.forEach(d => usersData.push({id: d.id, ...d.data()}));
 
@@ -234,7 +229,6 @@ onSnapshot(collection(db, "users"), async (snap) => {
                 referralBonusClaimed: true
             });
         }
-
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         if(isOnline) online++;
 
@@ -247,10 +241,10 @@ onSnapshot(collection(db, "users"), async (snap) => {
         </tr>`;
     }
     document.getElementById("activeUsers").innerText = online;
-    // Keep search filter active after data updates
     filterUsers();
 });
 
+// APPROVE DEPOSIT
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db,"users",user);
     const snap = await getDoc(ref);
@@ -261,27 +255,46 @@ window.approveDeposit = async (id, user, amt) => {
     }
 };
 
+// NEW: APPROVE WITHDRAW
+window.approveWithdraw = async (id, user, amt) => {
+    if(confirm("Mark this withdrawal as paid?")) {
+        try {
+            await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
+            alert("Withdrawal Approved!");
+        } catch(e) { alert("Error: " + e.message); }
+    }
+};
+
 window.editBal = async (uid, old) => {
     let n = prompt("New Balance for " + uid, old);
     if(n !== null && n !== "") await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
 };
 
+// MODIFIED LISTENER FOR BOTH
 function listenRequests(coll, elementId, action) {
     onSnapshot(collection(db, coll), (snap) => {
         const list = document.getElementById(elementId);
         list.innerHTML = "";
+        if(snap.empty) { list.innerHTML = "No requests found."; return; }
+        
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
+                let info = data.upi ? `<br><small style="color:var(--secondary)">UPI: ${data.upi}</small>` : (data.utr ? `<br><small style="color:var(--primary)">UTR: ${data.utr}</small>` : "");
+                
                 list.innerHTML += `<div class="item-request">
-                    <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
+                    <div><b>₹${data.amount}</b><br><small>${data.user}</small>${info}</div>
                     <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
                 </div>`;
             }
         });
+        if(list.innerHTML === "") list.innerHTML = "No pending requests.";
     });
 }
+
+// Start Listeners
 listenRequests("depositRequests", "depositList", "approveDeposit");
+listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
 
 onSnapshot(collection(db, "tickets"), (snap) => {
     const list = document.getElementById("ticketList");
