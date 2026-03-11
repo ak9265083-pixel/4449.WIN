@@ -10,38 +10,39 @@
 body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
 .app { width: 420px; background: var(--bg); min-height: 100vh; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; padding-bottom: 50px; }
 
-/* Header with Logo */
-.header { background: rgba(22, 27, 34, 0.95); padding: 12px 15px; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--primary); color: var(--primary); position: sticky; top:0; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
-.header-logo { width: 35px; height: 35px; border-radius: 50%; background: white; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
+/* Header with Round Logo */
+.header { background: rgba(22, 27, 34, 0.95); padding: 12px 15px; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--primary); color: var(--primary); position: sticky; top:0; z-index: 1000; backdrop-filter: blur(10px); }
+.header-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+/* Referral Link Box */
+.link-card { background: var(--card-bg); margin: 15px; padding: 15px; border-radius: 15px; border: 1px dashed var(--primary); text-align: center; }
+.link-card p { margin: 0 0 10px; font-size: 12px; color: #8b949e; text-transform: uppercase; }
+.link-box { background: #0b0e14; padding: 10px; border-radius: 8px; font-size: 13px; color: var(--primary); word-break: break-all; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+.copy-link-btn { background: var(--primary); color: black; border: none; padding: 8px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
 
 /* Task Card */
 .task-card { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 20px 15px; padding: 20px; border-radius: 20px; border: 1px solid var(--secondary); box-shadow: 0 0 20px rgba(255,0,122,0.2); position: relative; }
 .reward-tag { background: var(--big-color); color: black; padding: 4px 12px; border-radius: 8px; font-weight: 900; position: absolute; top: -12px; right: 20px; box-shadow: 0 0 10px var(--big-color); font-size: 14px; }
 .task-title { color: var(--primary); font-size: 18px; font-weight: 800; margin-bottom: 10px; display: block; }
-.task-desc { font-size: 13px; color: #8b949e; margin-bottom: 20px; line-height: 1.5; }
 
 /* Progress Bar */
-.progress-box { background: rgba(255,255,255,0.1); height: 12px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(0, 242, 255, 0.2); }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); width: 33.3%; box-shadow: 0 0 10px var(--primary); }
+.progress-box { background: rgba(255,255,255,0.1); height: 12px; border-radius: 10px; overflow: hidden; margin: 10px 0; border: 1px solid rgba(0, 242, 255, 0.2); }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); width: 0%; transition: 0.5s; box-shadow: 0 0 10px var(--primary); }
 
 /* Stats Grid */
 .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 0 15px; }
 .stat-item { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--glass); text-align: center; }
 .stat-item h3 { margin: 0; font-size: 24px; color: var(--primary); }
-.stat-item p { margin: 5px 0 0; font-size: 11px; opacity: 0.6; text-transform: uppercase; }
 
-/* Referral List */
+/* List */
 .list-box { margin: 25px 15px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass); overflow: hidden; }
-.list-title { padding: 15px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--glass); color: var(--primary); font-weight: bold; font-size: 14px; text-transform: uppercase; }
+.list-title { padding: 15px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--glass); color: var(--primary); font-weight: bold; }
 .user-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.user-info b { font-size: 14px; display: block; }
-.user-info span { font-size: 10px; opacity: 0.5; }
 .status-badge { font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: 900; }
 .done { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
 .pending { background: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
 
-.back-btn { margin: 20px auto; display: block; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px 40px; border-radius: 12px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 13px; }
-.back-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+.back-btn { margin: 20px auto; display: block; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 12px 40px; border-radius: 12px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -52,46 +53,101 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
         <span>4449 REFERRAL</span>
     </div>
 
+    <div class="link-card">
+        <p>Your Personal Referral Link</p>
+        <div class="link-box" id="referLink">Generating...</div>
+        <button class="copy-link-btn" onclick="copyReferLink()">COPY LINK</button>
+    </div>
+
     <div class="task-card">
         <div class="reward-tag">₹500 REWARD</div>
         <span class="task-title">MEGA MISSION</span>
-        <p class="task-desc">Invite <b>6 friends</b>. Each must bet <b>₹20+</b> to unlock your reward.</p>
-        
-        <div class="progress-box">
-            <div class="progress-fill" style="width: 33.3%;"></div> </div>
+        <p style="font-size:12px; color:#8b949e;">Invite 6 friends. (Min. bet ₹20 each)</p>
+        <div class="progress-box"><div class="progress-fill" id="progBar"></div></div>
         <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold;">
-            <span style="color: var(--primary)">PROGRESS: 2 / 6</span>
-            <span style="color: var(--secondary)">REMAINING: 4</span>
+            <span id="progText" style="color: var(--primary)">PROGRESS: 0 / 6</span>
+            <span id="remainText" style="color: var(--secondary)">REMAINING: 6</span>
         </div>
     </div>
 
     <div class="stats-row">
-        <div class="stat-item">
-            <h3 id="totalInvited">12</h3>
-            <p>Total Invited</p>
-        </div>
-        <div class="stat-item">
-            <h3 id="activeInvited" style="color: var(--secondary);">08</h3>
-            <p>Active (Bet ₹20+)</p>
-        </div>
+        <div class="stat-item"><h3 id="totalInvited">0</h3><p style="font-size:10px; opacity:0.6;">Total Invited</p></div>
+        <div class="stat-item"><h3 id="activeInvited" style="color:var(--secondary);">0</h3><p style="font-size:10px; opacity:0.6;">Active (₹20+)</p></div>
     </div>
 
     <div class="list-box">
-        <div class="list-title">My Referral List</div>
+        <div class="list-title">Referral Details</div>
         <div id="referralList">
-            <div class="user-item">
-                <div class="user-info"><b>User_4429</b><span>Joined: 11/03/2026</span></div>
-                <div class="status-badge done">BET DONE (₹20+)</div>
-            </div>
-            <div class="user-item">
-                <div class="user-info"><b>Player_X</b><span>Joined: 10/03/2026</span></div>
-                <div class="status-badge pending">PENDING BET</div>
-            </div>
+            <p style="padding:20px; text-align:center; font-size:12px; opacity:0.5;">No referrals yet...</p>
         </div>
     </div>
 
     <button class="back-btn" onclick="location.href='index.html'">Back to Game</button>
 </div>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, user => {
+    if(user) {
+        const myId = user.uid;
+        // Generate Link (Replace your domain here)
+        const myLink = "https://4449win.web.app/register.html?ref=" + myId.substring(0,8);
+        document.getElementById("referLink").innerText = myLink;
+
+        // Fetch User Data for Stats
+        getDoc(doc(db, "users", myId)).then(snap => {
+            if(snap.exists()){
+                const data = snap.data();
+                const active = data.activeRefer || 0;
+                const total = data.totalRefer || 0;
+                
+                // Update UI
+                document.getElementById("totalInvited").innerText = total;
+                document.getElementById("activeInvited").innerText = active;
+                
+                // Update Progress Bar (Max 6)
+                let percent = (active / 6) * 100;
+                document.getElementById("progBar").style.width = Math.min(percent, 100) + "%";
+                document.getElementById("progText").innerText = `PROGRESS: ${active} / 6`;
+                document.getElementById("remainText").innerText = `REMAINING: ${active >= 6 ? 0 : 6 - active}`;
+            }
+        });
+
+        // Real-time List of Referrals
+        const q = query(collection(db, "users"), where("referredBy", "==", myId));
+        onSnapshot(q, (snap) => {
+            const listDiv = document.getElementById("referralList");
+            if(snap.empty) return;
+            listDiv.innerHTML = "";
+            snap.forEach(d => {
+                const u = d.data();
+                const statusClass = u.firstBetDone ? "done" : "pending";
+                const statusText = u.firstBetDone ? "BET DONE (₹20+)" : "PENDING BET";
+                listDiv.innerHTML += `
+                    <div class="user-item">
+                        <div style="font-size:14px;"><b>${u.username || 'User'}</b><br><span style="font-size:10px; opacity:0.5;">ID: ${d.id.substring(0,8)}</span></div>
+                        <div class="status-badge ${statusClass}">${statusText}</div>
+                    </div>`;
+            });
+        });
+    } else {
+        window.location.href = "login.html";
+    }
+});
+
+window.copyReferLink = () => {
+    const link = document.getElementById("referLink").innerText;
+    navigator.clipboard.writeText(link);
+    alert("Referral link copied!");
+}
+</script>
 </body>
 </html>
