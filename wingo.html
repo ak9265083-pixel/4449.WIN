@@ -4,7 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>4449 WIN </title>
 <style>
-/* SAARA CSS AAPKA PURANA HAI */
 :root { 
     --primary: #00f2ff; 
     --secondary: #ff007a; 
@@ -20,49 +19,50 @@
 body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
 .app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 110px; overflow-x: hidden; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; }
 
+/* Attractive Header */
 .header { background: rgba(22, 27, 34, 0.95); padding: 12px 15px; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--primary); color: var(--primary); position: sticky; top:0; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
 .header-logo { width: 35px; height: 35px; border-radius: 50%; background: white; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
 
-.profile-card { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px 15px 5px 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.profile-card { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .profile-card h2 { margin: 5px 0; font-size: 32px; color: var(--primary); text-shadow: 0 0 15px rgba(0,242,255,0.4); }
-.uid-box { background: rgba(0, 242, 255, 0.05); padding: 6px 12px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 12px; border: 1px solid rgba(0, 242, 255, 0.2); cursor: pointer; }
-
-.refer-container { margin: 10px 15px 20px 15px; padding: 15px; background: var(--glass); border-radius: 15px; border: 1px dashed var(--primary); display: flex; justify-content: space-between; align-items: center; }
-.copy-btn { background: var(--primary); color: black; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
 
 .timer-container { background: var(--card-bg); margin: 0 15px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--glass); }
 #time { font-size: 28px; color: var(--secondary); font-weight: 900; text-shadow: 0 0 10px var(--secondary); font-family: monospace; }
 
+/* NEON GLITCH ANIMATION */
 .centerGame { width: 100%; height: 130px; background: #1a1f29; border-radius: 20px; border: 2px solid var(--primary); box-shadow: 0 0 25px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: 900; position: relative; transition: 0.5s; overflow: hidden; margin-top:25px; }
 .centerGame.animate { animation: neonGlitch 0.3s infinite; }
-@keyframes neonGlitch { 0% { border-color: var(--primary); } 50% { border-color: var(--secondary); } 100% { border-color: var(--primary); } }
+@keyframes neonGlitch { 0% { border-color: var(--primary); transform: scale(1); } 50% { border-color: var(--secondary); transform: scale(1.02); } 100% { border-color: var(--primary); transform: scale(1); } }
 
 .bs-badge { position: absolute; bottom: 12px; right: 20px; padding: 5px 15px; border-radius: 8px; font-size: 16px; font-weight: 900; transform: skew(-15deg) scale(0); transition: 0.4s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 .bs-badge.show { transform: skew(-15deg) scale(1); }
 
-.numbers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 15px; }
-.numbers button { height: 55px; border-radius: 12px; border: none; font-size: 20px; font-weight: bold; color: white; cursor: pointer; }
-.ball-0 { background: linear-gradient(135deg, var(--red) 50%, var(--violet) 50%); } 
-.ball-5 { background: linear-gradient(135deg, var(--green) 50%, var(--violet) 50%); } 
-.ball-odd { background: var(--green); } 
-.ball-even { background: var(--red); }
-
+/* Buttons & Numbers */
 .colors, .bigsmall { display: flex; gap: 10px; padding: 10px 15px; }
-.colors button, .bigsmall button { flex: 1; padding: 16px; border: none; color: white; border-radius: 12px; font-weight: 900; cursor: pointer; }
-.green-btn { background: var(--green); }
-.red-btn { background: var(--red); }
-.violet-btn { background: var(--violet); }
+.colors button, .bigsmall button { flex: 1; padding: 16px; border: none; color: white; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+.colors button:active, .bigsmall button:active { transform: scale(0.9); }
+.green-btn { background: var(--green); box-shadow: 0 0 15px var(--green); }
+.red-btn { background: var(--red); box-shadow: 0 0 15px var(--red); }
+.violet-btn { background: var(--violet); box-shadow: 0 0 15px var(--violet); }
 .big { background: var(--big-color); color: black !important; }
 .small { background: var(--primary); color: black !important; }
 
-.bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; padding: 15px 0; z-index: 2000; }
-.navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; flex: 1; text-decoration: none; }
+.numbers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 15px; }
+.numbers button { height: 55px; border-radius: 12px; border: none; font-size: 20px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; background: var(--card-bg); border: 1px solid var(--glass); }
+.ball-0 { background: linear-gradient(135deg, var(--red) 50%, var(--violet) 50%) !important; } 
+.ball-5 { background: linear-gradient(135deg, var(--green) 50%, var(--violet) 50%) !important; } 
+.ball-odd { background: var(--green) !important; } 
+.ball-even { background: var(--red) !important; }
 
-.betPopup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 3000; backdrop-filter: blur(8px); }
-.betBox { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 320px; border: 2px solid var(--primary); text-align:center; }
-.resultPopup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 40px 60px; border-radius: 25px; font-weight: 900; font-size: 32px; z-index: 9999; display:none; }
-.win { background: #1c2333; color: var(--primary); border: 3px solid var(--primary); }
+/* History & Popups */
+.history { margin: 20px 15px; text-align: left; }
+.resultPopup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); padding: 40px 60px; border-radius: 25px; font-weight: 900; font-size: 32px; z-index: 9999; display:none; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes pop { from { transform: translate(-50%,-50%) scale(0.5); opacity:0; } to { transform: translate(-50%,-50%) scale(1); opacity:1; } }
+.win { background: #1c2333; color: var(--primary); border: 3px solid var(--primary); box-shadow: 0 0 50px var(--primary); }
 .lose { background: #111; color: white; border: 3px solid #444; }
+
+.bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; padding: 15px 0; z-index: 2000; }
+.navBtn { flex: 1; color: #8b949e; cursor: pointer; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -71,14 +71,9 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
   <div class="header"><img src="logo.png" alt="Logo" class="header-logo"> <span>4449 WIN</span></div>
   
   <div class="profile-card">
-    <p>Current Credits</p>
+    <p>Available Balance</p>
     <h2 id="balance">₹ 0.00</h2>
-    <div class="uid-box" onclick="copyUID()"><span>ID: <span id="displayUid">...</span></span></div>
-  </div>
-
-  <div class="refer-container">
-    <div class="refer-info"><p>Referral Code</p><b id="myReferCode">LOADING...</b></div>
-    <button class="copy-btn" onclick="copyReferCode()">COPY</button>
+    <small id="uidText">UID: Loading...</small>
   </div>
 
   <div class="timer-container"><div>⏱ WINGO 30S</div><div id="time">00:30</div></div>
@@ -101,126 +96,119 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
   </div>
   
   <div class="history">
-    <h4 style="color:var(--primary)">Live Game History</h4>
+    <h4 style="color:var(--primary)">Game History</h4>
     <div id="historyList"></div>
   </div>
 </div>
 
 <div class="bottomWallet">
-  <div class="navBtn" onclick="location.href='refer.html'">📢 Refer</div>
   <div class="navBtn" onclick="location.href='wallet.html'">💳 Wallet</div>
   <div class="navBtn" onclick="location.href='help.html'">🎧 Help</div>
-  <div class="navBtn" onclick="logout()">🚪 Logout</div>
 </div>
 
-<div class="betPopup" id="betPopup">
-  <div class="betBox">
-    <h3 id="betTitle">SELECT Credits</h3>
-    <input type="number" id="betInput" style="width:100%; padding:10px; margin:15px 0;">
-    <div style="display:flex; gap:10px;"><button onclick="closeBetPopup()" class="cancelBtn">CANCEL</button><button onclick="placeBet()" class="confirmBtn">CONFIRM</button></div>
-  </div>
+<div id="betPopup" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; z-index:5000;">
+    <div style="background:var(--card-bg); padding:30px; border-radius:20px; border:2px solid var(--primary); width:80%;">
+        <h3 id="betTitle">Enter Amount</h3>
+        <input type="number" id="betAmount" style="width:100%; padding:12px; margin:15px 0; background:#0b0e14; border:1px solid var(--primary); color:white;">
+        <div style="display:flex; gap:10px;"><button onclick="closeBetPopup()" style="flex:1; padding:10px;">Cancel</button><button onclick="confirmBet()" style="flex:1; padding:10px; background:var(--primary); color:black;">Confirm</button></div>
+    </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,orderBy,limit,onSnapshot,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
+let balance=0, userId="", currentBet=null, bAmt=0, selection=null;
 
-window.copyUID = () => { navigator.clipboard.writeText(userId); alert("UID Copied!"); }
-
-function updateTimer() {
-    const remaining = 30 - (new Date().getSeconds() % 30);
-    document.getElementById("time").innerText = "00:" + (remaining < 10 ? "0" + remaining : remaining);
-    if (remaining === 30) { processResult(); }
+// Timer Logic
+function tick() {
+    const sec = new Date().getSeconds();
+    const remain = 30 - (sec % 30);
+    document.getElementById("time").innerText = "00:" + (remain < 10 ? "0" + remain : remain);
+    if (remain === 30) { runResult(); }
 }
-setInterval(updateTimer, 1000);
+setInterval(tick, 1000);
 
-onAuthStateChanged(auth, user => {
-  if(user){
-    userId=user.uid;
-    document.getElementById("displayUid").innerText = userId.substring(0,12).toUpperCase();
-    getDoc(doc(db,"users",userId)).then(snap => {
-      if(snap.exists()){ 
-          balance=snap.data().balance||0; 
-          document.getElementById("balance").innerText="₹ " + balance.toFixed(2); 
-          document.getElementById("myReferCode").innerText = snap.data().referralCode || user.uid.substring(0,6).toUpperCase();
-      }
-    });
-  }
-});
-
-onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(10)), (snap) => {
-  let list = document.getElementById("historyList"); list.innerHTML = "";
-  snap.forEach(d => {
-    let item = d.data();
-    let bg = item.num === 0 ? "ball-0" : item.num === 5 ? "ball-5" : (item.color === "green" ? "ball-odd" : "ball-even");
-    list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333">
-        <span class="res-num ${bg}" style="width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;">${item.num}</span>
-        <span>${item.bigsmall}</span>
-    </div>`;
-  });
-});
-
-window.selectBet=v=>{ selectedValue=v; document.getElementById("betTitle").innerText="BET ON: "+v; document.getElementById("betPopup").style.display="flex"; }
-window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="none"; }
-window.placeBet=async()=>{
-  let amt=parseInt(document.getElementById("betInput").value);
-  if(balance<amt || amt<=0) return;
-  balance-=amt; document.getElementById("balance").innerText="₹ "+balance.toFixed(2);
-  document.getElementById("betPopup").style.display="none";
-  currentBet=selectedValue; betAmount=amt;
-  await updateDoc(doc(db,"users",userId), {balance:balance});
-}
-
-// MAIN LOGIC: FIXED OR RANDOM
-async function processResult(){
-    let box=document.getElementById("ball"), badge=document.getElementById("bsBadge"), resText=document.getElementById("resText");
+// Result Processing
+async function runResult() {
+    const box = document.getElementById("ball"), txt = document.getElementById("resText"), badge = document.getElementById("bsBadge");
     box.classList.add("animate"); badge.classList.remove("show");
 
     let result;
-    const adminDoc = await getDoc(doc(db, "wingo", "result"));
-    if (adminDoc.exists() && adminDoc.data().manual === true) {
-        result = adminDoc.data().number;
+    const adminSnap = await getDoc(doc(db, "wingo", "result"));
+    if (adminSnap.exists() && adminSnap.data().manual === true) {
+        result = adminSnap.data().number;
         await updateDoc(doc(db, "wingo", "result"), { manual: false });
     } else {
         result = Math.floor(Math.random() * 10);
     }
 
-    let color = (result===0||result===5)?"violet":([1,3,7,9].includes(result)?"green":"red");
-    let bs = result>=5?"BIG":"SMALL";
-    
+    const color = (result===0||result===5)?"violet":([1,3,7,9].includes(result)?"green":"red");
+    const bs = result>=5?"BIG":"SMALL";
+
     await addDoc(collection(db, "history"), { num:result, color:color, bigsmall:bs, createdAt:serverTimestamp() });
 
-    setTimeout(async ()=>{
-      box.classList.remove("animate"); resText.innerText = result;
-      badge.innerText = bs; badge.className = "bs-badge show";
-      badge.style.background = (bs==="BIG" ? "var(--big-color)" : "var(--primary)");
-      if(currentBet !== null){
-        let win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
-        if(win) {
-          let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
-          balance += winAmt; document.getElementById("balance").innerText="₹ "+balance.toFixed(2);
-          await updateDoc(doc(db,"users",userId), {balance:balance});
-          showPopup("WIN ₹" + winAmt, "win");
-        } else { showPopup("LOSE", "lose"); }
-        currentBet=null;
-      }
-    },1000);
+    setTimeout(async () => {
+        box.classList.remove("animate"); txt.innerText = result;
+        badge.innerText = bs; badge.className = "bs-badge show";
+        badge.style.background = (bs==="BIG" ? "var(--big-color)" : "var(--primary)");
+
+        if(currentBet !== null) {
+            const win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
+            if(win) {
+                const prize = (currentBet===result) ? bAmt*9 : bAmt*2;
+                balance += prize; 
+                await updateDoc(doc(db, "users", userId), { balance: balance });
+                showResultPopup("WIN ₹"+prize, "win");
+            } else { showResultPopup("LOSE", "lose"); }
+            currentBet = null;
+        }
+    }, 1000);
 }
 
-function showPopup(txt, type) {
-    let p=document.createElement("div"); p.className="resultPopup "+type; p.innerText=txt;
-    document.body.appendChild(p); p.style.display="block"; 
-    setTimeout(()=>p.remove(),3000);
+// User Profile & History
+onAuthStateChanged(auth, user => {
+    if(user) {
+        userId = user.uid;
+        document.getElementById("uidText").innerText = "UID: " + userId.substring(0,10);
+        onSnapshot(doc(db, "users", userId), snap => {
+            balance = snap.data().balance || 0;
+            document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+        });
+    }
+});
+
+onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(10)), snap => {
+    const list = document.getElementById("historyList"); list.innerHTML = "";
+    snap.forEach(d => {
+        const h = d.data();
+        list.innerHTML += `<div style="padding:12px; border-bottom:1px solid #222; display:flex; justify-content:space-between;">
+            <b style="color:var(--primary)">${h.num}</b> <span>${h.bigsmall}</span>
+        </div>`;
+    });
+});
+
+// Bet Functions
+window.selectBet = v => { selection = v; document.getElementById("betPopup").style.display="flex"; }
+window.closeBetPopup = () => { document.getElementById("betPopup").style.display="none"; }
+window.confirmBet = async () => {
+    bAmt = parseInt(document.getElementById("betAmount").value);
+    if(balance < bAmt || bAmt <= 0) return;
+    balance -= bAmt; currentBet = selection;
+    await updateDoc(doc(db, "users", userId), { balance: balance });
+    closeBetPopup();
 }
-window.logout=()=>{ signOut(auth); window.location.href="login.html"; }
+function showResultPopup(t, c) {
+    const p = document.createElement("div"); p.className = "resultPopup " + c; p.innerText = t;
+    document.body.appendChild(p); p.style.display = "block";
+    setTimeout(() => p.remove(), 3000);
+}
 </script>
 </body>
 </html>
