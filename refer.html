@@ -3,197 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4449 WIN - Affiliate Dashboard</title>
+    <title>4449 WIN - Affiliate</title>
     <style>
-        :root { 
-            --primary: #00f2ff; 
-            --secondary: #ff007a; 
-            --accent: #fccf31; 
-            --bg: #0b0e14; 
-            --card-bg: #161b22;
-            --neon-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
-        }
-
-        body { 
-            margin: 0; 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            display: flex; 
-            justify-content: center;
-            overflow-x: hidden;
-        }
-
-        .app { 
-            width: 100%; 
-            max-width: 420px; 
-            min-height: 100vh; 
-            background: radial-gradient(circle at top, #1a202c, #0b0e14);
-            position: relative;
-            padding-bottom: 40px;
-        }
-
-        /* Premium Header */
-        .header { 
-            background: rgba(22, 27, 34, 0.8); 
-            padding: 18px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            border-bottom: 1px solid rgba(0, 242, 255, 0.2); 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            backdrop-filter: blur(20px);
-        }
-        .header-logo { 
-            width: 38px; height: 38px; 
-            border-radius: 50%; 
-            border: 2px solid var(--primary); 
-            box-shadow: var(--neon-shadow);
-        }
-        .header span { font-weight: 800; font-size: 18px; letter-spacing: 1px; color: var(--primary); }
-
-        /* Invite Section */
-        .link-card { 
-            margin: 20px 15px; 
-            padding: 20px; 
-            background: rgba(255, 255, 255, 0.03); 
-            border-radius: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-        .link-label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
-        .link-box { 
-            background: #000; 
-            padding: 14px; 
-            border-radius: 12px; 
-            font-size: 13px; 
-            color: var(--primary); 
-            border: 1px solid var(--primary);
-            margin-bottom: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            word-break: break-all;
-        }
-        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { 
-            padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        :root { --primary: #00f2ff; --secondary: #ff007a; --accent: #fccf31; --bg: #0b0e14; --card-bg: #161b22; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; display: flex; justify-content: center; }
+        .app { width: 100%; max-width: 420px; min-height: 100vh; background: #0b0e14; padding-bottom: 50px; }
+        .header { background: #161b22; padding: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--primary); position: sticky; top:0; z-index: 100; }
+        .header img { width: 35px; border-radius: 50%; border: 2px solid var(--primary); }
+        .link-card { margin: 20px 15px; padding: 20px; background: #161b22; border-radius: 15px; border: 1px dashed var(--primary); text-align: center; }
+        .link-box { background: #000; padding: 12px; border-radius: 8px; color: var(--primary); margin: 10px 0; font-size: 13px; word-break: break-all; border: 1px solid #333; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .copy-btn { background: var(--primary); color: #000; }
         .share-btn { background: #fff; color: #000; }
-        .btn:active { transform: scale(0.95); }
-
-        /* Mega Mission Card */
-        .mission-card { 
-            margin: 20px 15px; 
-            padding: 25px 20px; 
-            background: linear-gradient(135deg, #1e2636 0%, #0b0e14 100%);
-            border-radius: 25px; 
-            border-left: 5px solid var(--secondary);
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .reward-badge { 
-            position: absolute; top: -12px; right: 20px; 
-            background: var(--accent); color: #000; 
-            padding: 5px 15px; border-radius: 50px; 
-            font-weight: 900; font-size: 12px;
-            box-shadow: 0 4px 10px rgba(252, 207, 49, 0.4);
-        }
-        .mission-title { font-size: 20px; font-weight: 900; color: #fff; }
-        .mission-sub { font-size: 12px; color: #8b949e; margin-top: 5px; }
-
-        /* Custom Progress */
-        .progress-container { margin: 20px 0; }
-        .bar-bg { background: rgba(255,255,255,0.05); height: 12px; border-radius: 10px; overflow: hidden; }
-        .bar-fill { 
-            height: 100%; width: 0%; 
-            background: linear-gradient(90deg, var(--secondary), var(--primary)); 
-            box-shadow: 0 0 10px var(--primary);
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 15px; }
-        .stat-card { 
-            background: rgba(22, 27, 34, 0.6); padding: 15px; border-radius: 15px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .stat-card h4 { margin: 0; font-size: 26px; color: var(--primary); }
-        .stat-card p { margin: 5px 0 0; font-size: 10px; color: #8b949e; text-transform: uppercase; }
-
-        /* List Section */
-        .referral-list-box { 
-            margin: 25px 15px; background: rgba(22, 27, 34, 0.4); 
-            border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .list-header { padding: 15px; background: rgba(255,255,255,0.02); font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .status { font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: 800; }
-        .status.active { background: rgba(0, 242, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); }
-        .status.pending { background: rgba(255, 255, 255, 0.05); color: #666; }
-
-        .back-home { 
-            width: calc(100% - 30px); margin: 20px 15px; padding: 15px; 
-            background: transparent; border: 1px solid var(--primary); color: var(--primary);
-            border-radius: 12px; font-weight: bold; cursor: pointer;
-        }
+        .mission-card { margin: 20px 15px; padding: 20px; background: linear-gradient(135deg, #1c2333, #0b0e14); border-radius: 20px; border: 1px solid var(--secondary); position: relative; }
+        .reward-tag { position: absolute; top: -12px; right: 15px; background: var(--accent); color: #000; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 900; }
+        .bar-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--secondary), var(--primary)); transition: 1s; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 15px; }
+        .s-item { background: #161b22; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #222; }
+        .list-box { margin: 20px 15px; background: #161b22; border-radius: 15px; overflow: hidden; }
+        .list-h { padding: 12px; background: #222; font-size: 13px; font-weight: bold; color: var(--primary); }
+        .user-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; font-size: 13px; }
+        .badge { font-size: 9px; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .active { color: #2ecc71; border: 1px solid #2ecc71; }
+        .pending { color: #888; border: 1px solid #444; }
     </style>
 </head>
 <body>
-
 <div class="app">
-    <div class="header">
-        <img src="logo.png" alt="4449" class="header-logo">
-        <span>AFFILIATE CENTER</span>
-    </div>
-
+    <div class="header"><img src="logo.png"><span>AFFILIATE CENTER</span></div>
     <div class="link-card">
-        <div class="link-label">Your Unique Invite Link</div>
-        <div class="link-box" id="referLink">Loading...</div>
-        <div class="btn-row">
-            <button class="btn copy-btn" onclick="copyLink()">COPY</button>
-            <button class="btn share-btn" onclick="shareLink()">SHARE</button>
+        <div class="link-box" id="referLink">Loading Link...</div>
+        <div class="btn-group">
+            <button class="copy-btn" onclick="copyLink()">COPY</button>
+            <button class="share-btn" onclick="shareLink()">SHARE</button>
         </div>
     </div>
-
     <div class="mission-card">
-        <div class="reward-badge">₹500 REWARD</div>
-        <div class="mission-title">Mega Milestone</div>
-        <div class="mission-sub">Invite 6 friends who bet ₹20+ to claim.</div>
-        
-        <div class="progress-container">
-            <div class="bar-bg"><div class="bar-fill" id="progBar"></div></div>
-            <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; font-weight: bold;">
-                <span id="progText" style="color: var(--primary);">Progress: 0/6</span>
-                <span id="remainText" style="color: var(--secondary);">Remaining: 6</span>
-            </div>
+        <div class="reward-tag">₹500 REWARD</div>
+        <div style="font-weight:900;">MEGA MISSION</div>
+        <div style="font-size:11px; color:#8b949e;">Invite 6 active friends (₹20+ bet)</div>
+        <div class="bar-bg"><div class="bar-fill" id="progBar"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:bold;">
+            <span id="progText">PROGRESS: 0/6</span>
+            <span id="remainText" style="color:var(--secondary)">LEFT: 6</span>
         </div>
     </div>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h4 id="totalInvited">0</h4>
-            <p>Total Joined</p>
-        </div>
-        <div class="stat-card">
-            <h4 id="activeInvited" style="color: var(--secondary);">0</h4>
-            <p>Active (₹20+)</p>
-        </div>
+    <div class="stats">
+        <div class="s-item"><h3 id="totalInvited" style="margin:0; color:var(--primary);">0</h3><p style="margin:5px 0 0; font-size:10px; opacity:0.5;">JOINED</p></div>
+        <div class="s-item"><h3 id="activeInvited" style="margin:0; color:var(--secondary);">0</h3><p style="margin:5px 0 0; font-size:10px; opacity:0.5;">ACTIVE</p></div>
     </div>
-
-    <div class="referral-list-box">
-        <div class="list-header">
-            <span>Recent Referrals</span>
-            <span id="listCount" style="opacity: 0.5;">0</span>
-        </div>
-        <div id="referralList">
-            <p style="padding: 30px; text-align: center; font-size: 12px; opacity: 0.4;">No referrals found...</p>
-        </div>
+    <div class="list-box">
+        <div class="list-h">REFERRAL DETAILS</div>
+        <div id="referralList"><p style="padding:20px; text-align:center; font-size:11px; opacity:0.3;">No Joins Yet</p></div>
     </div>
-
-    <button class="back-home" onclick="location.href='index.html'">BACK TO GAME</button>
 </div>
 
 <script type="module">
@@ -201,71 +65,54 @@
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
+    const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1" };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     onAuthStateChanged(auth, user => {
         if(user) {
-            const myId = user.uid;
-            
-            // Fixed Link: Pointing to index.html (Since signup is there)
-            const myLink = `https://4449-win.vercel.app/index.html?ref=${myId.substring(0,8)}`;
+            const myId = user.uid.substring(0, 8).toUpperCase();
+            // CORRECT VERCEL LINK
+            const myLink = `https://4449-win.vercel.app/index.html?ref=${myId}`;
             document.getElementById("referLink").innerText = myLink;
 
-            // Real-time Stats
-            onSnapshot(doc(db, "users", myId), (snap) => {
+            onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if(snap.exists()) {
                     const d = snap.data();
                     const active = d.activeRefer || 0;
-                    const total = d.totalRefer || 0;
-                    
-                    document.getElementById("totalInvited").innerText = total;
+                    document.getElementById("totalInvited").innerText = d.totalRefer || 0;
                     document.getElementById("activeInvited").innerText = active;
-                    
-                    let pct = (active / 6) * 100;
-                    document.getElementById("progBar").style.width = Math.min(pct, 100) + "%";
-                    document.getElementById("progText").innerText = `Progress: ${active}/6`;
-                    document.getElementById("remainText").innerText = `Remaining: ${active >= 6 ? 0 : 6-active}`;
+                    document.getElementById("progBar").style.width = (active/6*100) + "%";
+                    document.getElementById("progText").innerText = `PROGRESS: ${active}/6`;
+                    document.getElementById("remainText").innerText = `LEFT: ${active >= 6 ? 0 : 6-active}`;
                 }
             });
 
-            // Referral List
-            const q = query(collection(db, "users"), where("referredBy", "==", myId.substring(0,8)));
+            const q = query(collection(db, "users"), where("referredBy", "==", myId));
             onSnapshot(q, (snap) => {
                 const list = document.getElementById("referralList");
-                document.getElementById("listCount").innerText = snap.size;
                 if(snap.empty) return;
-                
                 list.innerHTML = "";
-                snap.forEach(docSnap => {
-                    const u = docSnap.data();
-                    const status = u.firstBetDone ? "active" : "pending";
-                    const label = u.firstBetDone ? "BET DONE" : "NO BET";
-                    list.innerHTML += `
-                        <div class="user-row">
-                            <div>
-                                <div style="font-size: 14px; font-weight: 600;">${u.username || 'User'}</div>
-                                <div style="font-size: 9px; color: #555;">ID: ${docSnap.id.substring(0,6)}</div>
-                            </div>
-                            <div class="status ${status}">${label}</div>
-                        </div>`;
+                snap.forEach(d => {
+                    const u = d.data();
+                    list.innerHTML += `<div class="user-row">
+                        <div><b>${u.email.split('@')[0]}</b><br><small style="opacity:0.4;">ID: ${d.id.substring(0,6)}</small></div>
+                        <div class="badge ${u.firstBetDone ? 'active' : 'pending'}">${u.firstBetDone ? 'ACTIVE' : 'PENDING'}</div>
+                    </div>`;
                 });
             });
-
         } else { window.location.href = "login.html"; }
     });
 
     window.copyLink = () => {
-        const t = document.getElementById("referLink").innerText;
-        navigator.clipboard.writeText(t).then(() => alert("Link Copied!"));
-    }
-
+        navigator.clipboard.writeText(document.getElementById("referLink").innerText);
+        alert("Link Copied!");
+    };
     window.shareLink = () => {
-        const t = document.getElementById("referLink").innerText;
-        window.open(`https://wa.me/?text=Join 4449 WIN and claim your bonus! Register here: ${t}`);
-    }
+        const link = document.getElementById("referLink").innerText;
+        window.open(`https://wa.me/?text=Join 4449 WIN and claim bonus: ${link}`);
+    };
 </script>
 </body>
 </html>
