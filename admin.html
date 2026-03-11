@@ -66,7 +66,7 @@ body {
 }
 .stat b { font-size: 28px; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
 
-/* Result Grid */
+/* Result Buttons */
 .result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .result-grid button { 
     padding: 15px; background: #0b0e14; border: 1px solid var(--primary); 
@@ -122,6 +122,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
 </div>
 
 <div class="container">
+
     <div id="dash" class="section active">
         <div class="stats">
             <div class="stat">TOTAL USERS<br><b id="totalUsers">0</b></div>
@@ -155,14 +156,16 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div id="deposits" class="section">
         <div class="card"><h3>💰 DEPOSIT REQUESTS</h3><div id="depositList">Loading...</div></div>
     </div>
-    
+
     <div id="withdraws" class="section">
         <div class="card"><h3>💸 WITHDRAW REQUESTS</h3><div id="withdrawList">Loading...</div></div>
     </div>
 
     <div id="issues" class="section">
         <div class="card"><h3>📩 TICKETS</h3><div id="ticketList"></div></div>
+        <div class="card"><h3>📸 SCREENSHOTS</h3><div id="screenshotList"></div></div>
     </div>
+
 </div>
 
 <script type="module">
@@ -180,41 +183,99 @@ window.showSection = function(id) {
     event.currentTarget.classList.add('active');
 }
 
-// Logic to Fix Result
+// Result Setting - UPDATED FOR HYBRID LOGIC
 window.setResult = async (num) => {
     try {
         await setDoc(doc(db, "wingo", "result"), { 
             number: num, 
+            time: Date.now(),
             manual: true 
         });
         alert("Success: Next result fixed to " + num);
     } catch (e) { alert("Error: " + e.message); }
 };
 
-// Listeners (User Table, Stats, etc.)
+// Listeners & REFERRAL LOGIC
 onSnapshot(collection(db, "users"), async (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = ""; let online = 0;
     document.getElementById("totalUsers").innerText = snap.size;
 
-    snap.forEach(d => {
-        const u = d.data();
+    const usersData = [];
+    snap.forEach(d => usersData.push({id: d.id, ...d.data()}));
+
+    for (const u of usersData) {
+        const q = query(collection(db, "users"), where("invitedBy", "==", u.referralCode || "---"));
+        const refSnap = await getDocs(q);
+        const refCount = refSnap.size;
+
+        if(refCount >= 10 && !u.referralBonusClaimed) {
+            await updateDoc(doc(db, "users", u.id), {
+                balance: (u.balance || 0) + 500,
+                referralBonusClaimed: true
+            });
+        }
+
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         if(isOnline) online++;
+
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
-            <td><small>${u.email || d.id}</small></td>
+            <td><small>${u.email || u.id}</small><br><small style="color:var(--primary)">${u.id.substring(0,8)}</small></td>
             <td>₹${u.balance || 0}</td>
-            <td><span class="ref-badge">0 Refs</span></td>
-            <td><button class="edit-btn" onclick="editBal('${d.id}', ${u.balance})">Edit</button></td>
+            <td><span class="ref-badge">${refCount} Refs</span></td>
+            <td><button class="edit-btn" onclick="editBal('${u.id}', ${u.balance})">Edit</button></td>
         </tr>`;
-    });
+    }
     document.getElementById("activeUsers").innerText = online;
 });
 
+window.approveDeposit = async (id, user, amt) => {
+    const ref = doc(db,"users",user);
+    const snap = await getDoc(ref);
+    if(snap.exists()){
+        await updateDoc(ref, {balance: (snap.data().balance || 0) + amt});
+        await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
+        alert("Deposit Approved!");
+    }
+};
+
 window.editBal = async (uid, old) => {
-    let n = prompt("New Balance?", old);
+    let n = prompt("New Balance for " + uid, old);
     if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
+};
+
+function listenRequests(coll, elementId, action) {
+    onSnapshot(collection(db, coll), (snap) => {
+        const list = document.getElementById(elementId);
+        list.innerHTML = "";
+        snap.forEach(d => {
+            const data = d.data();
+            if(data.status === "pending") {
+                list.innerHTML += `<div class="item-request">
+                    <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
+                    <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
+                </div>`;
+            }
+        });
+    });
+}
+listenRequests("depositRequests", "depositList", "approveDeposit");
+
+onSnapshot(collection(db, "tickets"), (snap) => {
+    const list = document.getElementById("ticketList");
+    list.innerHTML = "";
+    snap.forEach(d => {
+        const t = d.data();
+        list.innerHTML += `<div class="item-request" style="flex-direction:column; align-items:flex-start;">
+            <p><b>User:</b> ${t.name} | <b>Message:</b> ${t.message}</p>
+            <button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button>
+        </div>`;
+    });
+});
+
+window.deleteDocData = async (coll, id) => {
+    if(confirm("Delete this?")) await deleteDoc(doc(db, coll, id));
 };
 </script>
 </body>
