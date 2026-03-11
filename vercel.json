@@ -1,7 +1,8 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!register|login|admin|help|wallet|wingo|refer).*)",
       "destination": "/index.html"
     }
   ]
