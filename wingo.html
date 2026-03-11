@@ -9,116 +9,143 @@
 body{
 margin:0;
 font-family:Arial;
-background:#9fa3ad;
+background:#f1f1f1;
 display:flex;
 justify-content:center;
 }
 
 .app{
 width:420px;
-background:white;
+background:#fff;
 min-height:100vh;
-text-align:center;
-padding-bottom:90px;
+padding-bottom:100px;
 }
+
+/* Header */
 
 .header{
-background:#ff6b6b;
+background:linear-gradient(90deg,#ff7a7a,#ff5a5a);
 color:white;
-padding:15px;
+padding:16px;
 font-size:22px;
 font-weight:bold;
+text-align:center;
 }
+
+/* Wallet */
 
 .wallet{
-background:#f2f2f2;
-margin:15px;
-padding:15px;
+background:#fff;
+margin:12px;
+padding:12px;
 border-radius:12px;
 font-size:18px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
+/* Timer */
+
 .timer{
-background:#ff6b6b;
+background:linear-gradient(90deg,#ff7a7a,#ff5a5a);
 color:white;
-margin:10px;
-padding:10px;
+margin:12px;
+padding:12px;
 border-radius:10px;
 font-size:18px;
 }
 
+/* Result Ball */
+
 .centerGame{
 margin:20px auto;
-width:120px;
-height:120px;
+width:110px;
+height:110px;
 border-radius:50%;
-background:#eee;
+background:linear-gradient(145deg,#ffffff,#e6e6e6);
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:50px;
+font-size:48px;
 font-weight:bold;
+box-shadow:0 4px 15px rgba(0,0,0,0.25);
 }
+
+/* Color Buttons */
 
 .colors{
 display:flex;
 gap:10px;
-padding:10px;
+padding:12px;
 }
 
 .colors button{
 flex:1;
-padding:12px;
+padding:14px;
 border:none;
 color:white;
-border-radius:8px;
+border-radius:10px;
 font-size:16px;
+font-weight:bold;
+cursor:pointer;
 }
 
 .green{background:#2ecc71;}
 .red{background:#e74c3c;}
 .violet{background:#9b59b6;}
 
+/* Number Balls */
+
 .numbers{
 display:grid;
 grid-template-columns:repeat(5,1fr);
-gap:8px;
-padding:10px;
+gap:12px;
+padding:12px;
 }
 
 .numbers button{
-padding:15px;
+width:60px;
+height:60px;
 border-radius:50%;
 border:none;
-font-size:18px;
-background:#eee;
+font-size:20px;
+font-weight:bold;
 cursor:pointer;
+margin:auto;
+background:linear-gradient(145deg,#ffffff,#e6e6e6);
+box-shadow:0 4px 8px rgba(0,0,0,0.15);
 }
 
+/* History */
+
 .history{
-margin:15px;
-text-align:left;
+margin:12px;
+}
+
+.history h3{
+margin-bottom:10px;
 }
 
 .historyItem{
-background:#eee;
+background:#f3f3f3;
+padding:10px;
+border-radius:8px;
 margin-bottom:6px;
-padding:8px;
-border-radius:6px;
+font-size:14px;
 }
+
+/* Bottom Menu */
 
 .bottomWallet{
 position:fixed;
-bottom:10px;
+bottom:0;
 left:50%;
 transform:translateX(-50%);
-width:360px;
+width:420px;
 background:white;
-border-radius:25px;
 display:flex;
 justify-content:space-around;
-padding:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.25);
+padding:10px 0;
+box-shadow:0 -3px 12px rgba(0,0,0,0.15);
 }
 
 .navBtn{
@@ -129,10 +156,10 @@ cursor:pointer;
 }
 
 .icon{
-width:48px;
-height:48px;
+width:46px;
+height:46px;
 border-radius:50%;
-background:#ff6b6b;
+background:linear-gradient(145deg,#ff7a7a,#ff5a5a);
 display:flex;
 align-items:center;
 justify-content:center;
@@ -141,12 +168,12 @@ color:white;
 }
 
 .label{
-font-size:13px;
-margin-top:4px;
+font-size:12px;
+margin-top:3px;
 font-weight:bold;
 }
 
-/* POPUP */
+/* Bet Popup */
 
 .betPopup{
 position:fixed;
@@ -167,7 +194,7 @@ padding:25px;
 border-radius:18px;
 width:260px;
 text-align:center;
-animation:zoomPop .35s ease;
+animation:zoomPop .3s ease;
 }
 
 @keyframes zoomPop{
@@ -188,7 +215,7 @@ margin-top:10px;
 .betBtn{
 margin-top:15px;
 padding:12px;
-background:#ff6b6b;
+background:#ff5a5a;
 color:white;
 border:none;
 width:100%;
@@ -197,56 +224,53 @@ font-size:16px;
 cursor:pointer;
 }
 
-/* Close button for bet popup */
-.closeBtn {
-position: absolute;
-top: 10px;
-right: 10px;
-background: #ff6b6b;
-color: white;
-border: none;
-border-radius: 50%;
-width: 28px;
-height: 28px;
-font-size: 16px;
-cursor: pointer;
+.closeBtn{
+position:absolute;
+top:8px;
+right:8px;
+background:#ff5a5a;
+color:white;
+border:none;
+border-radius:50%;
+width:26px;
+height:26px;
+cursor:pointer;
 }
 
-/* Animated Win/Loss popup */
-.resultPopup {
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%) scale(0.5);
-border-radius: 20px;
-padding: 25px 35px;
-text-align: center;
-font-size: 18px;
-font-weight: bold;
-color: white;
-display: none;
-animation: popupBounce 0.5s forwards;
-box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-z-index: 9999;
+/* Win/Loss Popup */
+
+.resultPopup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(.5);
+border-radius:20px;
+padding:25px 35px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+color:white;
+display:none;
+animation:popupBounce .4s forwards;
+z-index:9999;
 }
 
-.resultPopup.win {
-background: linear-gradient(135deg, #2ecc71, #27ae60);
+.resultPopup.win{
+background:linear-gradient(135deg,#2ecc71,#27ae60);
 }
 
-.resultPopup.lose {
-background: linear-gradient(135deg, #e74c3c, #c0392b);
+.resultPopup.lose{
+background:linear-gradient(135deg,#e74c3c,#c0392b);
 }
 
-@keyframes popupBounce {
-0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-60%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-80%  { transform: translate(-50%, -50%) scale(0.95); }
-100% { transform: translate(-50%, -50%) scale(1); }
+@keyframes popupBounce{
+0%{transform:translate(-50%,-50%) scale(.3);opacity:0;}
+60%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
+80%{transform:translate(-50%,-50%) scale(.95);}
+100%{transform:translate(-50%,-50%) scale(1);}
 }
 
 </style>
-
 </head>
 
 <body>
@@ -385,8 +409,10 @@ document.getElementById("betPopup").style.display="flex";
 
 }
 
-window.closeBetPopup = function() {
-  document.getElementById("betPopup").style.display = "none";
+window.closeBetPopup=function(){
+
+document.getElementById("betPopup").style.display="none";
+
 }
 
 window.placeBet=function(){
@@ -411,16 +437,24 @@ document.getElementById("betPopup").style.display="none";
 
 }
 
-// Animated win/loss popup with colors
-function showResultPopup(message, isWin){
-    let popup = document.createElement("div");
-    popup.className = "resultPopup " + (isWin ? "win" : "lose");
-    popup.innerText = message;
-    document.body.appendChild(popup);
-    popup.style.display = "block";
-    setTimeout(()=>{
-        popup.remove();
-    }, 2000);
+function showResultPopup(message,isWin){
+
+let popup=document.createElement("div");
+
+popup.className="resultPopup "+(isWin?"win":"lose");
+
+popup.innerText=message;
+
+document.body.appendChild(popup);
+
+popup.style.display="block";
+
+setTimeout(()=>{
+
+popup.remove();
+
+},2000);
+
 }
 
 function addHistory(num,color){
@@ -428,28 +462,27 @@ function addHistory(num,color){
 let div=document.createElement("div");
 
 div.className="historyItem";
+
 div.innerHTML="Result: "+num+" ("+color+")";
 
 document.getElementById("historyList").prepend(div);
 
 }
 
-// Timer starts from 30 seconds now
 let time=30;
 
 setInterval(async ()=>{
 
 time--;
+
 document.getElementById("time").innerText=time;
 
 if(time<=0){
 
 time=30;
 
-/* admin result */
-
-let resultDoc = await getDoc(doc(db,"wingo","result"));
-let result = resultDoc.data().number;
+let resultDoc=await getDoc(doc(db,"wingo","result"));
+let result=resultDoc.data().number;
 
 let color=getColor(result);
 
@@ -461,21 +494,21 @@ if(currentBet!=null){
 
 if(currentBet===result){
 
-let winAmount = betAmount * (result==0?2:result);
+let winAmount=betAmount*(result==0?2:result);
 
-balance += winAmount;
+balance+=winAmount;
 
-showResultPopup("You Win ₹"+winAmount, true);
+showResultPopup("You Win ₹"+winAmount,true);
 
 }else if(currentBet===color){
 
-balance += betAmount*2;
+balance+=betAmount*2;
 
-showResultPopup("Color Win ₹"+betAmount*2, true);
+showResultPopup("Color Win ₹"+betAmount*2,true);
 
 }else{
 
-showResultPopup("You Lose", false);
+showResultPopup("You Lose",false);
 
 }
 
