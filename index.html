@@ -1,302 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>4449 WIN - Register</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-:root { 
-    --primary: #00f2ff; /* Neon Cyan */
-    --secondary: #ff007a; /* Neon Pink */
-    --bg: #0b0e14; 
-    --card-bg: #161b22; 
-    --glass: rgba(255, 255, 255, 0.05);
-}
-
-* { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: var(--bg);
-    color: white;
-    overflow: hidden;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 50% 50%, #1a1f29 0%, #0b0e14 100%);
-    z-index: -1;
-}
-
-.container {
-    width: 92%;
-    max-width: 400px;
-    background: var(--card-bg);
-    border-radius: 24px;
-    border: 1px solid rgba(0, 242, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    overflow: hidden;
-    animation: fadeIn 0.8s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.header {
-    background: rgba(22, 27, 34, 0.95);
-    padding: 18px 25px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--primary);
-    box-shadow: 0 0 15px rgba(0,242,255,0.2);
-}
-
-.logo {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-    box-shadow: 0 0 10px var(--primary);
-    object-fit: cover;
-}
-
-.header span {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--primary);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.content { padding: 30px; }
-
-h3 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 25px;
-    color: white;
-    font-size: 24px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-label {
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--primary);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-}
-
-.input-box {
-    width: 100%;
-    padding: 14px;
-    background: #05070a;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    color: white;
-    margin-bottom: 20px;
-    outline: none;
-    transition: 0.3s;
-}
-
-.input-box:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 12px rgba(0,242,255,0.3);
-}
-
-.checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    margin-bottom: 25px;
-    color: #8b949e;
-    cursor: pointer;
-}
-
-.checkbox input {
-    accent-color: var(--primary);
-    width: 18px;
-    height: 18px;
-}
-
-.signup-btn {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.signup-btn:hover {
-    background: var(--primary);
-    color: black;
-    box-shadow: 0 0 20px var(--primary);
-}
-
-.signup-btn:active { transform: scale(0.96); }
-
-.login-link {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #8b949e;
-}
-
-.login-link a {
-    color: var(--secondary);
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.login-link a:hover { text-shadow: 0 0 8px var(--secondary); }
-
-.success-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    background: var(--card-bg);
-    border: 2px solid var(--primary);
-    color: var(--primary);
-    padding: 20px 40px;
-    border-radius: 15px;
-    font-weight: bold;
-    display: none;
-    z-index: 1000;
-    box-shadow: 0 0 40px rgba(0,242,255,0.4);
-    text-align: center;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <title>4449 WIN - Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root { --primary: #00f2ff; --secondary: #ff007a; --bg: #0b0e14; --card-bg: #161b22; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg); color: white; }
+        .container { width: 92%; max-width: 400px; background: var(--card-bg); border-radius: 24px; border: 1px solid rgba(0, 242, 255, 0.1); overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .header { background: rgba(22, 27, 34, 0.95); padding: 18px 25px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--primary); }
+        .logo { height: 40px; width: 40px; border-radius: 50%; border: 2px solid var(--primary); }
+        .header span { font-size: 20px; font-weight: 800; color: var(--primary); text-transform: uppercase; }
+        .content { padding: 30px; }
+        h3 { text-align: center; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        label { font-size: 11px; color: var(--primary); text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: bold; }
+        .input-box { width: 100%; padding: 14px; background: #05070a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; margin-bottom: 20px; outline: none; }
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+        .signup-btn { width: 100%; padding: 16px; border-radius: 12px; background: transparent; border: 1px solid var(--primary); color: var(--primary); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .signup-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
+        .success-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--card-bg); border: 2px solid var(--primary); color: var(--primary); padding: 20px 40px; border-radius: 15px; display: none; z-index: 1000; text-align: center; }
+    </style>
 </head>
-
 <body>
-
-<div class="container">
-    <div class="header">
-        <img src="logo.png" class="logo" alt="Logo">
-        <span>4449 WIN</span>
-    </div>
-
-    <div class="content">
-        <h3>Join the Game</h3>
-
-        <label>Email Address</label>
-        <input type="email" class="input-box" id="email" placeholder="name@example.com">
-
-        <label>Password</label>
-        <input type="password" class="input-box" id="password" placeholder="Min 6 characters">
-
-        <label>Invite Code (Optional)</label>
-        <input type="text" class="input-box" id="invite" placeholder="Enter code">
-
-        <label class="checkbox">
-            <input type="checkbox" id="terms">
-            <span>Accept Terms & Privacy</span>
-        </label>
-
-        <button class="signup-btn" onclick="signup()">CREATE ACCOUNT</button>
-
-        <div class="login-link">
-            Master of the game? <a href="login.html">Login Here</a>
+    <div class="container">
+        <div class="header"><img src="logo.png" class="logo"><span>4449 WIN</span></div>
+        <div class="content">
+            <h3>Create Account</h3>
+            <label>Email Address</label>
+            <input type="email" class="input-box" id="email" placeholder="Email">
+            <label>Password</label>
+            <input type="password" class="input-box" id="password" placeholder="Password">
+            <label>Invite Code (Auto-filled)</label>
+            <input type="text" class="input-box" id="invite" placeholder="Code">
+            <button class="signup-btn" onclick="signup()">SIGN UP</button>
         </div>
     </div>
-</div>
-
-<div id="successPopup" class="success-popup">
-    🚀 SIGNUP SUCCESSFUL!<br>
-    <small style="color:white">Redirecting to Login...</small>
-</div>
+    <div id="successPopup" class="success-popup">🚀 SUCCESSFUL!<br><small style="color:white">Redirecting...</small></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-    authDomain: "win2-512e1.firebaseapp.com",
-    projectId: "win2-512e1",
-    storageBucket: "win2-512e1.firebasestorage.app",
-    messagingSenderId: "577913579227",
-    appId: "1:577913579227:web:1e073059c2d3d881720efe",
-    measurementId: "G-4V1SCSMTM6"
-};
+    const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1" };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    // URL Detection Logic
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+        if (ref) { document.getElementById("invite").value = ref.toUpperCase(); }
+    };
 
-window.signup = function() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const inviteCode = document.getElementById("invite").value.trim();
-    const terms = document.getElementById("terms").checked;
+    window.signup = function() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const inviteCode = document.getElementById("invite").value.trim().toUpperCase();
 
-    if (!email || !password) {
-        alert("Please fill all details");
-        return;
+        createUserWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+            const user = userCredential.user;
+            await setDoc(doc(db, "users", user.uid), {
+                email, uid: user.uid,
+                referralCode: user.uid.substring(0, 8).toUpperCase(),
+                referredBy: inviteCode || "NONE", // This matches refer.html query
+                totalRefer: 0, activeRefer: 0, firstBetDone: false, createdAt: serverTimestamp()
+            });
+            document.getElementById("successPopup").style.display = "block";
+            setTimeout(() => { window.location.href = "login.html"; }, 1500);
+        }).catch(err => alert(err.message));
     }
-
-    if (!terms) {
-        alert("Please accept Terms & Conditions");
-        return;
-    }
-
-    createUserWithEmailAndPassword(auth, email, password)
-    .then(async (userCredential) => {
-        const user = userCredential.user;
-        
-        // Generate Unique Referral Code for this user (First 6 chars of UID)
-        const myReferralCode = user.uid.substring(0, 6).toUpperCase();
-
-        // Firestore mein naya user profile banayein
-        await setDoc(doc(db, "users", user.uid), {
-            email: email,
-            balance: 0,
-            uid: user.uid,
-            referralCode: myReferralCode, // User ka apna code
-            invitedBy: inviteCode || "NONE", // Kisne invite kiya
-            createdAt: serverTimestamp()
-        });
-
-        document.getElementById("successPopup").style.display = "block";
-
-        setTimeout(() => {
-            window.location.href = "login.html";
-        }, 1500);
-    })
-    .catch(error => {
-        let msg = "Signup Failed";
-        if(error.code === 'auth/email-already-in-use') msg = "Email already exists!";
-        if(error.code === 'auth/weak-password') msg = "Password is too weak!";
-        alert(msg);
-    });
-}
 </script>
-
 </body>
 </html>
