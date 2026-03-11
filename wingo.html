@@ -2,245 +2,176 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>4449 WIN</title>
+<title>Wallet</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#9fa3ad;
+background:#8f939c;
 display:flex;
 justify-content:center;
 }
 
 .app{
-width:420px;
-background:white;
+width:100%;
+max-width:420px;
+background:#f5f5f5;
 min-height:100vh;
-text-align:center;
-padding-bottom:90px;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+position:relative;
+}
+
+.header-container{
+position:relative;
+height:60px;
 }
 
 .header{
 background:#ff6b6b;
 color:white;
 padding:15px;
-font-size:22px;
+font-size:20px;
 font-weight:bold;
+text-align:center;
 }
 
-.wallet{
-background:#f2f2f2;
-margin:15px;
-padding:15px;
-border-radius:12px;
-font-size:18px;
-}
-
-.timer{
-background:#ff6b6b;
-color:white;
-margin:10px;
-padding:10px;
-border-radius:10px;
-font-size:18px;
-}
-
-.centerGame{
-margin:20px auto;
-width:120px;
-height:120px;
+.logo-top{
+position:absolute;
+top:5px;
+left:10px;
+width:50px;
+height:50px;
 border-radius:50%;
-background:#eee;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:50px;
-font-weight:bold;
-transition:transform .6s;
-}
-
-.colors{
-display:flex;
-gap:10px;
-padding:10px;
-}
-
-.colors button{
-flex:1;
-padding:12px;
-border:none;
-color:white;
-border-radius:8px;
-font-size:16px;
-}
-
-.green{background:#2ecc71;}
-.red{background:#e74c3c;}
-.violet{background:#9b59b6;}
-
-.numbers{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:8px;
-padding:10px;
-}
-
-.numbers button{
-padding:15px;
-border-radius:50%;
-border:none;
-font-size:18px;
-background:#eee;
-cursor:pointer;
-}
-
-.history{
-margin:15px;
-text-align:left;
-}
-
-.historyItem{
-background:#eee;
-margin-bottom:6px;
-padding:8px;
-border-radius:6px;
-}
-
-.bottomWallet{
-position:fixed;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-width:360px;
+object-fit:cover;
+border:2px solid white;
 background:white;
-border-radius:25px;
-display:flex;
-justify-content:space-around;
-padding:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.25);
 }
 
-.navBtn{
-display:flex;
-flex-direction:column;
-align-items:center;
-cursor:pointer;
+.box{
+background:white;
+margin:15px;
+padding:20px;
+border-radius:12px;
+text-align:center;
 }
 
-.icon{
-width:48px;
-height:48px;
-border-radius:50%;
+.btn{
+padding:12px 20px;
 background:#ff6b6b;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
 color:white;
+border:none;
+border-radius:8px;
+margin:10px;
+font-size:16px;
+cursor:pointer;
+transition:.3s;
 }
 
-.label{
-font-size:13px;
-margin-top:4px;
+.btn:hover{
+transform:scale(1.05);
+}
+
+input{
+padding:10px;
+width:80%;
+max-width:250px;
+border-radius:6px;
+border:1px solid #ccc;
+margin:5px;
+}
+
+.qr{
+width:200px;
+display:block;
+margin:auto;
+}
+
+/* PACKAGE */
+
+.package-container{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:10px;
+}
+
+.pkg{
+background:#ff6b6b;
+color:white;
+padding:12px;
+border-radius:10px;
+width:90px;
+cursor:pointer;
 font-weight:bold;
+transition:.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.2);
+animation:fadeUp .4s ease;
+}
+
+.pkg:hover{
+transform:scale(1.1);
+background:#ff3b3b;
+}
+
+@keyframes fadeUp{
+0%{opacity:0;transform:translateY(10px);}
+100%{opacity:1;transform:translateY(0);}
 }
 
 /* POPUP */
 
-.betPopup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:none;
-align-items:center;
-justify-content:center;
-}
-
-.betBox{
-position:relative;
-background:white;
-padding:25px;
-border-radius:18px;
-width:260px;
-text-align:center;
-animation:zoomPop .35s ease;
-}
-
-@keyframes zoomPop{
-0%{transform:scale(.5);opacity:0;}
-100%{transform:scale(1);opacity:1;}
-}
-
-.betBox input{
-width:100%;
-padding:12px;
-border-radius:10px;
-border:1px solid #ddd;
-font-size:16px;
-text-align:center;
-margin-top:10px;
-}
-
-.betBtn{
-margin-top:15px;
-padding:12px;
-background:#ff6b6b;
-color:white;
-border:none;
-width:100%;
-border-radius:10px;
-font-size:16px;
-cursor:pointer;
-}
-
-.closeBtn{
-position:absolute;
-top:10px;
-right:10px;
-background:#ff6b6b;
-color:white;
-border:none;
-border-radius:50%;
-width:28px;
-height:28px;
-font-size:16px;
-cursor:pointer;
-}
-
-.resultPopup{
+.bet-popup{
 position:fixed;
 top:50%;
 left:50%;
-transform:translate(-50%,-50%) scale(0.5);
-border-radius:20px;
-padding:25px 35px;
-text-align:center;
-font-size:18px;
-font-weight:bold;
+transform:translate(-50%,-50%);
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+width:300px;
+display:none;
+box-shadow:0 0 20px rgba(0,0,0,0.6);
+animation:zoomPop .4s ease;
 color:white;
-animation:popupBounce .5s forwards;
-z-index:9999;
+text-align:center;
 }
 
-.resultPopup.win{
-background:linear-gradient(135deg,#2ecc71,#27ae60);
+@keyframes zoomPop{
+0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}
+100%{transform:translate(-50%,-50%) scale(1);opacity:1;}
 }
 
-.resultPopup.lose{
-background:linear-gradient(135deg,#e74c3c,#c0392b);
+/* HISTORY */
+
+.history-box{
+background:white;
+margin:15px;
+padding:15px;
+border-radius:12px;
+max-height:250px;
+overflow-y:auto;
+text-align:left;
 }
 
-@keyframes popupBounce{
-0%{transform:translate(-50%,-50%) scale(.3);opacity:0;}
-60%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
-80%{transform:translate(-50%,-50%) scale(.95);}
-100%{transform:translate(-50%,-50%) scale(1);}
+.history-item{
+border-bottom:1px solid #ddd;
+padding:10px 0;
+display:flex;
+justify-content:space-between;
+animation:fadeHistory .4s ease;
 }
+
+@keyframes fadeHistory{
+0%{opacity:0;transform:translateX(-10px);}
+100%{opacity:1;transform:translateX(0);}
+}
+
+.history-pending{color:orange;font-weight:bold;}
+.history-approved{color:green;font-weight:bold;}
+.history-rejected{color:red;font-weight:bold;}
 
 </style>
 </head>
@@ -249,207 +180,255 @@ background:linear-gradient(135deg,#e74c3c,#c0392b);
 
 <div class="app">
 
-<div class="header">4449 WIN</div>
+<div class="header-container">
+<img src="logo.png" class="logo-top">
+<div class="header">Wallet</div>
+</div>
 
-<div class="wallet">
+<div class="box">
 Balance ₹ <span id="balance">0</span>
 </div>
 
-<div class="timer">
-Next Result In <span id="time">30</span>s
+<div class="box">
+<button class="btn" onclick="showDeposit()">Deposit</button>
+<button class="btn" onclick="showWithdraw()">Withdraw</button>
 </div>
 
-<div class="centerGame" id="ball">?</div>
+<!-- DEPOSIT -->
 
-<div class="colors">
-<button class="green" onclick="selectBet('green')">Green</button>
-<button class="violet" onclick="selectBet('violet')">Violet</button>
-<button class="red" onclick="selectBet('red')">Red</button>
+<div id="depositBox" class="box" style="display:none">
+
+<h3>Select Package</h3>
+
+<div class="package-container">
+
+<div class="pkg" onclick="selectPkg(100,20)">
+₹100<br><small>+20%</small>
 </div>
 
-<div class="numbers">
-<button onclick="selectBet(0)">0</button>
-<button onclick="selectBet(1)">1</button>
-<button onclick="selectBet(2)">2</button>
-<button onclick="selectBet(3)">3</button>
-<button onclick="selectBet(4)">4</button>
-<button onclick="selectBet(5)">5</button>
-<button onclick="selectBet(6)">6</button>
-<button onclick="selectBet(7)">7</button>
-<button onclick="selectBet(8)">8</button>
-<button onclick="selectBet(9)">9</button>
+<div class="pkg" onclick="selectPkg(200,20)">
+₹200<br><small>+20%</small>
 </div>
 
-<div class="history">
-<h3>Last Results</h3>
+<div class="pkg" onclick="selectPkg(500,50)">
+₹500<br><small>+50%</small>
+</div>
+
+</div>
+
+<h3>Deposit</h3>
+
+<img src="ui.png" class="qr"><br>
+
+<input type="number" id="amt" placeholder="Amount"><br>
+
+<input type="text" id="utr" placeholder="Enter UTR Number"><br><br>
+
+<div id="bonusPreview"></div>
+
+<button class="btn" onclick="sendDeposit()">Submit</button>
+
+</div>
+
+<!-- WITHDRAW -->
+
+<div id="withdrawBox" class="box" style="display:none">
+
+<h3>Withdraw</h3>
+
+<input type="number" id="wamt" placeholder="Amount"><br>
+
+<input type="text" id="upi" placeholder="UPI ID"><br><br>
+
+<button class="btn" onclick="sendWithdraw()">Submit</button>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="history-box">
+<h3>Withdrawal History</h3>
 <div id="historyList"></div>
 </div>
 
-</div>
-
-<div class="bottomWallet">
-
-<div class="navBtn" onclick="openWallet()">
-<div class="icon">💳</div>
-<div class="label">Wallet</div>
-</div>
-
-<div class="navBtn" onclick="openHelp()">
-<div class="icon">🎧</div>
-<div class="label">Help</div>
-</div>
-
-<div class="navBtn" onclick="logout()">
-<div class="icon">🚪</div>
-<div class="label">Logout</div>
-</div>
+<div class="bet-popup" id="popupMessage"></div>
 
 </div>
 
-<script>
+<script type="module">
 
-let balance=1000
-let currentBet=null
-let betAmount=0
-let selectedValue=null
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-function getColor(n){
-if(n==0||n==5) return "violet"
-if(n==1||n==3||n==7||n==9) return "green"
-return "red"
+const firebaseConfig = {
+apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain: "win2-512e1.firebaseapp.com",
+projectId: "win2-512e1",
+storageBucket: "win2-512e1.firebasestorage.app",
+messagingSenderId: "577913579227",
+appId: "1:577913579227:web:1e073059c2d3d881720efe"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser="";
+let balance=0;
+
+onAuthStateChanged(auth, async (user)=>{
+
+if(user){
+
+currentUser=user.uid;
+
+let ref=doc(db,"users",user.uid);
+
+let snap=await getDoc(ref);
+
+if(!snap.exists()){
+await setDoc(ref,{balance:0});
 }
 
-function selectBet(v){
-selectedValue=v
-document.getElementById("betPopup").style.display="flex"
-}
+let data=(await getDoc(ref)).data();
 
-function showResultPopup(msg,win){
+balance=data.balance;
 
-let popup=document.createElement("div")
-popup.className="resultPopup "+(win?"win":"lose")
-popup.innerText=msg
+document.getElementById("balance").innerText=balance;
 
-document.body.appendChild(popup)
-
-setTimeout(()=>{
-
-popup.remove()
-
-},2000)
-
-}
-
-function animateBall(num){
-
-let ball=document.getElementById("ball")
-
-ball.style.transform="rotate(360deg) scale(1.2)"
-
-setTimeout(()=>{
-
-ball.innerText=num
-ball.style.transform="rotate(0deg) scale(1)"
-
-},300)
+loadWithdrawHistory();
 
 }
 
-function addHistory(num,color){
+});
 
-let div=document.createElement("div")
-div.className="historyItem"
-
-div.innerHTML="Result: "+num+" ("+color+")"
-
-let box=document.getElementById("historyList")
-
-box.prepend(div)
-
-if(box.children.length>10){
-box.removeChild(box.lastChild)
+window.showDeposit=function(){
+document.getElementById("depositBox").style.display="block";
+document.getElementById("withdrawBox").style.display="none";
 }
 
+window.showWithdraw=function(){
+document.getElementById("withdrawBox").style.display="block";
+document.getElementById("depositBox").style.display="none";
 }
 
-function generateResult(){
-return Math.floor(Math.random()*10)
-}
+window.selectPkg=function(amount,bonus){
 
-let roundTime=30
+document.getElementById("amt").value=amount;
 
-function getRemainingTime(){
+let bonusAmount=(amount*bonus)/100;
 
-let now=Math.floor(Date.now()/1000)
-return roundTime-(now%roundTime)
+let total=amount+bonusAmount;
+
+document.getElementById("bonusPreview").innerHTML=
+"Bonus ₹"+bonusAmount+" | Total Credit ₹"+total;
+
+showPopup("Package Selected ₹"+amount);
 
 }
 
-let lastRound=-1
+window.sendDeposit=async function(){
 
-setInterval(()=>{
+let amt=parseInt(document.getElementById("amt").value);
 
-let now=Math.floor(Date.now()/1000)
-let round=Math.floor(now/30)
+let utr=document.getElementById("utr").value;
 
-document.getElementById("time").innerText=getRemainingTime()
+if(!amt) return alert("Enter amount");
 
-if(round!==lastRound){
+if(!utr) return alert("Enter UTR Number");
 
-lastRound=round
+await addDoc(collection(db,"depositRequests"),{
+user:currentUser,
+amount:amt,
+utr:utr,
+status:"pending"
+});
 
-let result=generateResult()
-let color=getColor(result)
+showPopup("Deposit request sent. Waiting for admin approval");
 
-animateBall(result)
-addHistory(result,color)
-
-if(currentBet!=null){
-
-if(currentBet===result){
-
-let winAmount=betAmount*(result==0?2:result)
-balance+=winAmount
-
-showResultPopup("You Win ₹"+winAmount,true)
+document.getElementById("amt").value="";
+document.getElementById("utr").value="";
+document.getElementById("bonusPreview").innerHTML="";
 
 }
 
-else if(currentBet===color){
+window.sendWithdraw=async function(){
 
-balance+=betAmount*2
+let amt=parseInt(document.getElementById("wamt").value);
 
-showResultPopup("Color Win ₹"+betAmount*2,true)
+let upi=document.getElementById("upi").value;
+
+if(!amt) return alert("Enter amount");
+
+if(amt>balance) return alert("Insufficient balance");
+
+if(!upi) return alert("Enter UPI ID");
+
+balance-=amt;
+
+document.getElementById("balance").innerText=balance;
+
+await addDoc(collection(db,"withdrawRequests"),{
+user:currentUser,
+amount:amt,
+upi:upi,
+status:"pending"
+});
+
+showPopup("Withdraw request sent. Waiting for admin approval");
+
+document.getElementById("wamt").value="";
+document.getElementById("upi").value="";
+
+loadWithdrawHistory();
 
 }
 
-else{
+async function loadWithdrawHistory(){
 
-showResultPopup("You Lose",false)
+let q=query(collection(db,"withdrawRequests"),where("user","==",currentUser));
+
+let snap=await getDocs(q);
+
+let container=document.getElementById("historyList");
+
+container.innerHTML="";
+
+snap.forEach(docSnap=>{
+
+let d=docSnap.data();
+
+let statusText="Pending";
+
+if(d.status==="approved") statusText="Success";
+if(d.status==="rejected") statusText="Rejected";
+
+let statusClass=d.status==="pending"?"history-pending":
+d.status==="approved"?"history-approved":"history-rejected";
+
+let div=document.createElement("div");
+
+div.className="history-item "+statusClass;
+
+div.innerHTML=`<span>₹${d.amount}</span><span>${statusText}</span>`;
+
+container.appendChild(div);
+
+});
 
 }
 
-document.getElementById("balance").innerText=balance
+function showPopup(msg){
 
-currentBet=null
-betAmount=0
+let popup=document.getElementById("popupMessage");
 
-}
+popup.innerText=msg;
 
-}
+popup.style.display="block";
 
-},1000)
+setTimeout(()=>{popup.style.display="none"},3000);
 
-function openWallet(){
-window.location.href="wallet.html"
-}
-
-function openHelp(){
-window.location.href="help.html"
-}
-
-function logout(){
-window.location.href="login.html"
 }
 
 </script>
