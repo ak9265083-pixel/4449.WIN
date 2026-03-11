@@ -2,176 +2,63 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wallet</title>
+<title>4449 WIN - Wallet</title>
 
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#8f939c;
-display:flex;
-justify-content:center;
+:root { 
+    --primary: #00f2ff; /* Neon Cyan */
+    --secondary: #ff007a; /* Neon Pink */
+    --bg: #0b0e14; 
+    --card-bg: #161b22; 
+    --glass: rgba(255, 255, 255, 0.05);
 }
 
-.app{
-width:100%;
-max-width:420px;
-background:#f5f5f5;
-min-height:100vh;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-position:relative;
-}
+body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
 
-.header-container{
-position:relative;
-height:60px;
-}
+.app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 50px; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; }
 
-.header{
-background:#ff6b6b;
-color:white;
-padding:15px;
-font-size:20px;
-font-weight:bold;
-text-align:center;
-}
+/* Header */
+.header-container { position: sticky; top: 0; z-index: 1000; }
+.header { background: rgba(22, 27, 34, 0.95); padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); }
+.logo-top { position: absolute; top: 8px; left: 15px; width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); background: white; z-index: 1001; }
 
-.logo-top{
-position:absolute;
-top:5px;
-left:10px;
-width:50px;
-height:50px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid white;
-background:white;
-}
+/* Balance Box */
+.box { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+#balance { font-size: 32px; color: var(--primary); font-weight: 900; text-shadow: 0 0 15px rgba(0,242,255,0.4); display: block; margin-top: 5px; }
 
-.box{
-background:white;
-margin:15px;
-padding:20px;
-border-radius:12px;
-text-align:center;
-}
+/* Buttons */
+.btn { padding: 12px 25px; background: transparent; color: var(--primary); border: 1px solid var(--primary); border-radius: 12px; margin: 10px 5px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
+.btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
+.btn-submit { background: var(--primary); color: black; width: 80%; margin-top: 20px; }
 
-.btn{
-padding:12px 20px;
-background:#ff6b6b;
-color:white;
-border:none;
-border-radius:8px;
-margin:10px;
-font-size:16px;
-cursor:pointer;
-transition:.3s;
-}
+/* Inputs */
+input { padding: 12px; width: 85%; background: #0b0e14; border: 1px solid rgba(0, 242, 255, 0.2); color: white; border-radius: 10px; margin: 8px 0; outline: none; transition: 0.3s; text-align: center; }
+input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
 
-.btn:hover{
-transform:scale(1.05);
-}
+/* Package Tiles */
+.package-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+.pkg { background: var(--card-bg); border: 1px solid var(--glass); padding: 15px 5px; border-radius: 12px; cursor: pointer; transition: 0.3s; }
+.pkg:hover { border-color: var(--secondary); box-shadow: 0 0 15px rgba(255,0,122,0.3); transform: translateY(-3px); }
+.pkg b { color: var(--primary); font-size: 16px; }
+.pkg small { color: var(--secondary); display: block; font-weight: bold; margin-top: 4px; }
 
-input{
-padding:10px;
-width:80%;
-max-width:250px;
-border-radius:6px;
-border:1px solid #ccc;
-margin:5px;
-}
+/* History Section */
+.history-box { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass); text-align: left; }
+.history-box h3 { color: var(--primary); font-size: 14px; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
+.history-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 0; display: flex; flex-direction: column; gap: 4px; }
+.history-row { display: flex; justify-content: space-between; align-items: center; }
+.history-details { font-size: 11px; opacity: 0.6; color: #8b949e; }
 
-.qr{
-width:200px;
-display:block;
-margin:auto;
-}
+.history-pending { color: #fccf31; }
+.history-approved { color: #2ecc71; }
+.history-rejected { color: #e74c3c; }
 
-/* PACKAGE */
+/* QR Code */
+.qr { width: 160px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); margin: 15px auto; border-radius: 10px; border: 2px solid white; }
 
-.package-container{
-display:flex;
-justify-content:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:10px;
-}
-
-.pkg{
-background:#ff6b6b;
-color:white;
-padding:12px;
-border-radius:10px;
-width:90px;
-cursor:pointer;
-font-weight:bold;
-transition:.3s;
-box-shadow:0 5px 10px rgba(0,0,0,0.2);
-animation:fadeUp .4s ease;
-}
-
-.pkg:hover{
-transform:scale(1.1);
-background:#ff3b3b;
-}
-
-@keyframes fadeUp{
-0%{opacity:0;transform:translateY(10px);}
-100%{opacity:1;transform:translateY(0);}
-}
-
-/* POPUP */
-
-.bet-popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#1e293b;
-padding:20px;
-border-radius:12px;
-width:300px;
-display:none;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
-animation:zoomPop .4s ease;
-color:white;
-text-align:center;
-}
-
-@keyframes zoomPop{
-0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}
-100%{transform:translate(-50%,-50%) scale(1);opacity:1;}
-}
-
-/* HISTORY */
-
-.history-box{
-background:white;
-margin:15px;
-padding:15px;
-border-radius:12px;
-max-height:250px;
-overflow-y:auto;
-text-align:left;
-}
-
-.history-item{
-border-bottom:1px solid #ddd;
-padding:10px 0;
-display:flex;
-justify-content:space-between;
-animation:fadeHistory .4s ease;
-}
-
-@keyframes fadeHistory{
-0%{opacity:0;transform:translateX(-10px);}
-100%{opacity:1;transform:translateX(0);}
-}
-
-.history-pending{color:orange;font-weight:bold;}
-.history-approved{color:green;font-weight:bold;}
-.history-rejected{color:red;font-weight:bold;}
+/* Popup Message */
+.bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); animation: slideDown 0.4s ease; }
+@keyframes slideDown { from { top: -50px; } to { top: 20px; } }
 
 </style>
 </head>
@@ -179,258 +66,170 @@ animation:fadeHistory .4s ease;
 <body>
 
 <div class="app">
+    <div class="header-container">
+        <img src="logo.png" class="logo-top">
+        <div class="header">ACCOUNT WALLET</div>
+    </div>
 
-<div class="header-container">
-<img src="logo.png" class="logo-top">
-<div class="header">Wallet</div>
-</div>
+    <div class="box">
+        <span style="font-size: 12px; opacity: 0.7; letter-spacing: 1px;">AVAILABLE BALANCE</span>
+        <span id="balance">₹ 0.00</span>
+    </div>
 
-<div class="box">
-Balance ₹ <span id="balance">0</span>
-</div>
+    <div style="display: flex; justify-content: center; gap: 5px;">
+        <button class="btn" onclick="showDeposit()">Deposit</button>
+        <button class="btn" onclick="showWithdraw()">Withdraw</button>
+    </div>
 
-<div class="box">
-<button class="btn" onclick="showDeposit()">Deposit</button>
-<button class="btn" onclick="showWithdraw()">Withdraw</button>
-</div>
+    <div id="depositBox" class="box" style="display:none; border-color: var(--secondary);">
+        <h3 style="color:var(--secondary); font-size: 14px;">SELECT RECHARGE AMOUNT</h3>
+        <div class="package-container">
+            <div class="pkg" onclick="selectPkg(100,20)"><b>₹100</b><small>+20% Bonus</small></div>
+            <div class="pkg" onclick="selectPkg(200,20)"><b>₹200</b><small>+20% Bonus</small></div>
+            <div class="pkg" onclick="selectPkg(500,50)"><b>₹500</b><small>+50% Bonus</small></div>
+        </div>
+        
+        <img src="ui.png" class="qr">
+        <input type="number" id="amt" placeholder="Enter Amount">
+        <input type="text" id="utr" placeholder="Enter 12-Digit UTR Number">
+        <div id="bonusPreview" style="font-size:12px; margin-top:10px; color: var(--primary);"></div>
+        <button class="btn btn-submit" onclick="sendDeposit()" style="border-color: var(--secondary); color: var(--secondary);">Submit Deposit</button>
+    </div>
 
-<!-- DEPOSIT -->
+    <div id="withdrawBox" class="box" style="display:none">
+        <h3 style="color:var(--primary); font-size: 14px;">WITHDRAW CREDITS</h3>
+        <input type="number" id="wamt" placeholder="Enter Amount">
+        <input type="text" id="upi" placeholder="Enter UPI ID (e.g. name@okaxis)">
+        <p style="font-size: 10px; opacity: 0.5;">*Withdrawal usually takes 1-2 hours.</p>
+        <button class="btn btn-submit" onclick="sendWithdraw()">Confirm Withdrawal</button>
+    </div>
 
-<div id="depositBox" class="box" style="display:none">
+    <div class="history-box">
+        <h3>Transaction History</h3>
+        <div id="historyList"></div>
+    </div>
 
-<h3>Select Package</h3>
-
-<div class="package-container">
-
-<div class="pkg" onclick="selectPkg(100,20)">
-₹100<br><small>+20%</small>
-</div>
-
-<div class="pkg" onclick="selectPkg(200,20)">
-₹200<br><small>+20%</small>
-</div>
-
-<div class="pkg" onclick="selectPkg(500,50)">
-₹500<br><small>+50%</small>
-</div>
-
-</div>
-
-<h3>Deposit</h3>
-
-<img src="ui.png" class="qr"><br>
-
-<input type="number" id="amt" placeholder="Amount"><br>
-
-<input type="text" id="utr" placeholder="Enter UTR Number"><br><br>
-
-<div id="bonusPreview"></div>
-
-<button class="btn" onclick="sendDeposit()">Submit</button>
-
-</div>
-
-<!-- WITHDRAW -->
-
-<div id="withdrawBox" class="box" style="display:none">
-
-<h3>Withdraw</h3>
-
-<input type="number" id="wamt" placeholder="Amount"><br>
-
-<input type="text" id="upi" placeholder="UPI ID"><br><br>
-
-<button class="btn" onclick="sendWithdraw()">Submit</button>
-
-</div>
-
-<!-- HISTORY -->
-
-<div class="history-box">
-<h3>Withdrawal History</h3>
-<div id="historyList"></div>
-</div>
-
-<div class="bet-popup" id="popupMessage"></div>
-
+    <div class="bet-popup" id="popupMessage"></div>
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, addDoc, collection, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain: "win2-512e1.firebaseapp.com",
-projectId: "win2-512e1",
-storageBucket: "win2-512e1.firebasestorage.app",
-messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe"
+    apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+    authDomain: "win2-512e1.firebaseapp.com",
+    projectId: "win2-512e1"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser="";
-let balance=0;
+let currentUser = "";
+let balance = 0;
 
-onAuthStateChanged(auth, async (user)=>{
-
-if(user){
-
-currentUser=user.uid;
-
-let ref=doc(db,"users",user.uid);
-
-let snap=await getDoc(ref);
-
-if(!snap.exists()){
-await setDoc(ref,{balance:0});
-}
-
-let data=(await getDoc(ref)).data();
-
-balance=data.balance;
-
-document.getElementById("balance").innerText=balance;
-
-loadWithdrawHistory();
-
-}
-
+onAuthStateChanged(auth, async (user) => {
+    if(user) {
+        currentUser = user.uid;
+        let ref = doc(db, "users", user.uid);
+        let snap = await getDoc(ref);
+        if(!snap.exists()) { await setDoc(ref, {balance: 0}); }
+        balance = snap.data().balance || 0;
+        document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+        loadWithdrawHistory();
+    }
 });
 
-window.showDeposit=function(){
-document.getElementById("depositBox").style.display="block";
-document.getElementById("withdrawBox").style.display="none";
+window.showDeposit = () => {
+    document.getElementById("depositBox").style.display = "block";
+    document.getElementById("withdrawBox").style.display = "none";
+};
+
+window.showWithdraw = () => {
+    document.getElementById("withdrawBox").style.display = "block";
+    document.getElementById("depositBox").style.display = "none";
+};
+
+window.selectPkg = (amount, bonus) => {
+    document.getElementById("amt").value = amount;
+    let bonusAmt = (amount * bonus) / 100;
+    document.getElementById("bonusPreview").innerHTML = `🎁 Extra Bonus: ₹${bonusAmt} | Total: ₹${amount + bonusAmt}`;
+    showPopup("Selected: ₹" + amount);
+};
+
+window.sendDeposit = async () => {
+    let amt = parseInt(document.getElementById("amt").value);
+    let utr = document.getElementById("utr").value;
+    if(!amt || !utr) return showPopup("Fill all details!");
+
+    await addDoc(collection(db, "depositRequests"), {
+        user: currentUser,
+        amount: amt,
+        utr: utr,
+        status: "pending",
+        createdAt: serverTimestamp()
+    });
+    showPopup("Deposit Submitted!");
+    document.getElementById("amt").value = "";
+    document.getElementById("utr").value = "";
+};
+
+window.sendWithdraw = async () => {
+    let amt = parseInt(document.getElementById("wamt").value);
+    let upi = document.getElementById("upi").value;
+    if(!amt || !upi) return showPopup("Fill all details!");
+    if(amt > balance) return showPopup("Insufficient Balance!");
+
+    balance -= amt;
+    document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+
+    await addDoc(collection(db, "withdrawRequests"), {
+        user: currentUser,
+        amount: amt,
+        upi: upi,
+        status: "pending",
+        createdAt: serverTimestamp()
+    });
+    showPopup("Withdrawal Requested!");
+    document.getElementById("wamt").value = "";
+    document.getElementById("upi").value = "";
+    loadWithdrawHistory();
+};
+
+async function loadWithdrawHistory() {
+    let q = query(collection(db, "withdrawRequests"), where("user", "==", currentUser), orderBy("createdAt", "desc"));
+    let snap = await getDocs(q);
+    let container = document.getElementById("historyList");
+    container.innerHTML = "";
+
+    snap.forEach(docSnap => {
+        let d = docSnap.data();
+        let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
+        let statusText = d.status.toUpperCase();
+        let statusClass = "history-" + d.status;
+
+        let div = document.createElement("div");
+        div.className = "history-item";
+        div.innerHTML = `
+            <div class="history-row">
+                <span style="font-weight:bold; color:white;">₹${d.amount}</span>
+                <span class="${statusClass}" style="font-size:12px; font-weight:900;">${statusText}</span>
+            </div>
+            <div class="history-details">UPI: ${d.upi}</div>
+            <div class="history-details">${date}</div>
+        `;
+        container.appendChild(div);
+    });
 }
 
-window.showWithdraw=function(){
-document.getElementById("withdrawBox").style.display="block";
-document.getElementById("depositBox").style.display="none";
+function showPopup(msg) {
+    let p = document.getElementById("popupMessage");
+    p.innerText = msg;
+    p.style.display = "block";
+    setTimeout(() => { p.style.display = "none"; }, 3000);
 }
-
-window.selectPkg=function(amount,bonus){
-
-document.getElementById("amt").value=amount;
-
-let bonusAmount=(amount*bonus)/100;
-
-let total=amount+bonusAmount;
-
-document.getElementById("bonusPreview").innerHTML=
-"Bonus ₹"+bonusAmount+" | Total Credit ₹"+total;
-
-showPopup("Package Selected ₹"+amount);
-
-}
-
-window.sendDeposit=async function(){
-
-let amt=parseInt(document.getElementById("amt").value);
-
-let utr=document.getElementById("utr").value;
-
-if(!amt) return alert("Enter amount");
-
-if(!utr) return alert("Enter UTR Number");
-
-await addDoc(collection(db,"depositRequests"),{
-user:currentUser,
-amount:amt,
-utr:utr,
-status:"pending"
-});
-
-showPopup("Deposit request sent. Waiting for admin approval");
-
-document.getElementById("amt").value="";
-document.getElementById("utr").value="";
-document.getElementById("bonusPreview").innerHTML="";
-
-}
-
-window.sendWithdraw=async function(){
-
-let amt=parseInt(document.getElementById("wamt").value);
-
-let upi=document.getElementById("upi").value;
-
-if(!amt) return alert("Enter amount");
-
-if(amt>balance) return alert("Insufficient balance");
-
-if(!upi) return alert("Enter UPI ID");
-
-balance-=amt;
-
-document.getElementById("balance").innerText=balance;
-
-await addDoc(collection(db,"withdrawRequests"),{
-user:currentUser,
-amount:amt,
-upi:upi,
-status:"pending"
-});
-
-showPopup("Withdraw request sent. Waiting for admin approval");
-
-document.getElementById("wamt").value="";
-document.getElementById("upi").value="";
-
-loadWithdrawHistory();
-
-}
-
-async function loadWithdrawHistory(){
-
-let q=query(collection(db,"withdrawRequests"),where("user","==",currentUser));
-
-let snap=await getDocs(q);
-
-let container=document.getElementById("historyList");
-
-container.innerHTML="";
-
-snap.forEach(docSnap=>{
-
-let d=docSnap.data();
-
-let statusText="Pending";
-
-if(d.status==="approved") statusText="Success";
-if(d.status==="rejected") statusText="Rejected";
-
-let statusClass=d.status==="pending"?"history-pending":
-d.status==="approved"?"history-approved":"history-rejected";
-
-let div=document.createElement("div");
-
-div.className="history-item "+statusClass;
-
-div.innerHTML=`<span>₹${d.amount}</span><span>${statusText}</span>`;
-
-container.appendChild(div);
-
-});
-
-}
-
-function showPopup(msg){
-
-let popup=document.getElementById("popupMessage");
-
-popup.innerText=msg;
-
-popup.style.display="block";
-
-setTimeout(()=>{popup.style.display="none"},3000);
-
-}
-
 </script>
 
 </body>
