@@ -33,11 +33,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .big{background: #f39c12;}
 .small{background: #3498db;}
 
-.history-tabs{display:flex; margin:15px; border-bottom: 2px solid #eee;}
-.tab-btn{flex:1; padding: 10px; cursor:pointer; font-weight: bold; color: #777; border:none; background:none;}
-.tab-btn.active{color: #ff6b6b; border-bottom: 2px solid #ff6b6b;}
-
-.history{margin:15px;text-align:left;max-height:300px;overflow-y:auto;}
+.history{margin:15px;text-align:left;max-height:400px;overflow-y:auto;}
 .historyItem{background:#eee;margin-bottom:6px;padding:10px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;}
 .colorGreen{background:#2ecc71; color:white; padding: 2px 8px; border-radius: 4px;}
 .colorRed{background:#e74c3c; color:white; padding: 2px 8px; border-radius: 4px;}
@@ -89,12 +85,10 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
     <button class="ball-9" onclick="selectBet(9)">9</button>
   </div>
   
-  <div class="history-tabs">
-    <button class="tab-btn active" id="gameTab" onclick="switchTab('game')">Game History</button>
-    <button class="tab-btn" id="betTab" onclick="switchTab('bet')">My Bets</button>
+  <div class="history">
+    <h3>Game History (Last 10)</h3>
+    <div id="historyList"></div>
   </div>
-  <div class="history" id="gameHistoryBox"><div id="historyList"></div></div>
-  <div class="history" id="myBetBox" style="display:none;"><div id="myBetList"></div></div>
 </div>
 
 <div class="bottomWallet">
@@ -115,37 +109,24 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,where,orderBy,limit,onSnapshot,serverTimestamp,deleteDoc,setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,orderBy,limit,onSnapshot,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, currentBetId=null;
+let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
 let timerTime = 30;
 
-// Online Status Update
 async function updateOnlineStatus() {
-  if (userId) {
-    await updateDoc(doc(db, "users", userId), { lastActive: Date.now() });
-  }
+  if (userId) { await updateDoc(doc(db, "users", userId), { lastActive: Date.now() }); }
 }
 
-// Tab Switcher
-window.switchTab = (type) => {
-  document.getElementById('gameHistoryBox').style.display = (type==='game')?'block':'none';
-  document.getElementById('myBetBox').style.display = (type==='bet')?'block':'none';
-  document.getElementById('gameTab').classList.toggle('active', type==='game');
-  document.getElementById('betTab').classList.toggle('active', type==='bet');
-}
-
-// Listeners
 onAuthStateChanged(auth, user => {
   if(user){
     userId=user.uid;
     updateOnlineStatus();
-    listenToMyBets(userId);
     getDoc(doc(db,"users",userId)).then(snap => {
       if(snap.exists()){ balance=snap.data().balance||0; document.getElementById("balance").innerText=balance; }
     });
@@ -157,30 +138,18 @@ onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(
   snap.forEach(d => {
     let item = d.data();
     let colorClass = item.color === "green" ? "colorGreen" : item.color === "red" ? "colorRed" : "colorViolet";
-    list.innerHTML += `<div class="historyItem">Res ${item.num} (<span class="${colorClass}">${item.color}</span>) <span>${item.bigsmall}</span></div>`;
+    list.innerHTML += `<div class="historyItem">Result ${item.num} (<span class="${colorClass}">${item.color}</span>) <span>${item.bigsmall}</span></div>`;
   });
 });
 
-function listenToMyBets(uid) {
-  onSnapshot(query(collection(db, "userBets"), where("uid", "==", uid), orderBy("createdAt", "desc"), limit(10)), (snap) => {
-    let list = document.getElementById("myBetList"); list.innerHTML = "";
-    snap.forEach(d => {
-      let b = d.data();
-      list.innerHTML += `<div class="historyItem">Bet: ${b.selection} | ₹${b.amount} | ${b.status}</div>`;
-    });
-  });
-}
-
-// Game Logic
 window.selectBet=v=>{ selectedValue=v; document.getElementById("betPopup").style.display="flex"; }
 window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="none"; }
 window.placeBet=async()=>{
   let amt=parseInt(document.getElementById("betInput").value);
-  if(balance<amt || amt<=0){ alert("Invalid Balance"); return; }
+  if(balance<amt || amt<=0){ alert("Invalid Amount"); return; }
   balance-=amt; document.getElementById("balance").innerText=balance;
   document.getElementById("betPopup").style.display="none";
-  let docRef = await addDoc(collection(db, "userBets"), { uid:userId, selection:selectedValue, amount:amt, status:"Pending", createdAt:serverTimestamp() });
-  currentBetId = docRef.id; currentBet=selectedValue; betAmount=amt;
+  currentBet=selectedValue; betAmount=amt;
   await updateDoc(doc(db,"users",userId), {balance:balance});
   updateOnlineStatus();
 }
@@ -193,20 +162,16 @@ async function timerTick(){
     updateOnlineStatus();
     let ball=document.getElementById("ball"); ball.classList.add("animate");
     
-    // --- SMART RESULT LOGIC ---
     let result;
     try {
       const adminDoc = await getDoc(doc(db, "wingo", "result"));
       if (adminDoc.exists() && adminDoc.data().number !== null && adminDoc.data().number !== undefined) {
           result = adminDoc.data().number;
-          // Admin result use hone ke baad use null kar do taaki agli baar random aaye
           await setDoc(doc(db, "wingo", "result"), { number: null, time: Date.now() });
       } else {
           result = Math.floor(Math.random() * 10);
       }
-    } catch(e) { 
-      result = Math.floor(Math.random() * 10); 
-    }
+    } catch(e) { result = Math.floor(Math.random() * 10); }
 
     let color = (result===0||result===5)?"violet":([1,3,7,9].includes(result)?"green":"red");
     let bs = result>=5?"BIG":"SMALL";
@@ -215,30 +180,26 @@ async function timerTick(){
 
     setTimeout(async ()=>{
       ball.innerText=result; ball.classList.remove("animate");
-      
-      // Ball colors update
       if(result===0) ball.style.background = "linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%)";
       else if(result===5) ball.style.background = "linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%)";
       else if(color==="green") ball.style.background = "radial-gradient(circle at 30% 30%, #58d68d, #27ae60)";
       else ball.style.background = "radial-gradient(circle at 30% 30%, #ec7063, #c0392b)";
       ball.style.color="white";
 
-      if(currentBetId){
+      if(currentBet !== null){
         let win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
         let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
         if(win) {
           balance += winAmt; 
           document.getElementById("balance").innerText=balance;
           await updateDoc(doc(db,"users",userId), {balance:balance});
-          await updateDoc(doc(db,"userBets",currentBetId), {status:"Win ₹"+winAmt});
           let p=document.createElement("div"); p.className="resultPopup win"; p.innerText="Win ₹"+winAmt;
           document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2500);
         } else {
-          await updateDoc(doc(db,"userBets",currentBetId), {status:"Lose"});
           let p=document.createElement("div"); p.className="resultPopup lose"; p.innerText="Lose";
           document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2500);
         }
-        currentBetId=null;
+        currentBet=null; betAmount=0;
       }
     },500);
   }
