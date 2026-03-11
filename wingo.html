@@ -28,9 +28,21 @@ padding-bottom:100px;
 .header{
 background:#ff6b6b;
 color:white;
-padding:15px;
+padding:12px;
 font-size:22px;
 font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+}
+
+.logo{
+width:40px;
+height:40px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid white;
 }
 
 /* WALLET */
@@ -49,7 +61,7 @@ font-size:18px;
 background:#ff6b6b;
 color:white;
 margin:10px;
-padding:10px;
+padding:12px;
 border-radius:10px;
 font-size:20px;
 font-weight:bold;
@@ -78,7 +90,7 @@ font-weight:bold;
 box-shadow:0 5px 20px rgba(0,0,0,0.3);
 }
 
-/* COLOR BET */
+/* COLORS */
 
 .colors{
 display:flex;
@@ -120,7 +132,7 @@ font-weight:bold;
 .big{background:#f39c12;}
 .small{background:#3498db;}
 
-/* NUMBER BALLS */
+/* BALLS */
 
 .numbers{
 display:grid;
@@ -166,11 +178,33 @@ text-align:left;
 .historyItem{
 background:#eee;
 margin-bottom:6px;
-padding:8px;
+padding:10px;
 border-radius:6px;
+animation:slideIn .4s ease;
 }
 
-/* BOTTOM NAV */
+@keyframes slideIn{
+0%{transform:translateX(-20px);opacity:0;}
+100%{transform:translateX(0);opacity:1;}
+}
+
+.bs{
+font-weight:bold;
+margin-left:8px;
+padding:2px 8px;
+border-radius:5px;
+color:white;
+}
+
+.bigTag{
+background:#f39c12;
+}
+
+.smallTag{
+background:#3498db;
+}
+
+/* BOTTOM */
 
 .bottomWallet{
 position:fixed;
@@ -211,7 +245,7 @@ margin-top:4px;
 font-weight:bold;
 }
 
-/* BET POPUP */
+/* POPUP */
 
 .betPopup{
 position:fixed;
@@ -226,7 +260,6 @@ justify-content:center;
 }
 
 .betBox{
-position:relative;
 background:white;
 padding:25px;
 border-radius:18px;
@@ -255,43 +288,6 @@ border-radius:10px;
 font-size:16px;
 }
 
-.closeBtn{
-position:absolute;
-top:10px;
-right:10px;
-background:#ff6b6b;
-color:white;
-border:none;
-border-radius:50%;
-width:28px;
-height:28px;
-}
-
-/* RESULT POPUP */
-
-.resultPopup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-border-radius:20px;
-padding:25px 35px;
-text-align:center;
-font-size:18px;
-font-weight:bold;
-color:white;
-display:none;
-z-index:9999;
-}
-
-.resultPopup.win{
-background:#2ecc71;
-}
-
-.resultPopup.lose{
-background:#e74c3c;
-}
-
 </style>
 </head>
 
@@ -299,7 +295,10 @@ background:#e74c3c;
 
 <div class="app">
 
-<div class="header">4449 WIN</div>
+<div class="header">
+<img src="logo.png" class="logo">
+4449 WIN
+</div>
 
 <div class="wallet">
 Balance ₹ <span id="balance">0</span>
@@ -345,33 +344,12 @@ Next Result In <span id="time">30</span>s
 
 </div>
 
-<div class="bottomWallet">
-
-<div class="navBtn" onclick="openWallet()">
-<div class="icon">💳</div>
-<div class="label">Wallet</div>
-</div>
-
-<div class="navBtn" onclick="openHelp()">
-<div class="icon">🎧</div>
-<div class="label">Help</div>
-</div>
-
-<div class="navBtn" onclick="logout()">
-<div class="icon">🚪</div>
-<div class="label">Logout</div>
-</div>
-
-</div>
-
 <div class="betPopup" id="betPopup">
 <div class="betBox">
 
-<button class="closeBtn" onclick="closeBetPopup()">✖</button>
-
 <h3>Enter Bet Amount</h3>
 
-<input type="number" id="betInput" placeholder="Amount">
+<input type="number" id="betInput">
 
 <button class="betBtn" onclick="placeBet()">Place Bet</button>
 
@@ -384,15 +362,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {getFirestore,doc,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain: "win2-512e1.firebaseapp.com",
-projectId: "win2-512e1"
+const firebaseConfig={
+apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+authDomain:"win2-512e1.firebaseapp.com",
+projectId:"win2-512e1"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
 let balance=0;
 let userId="";
@@ -407,36 +385,16 @@ startTime=Date.now();
 localStorage.setItem("startTime",startTime);
 }
 
-onAuthStateChanged(auth, async (user)=>{
-
-if(user){
-
-userId=user.uid;
-
-let ref=doc(db,"users",userId);
-let snap=await getDoc(ref);
-
-if(snap.exists()){
-
-balance=snap.data().balance || 0;
-document.getElementById("balance").innerText=balance;
-
-}
-
-}
-
-});
-
 function getColor(n){
 
-if(n==0 || n==5) return "violet";
-
-if(n==1 || n==3 || n==7 || n==9)
-return "green";
-
-if(n==2 || n==4 || n==6 || n==8)
+if(n==0||n==5) return "violet";
+if([1,3,7,9].includes(n)) return "green";
 return "red";
 
+}
+
+function getBigSmall(n){
+return n>=5 ? "BIG" : "SMALL";
 }
 
 window.selectBet=function(v){
@@ -446,26 +404,10 @@ document.getElementById("betPopup").style.display="flex";
 
 }
 
-window.closeBetPopup=function(){
-
-document.getElementById("betPopup").style.display="none";
-
-}
-
 window.placeBet=function(){
 
-let amt=parseInt(document.getElementById("betInput").value);
-
-if(balance<amt){
-alert("Low Balance");
-return;
-}
-
-balance-=amt;
-document.getElementById("balance").innerText=balance;
-
+betAmount=parseInt(document.getElementById("betInput").value);
 currentBet=selectedValue;
-betAmount=amt;
 
 document.getElementById("betPopup").style.display="none";
 
@@ -495,9 +437,18 @@ list.innerHTML="";
 
 history.forEach(h=>{
 
+let bs=getBigSmall(h.num);
+
+let tagClass=bs=="BIG"?"bigTag":"smallTag";
+
 let div=document.createElement("div");
+
 div.className="historyItem";
-div.innerHTML="Result: "+h.num+" ("+h.color+")";
+
+div.innerHTML=
+"Result "+h.num+
+" ("+h.color+") "+
+"<span class='bs "+tagClass+"'>"+bs+"</span>";
 
 list.appendChild(div);
 
@@ -507,110 +458,37 @@ list.appendChild(div);
 
 renderHistory();
 
-function showResultPopup(message,isWin){
+function showResult(num){
 
-let popup=document.createElement("div");
+let color=getColor(num);
 
-popup.className="resultPopup "+(isWin?"win":"lose");
+document.getElementById("ball").innerText=num;
 
-popup.innerText=message;
-
-document.body.appendChild(popup);
-
-popup.style.display="block";
-
-setTimeout(()=>{popup.remove()},2000);
+saveHistory(num,color);
 
 }
 
-setInterval(async ()=>{
+let time=30;
+
+setInterval(async()=>{
 
 let passed=Math.floor((Date.now()-startTime)/1000);
 
-let time=30-(passed%30);
+let left=30-(passed%30);
 
-document.getElementById("time").innerText=time;
+document.getElementById("time").innerText=left;
 
-if(time==30){
+if(left==30){
 
 let resultDoc=await getDoc(doc(db,"wingo","result"));
+
 let result=resultDoc.data().number;
 
-let color=getColor(result);
-
-document.getElementById("ball").innerText=result;
-
-saveHistory(result,color);
-
-if(currentBet!=null){
-
-if(currentBet===result){
-
-let winAmount=betAmount*(result==0?2:result);
-
-balance+=winAmount;
-
-showResultPopup("You Win ₹"+winAmount,true);
-
-}
-
-else if(currentBet===color){
-
-balance+=betAmount*2;
-
-showResultPopup("Color Win ₹"+betAmount*2,true);
-
-}
-
-else if(currentBet==="big" && result>=5){
-
-balance+=betAmount*2;
-
-showResultPopup("Big Win ₹"+betAmount*2,true);
-
-}
-
-else if(currentBet==="small" && result<=4){
-
-balance+=betAmount*2;
-
-showResultPopup("Small Win ₹"+betAmount*2,true);
-
-}
-
-else{
-
-showResultPopup("You Lose",false);
-
-}
-
-document.getElementById("balance").innerText=balance;
-
-await updateDoc(doc(db,"users",userId),{
-balance:balance
-});
-
-currentBet=null;
-betAmount=0;
-
-}
+showResult(result);
 
 }
 
 },1000);
-
-window.openWallet=function(){
-window.location.href="wallet.html";
-}
-
-window.openHelp=function(){
-window.location.href="help.html";
-}
-
-window.logout=function(){
-signOut(auth);
-window.location.href="login.html";
-}
 
 </script>
 
