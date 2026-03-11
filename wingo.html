@@ -24,17 +24,32 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .header-logo { width: 35px; height: 35px; border-radius: 50%; background: white; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
 
 /* Profile Card */
-.profile-card { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.profile-card { background: linear-gradient(135deg, #1c2333, #0b0e14); margin: 15px 15px 5px 15px; padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .profile-card p { margin: 0; font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
 .profile-card h2 { margin: 5px 0; font-size: 32px; color: var(--primary); text-shadow: 0 0 15px rgba(0,242,255,0.4); }
 .uid-box { background: rgba(0, 242, 255, 0.05); padding: 6px 12px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 12px; border: 1px solid rgba(0, 242, 255, 0.2); cursor: pointer; }
+
+/* REFERRAL BOX STYLE */
+.refer-container { 
+    margin: 10px 15px 20px 15px; 
+    padding: 15px; 
+    background: var(--glass); 
+    border-radius: 15px; 
+    border: 1px dashed var(--primary); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.refer-info p { margin: 0; font-size: 10px; color: #8b949e; text-transform: uppercase; }
+.refer-info b { font-size: 18px; color: var(--primary); letter-spacing: 1px; }
+.copy-btn { background: var(--primary); color: black; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
 
 /* Timer Section */
 .timer-container { background: var(--card-bg); margin: 0 15px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--glass); }
 .timer-label { font-weight: bold; color: #8b949e; display: flex; align-items: center; gap: 6px; }
 #time { font-size: 28px; color: var(--secondary); font-weight: 900; text-shadow: 0 0 10px var(--secondary); font-family: monospace; }
 
-/* RECTANGULAR RESULT BOX (CYBER SLOT STYLE) */
+/* RESULT BOX */
 .result-area { margin: 25px auto; width: 90%; }
 .centerGame { width: 100%; height: 130px; background: #1a1f29; border-radius: 20px; border: 2px solid var(--primary); box-shadow: 0 0 25px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: 900; position: relative; transition: 0.5s; overflow: hidden; }
 .centerGame.animate { animation: neonGlitch 0.3s infinite; }
@@ -61,51 +76,35 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .big { background: var(--big-color); color: black !important; box-shadow: 0 4px 0 #c48a0d; }
 .small { background: var(--primary); color: black !important; box-shadow: 0 4px 0 #00b8c2; }
 
-/* History List with Original Colors */
+/* History */
 .history { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
 .historyItem { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
 .res-num { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-/* UPGRADED BOTTOM NAVIGATION WITH LOGOS */
+/* BOTTOM NAVIGATION (Home Replaced by Refer) */
 .bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 2000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
 .navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; transition: 0.3s; flex: 1; text-decoration: none; }
 .navBtn.active, .navBtn:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
 .nav-icon { font-size: 22px; margin-bottom: 4px; transition: 0.3s; }
 .nav-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* Popup (Bet selection) - CENTERED FIXED */
+/* Popup (Bet selection) */
 .betPopup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 3000; backdrop-filter: blur(8px); }
 .betBox { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 320px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(0,242,255,0.3); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
 @keyframes pop { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
 .betBox h3 { margin: 0 0 20px; font-size: 18px; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
 .betBox input { width: 100%; padding: 15px; background: #0b0e14; border: 1px solid var(--glass); color: var(--primary); font-size: 28px; text-align: center; margin-bottom: 25px; border-radius: 12px; font-weight: bold; outline: none; transition: 0.3s; }
-.betBox input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
 .popup-btns { display:flex; gap:15px; width: 100%; }
 .confirmBtn { flex:1; padding:15px; border-radius:12px; border:none; background:var(--primary); color:black; font-weight:bold; cursor:pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
 .cancelBtn { flex:1; padding:15px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; cursor:pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Winning/Lose Result Popups (5 seconds attractive) */
 .resultPopup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); padding: 40px 60px; border-radius: 25px; font-weight: 900; font-size: 32px; z-index: 9999; animation: popupBounce 0.6s forwards; text-transform: uppercase; letter-spacing: 2px; }
 @keyframes popupBounce { 0% { transform: translate(-50%,-50%) scale(0); } 80% { transform: translate(-50%,-50%) scale(1.1); } 100% { transform: translate(-50%,-50%) scale(1); } }
 
-/* WIN POPUP STYLE */
-.resultPopup.win {
-    background: linear-gradient(135deg, #1c2333, #0b0e14);
-    color: var(--primary);
-    border: 3px solid var(--primary);
-    box-shadow: 0 0 50px rgba(0,242,255,0.4);
-    text-shadow: 0 0 15px var(--primary);
-}
+.resultPopup.win { background: linear-gradient(135deg, #1c2333, #0b0e14); color: var(--primary); border: 3px solid var(--primary); box-shadow: 0 0 50px rgba(0,242,255,0.4); text-shadow: 0 0 15px var(--primary); }
 .resultPopup.win::after { content: 'WIN credits Added!'; display: block; font-size: 14px; color: white; margin-top: 10px; font-weight: bold; opacity: 0.8; }
 
-/* LOSE POPUP STYLE */
-.resultPopup.lose {
-    background: linear-gradient(135deg, #111, #000);
-    color: white;
-    border: 3px solid #444;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
-    opacity: 0.9;
-}
+.resultPopup.lose { background: linear-gradient(135deg, #111, #000); color: white; border: 3px solid #444; box-shadow: 0 0 30px rgba(0,0,0,0.8); opacity: 0.9; }
 .resultPopup.lose::after { content: 'SYSTEM: Better luck next time'; display: block; font-size: 13px; color: #ff3547; margin-top: 10px; font-weight: bold; }
 
 </style>
@@ -125,6 +124,14 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
       <span>ID: <span id="displayUid">...</span></span>
       <span style="color: var(--primary);">📋</span>
     </div>
+  </div>
+
+  <div class="refer-container">
+    <div class="refer-info">
+        <p>Your Referral Code</p>
+        <b id="myReferCode">LOADING...</b>
+    </div>
+    <button class="copy-btn" onclick="copyReferCode()">COPY CODE</button>
   </div>
 
   <div class="timer-container">
@@ -169,9 +176,9 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 </div>
 
 <div class="bottomWallet">
-  <div class="navBtn active" onclick="location.reload()">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-label">Home</div>
+  <div class="navBtn" onclick="alert('Share your referral code to earn credits!')">
+    <div class="nav-icon">📢</div>
+    <div class="nav-label">Refer</div>
   </div>
   <div class="navBtn" onclick="location.href='wallet.html'">
     <div class="nav-icon">💳</div>
@@ -215,6 +222,14 @@ window.copyUID = () => {
     alert("UID Copied to Clipboard!");
 }
 
+window.copyReferCode = () => {
+    const code = document.getElementById("myReferCode").innerText;
+    if(code !== "LOADING...") {
+        navigator.clipboard.writeText(code);
+        alert("Referral Code Copied: " + code);
+    }
+}
+
 function updateTimer() {
     const remaining = 30 - (new Date().getSeconds() % 30);
     document.getElementById("time").innerText = "00:" + (remaining < 10 ? "0" + remaining : remaining);
@@ -227,7 +242,13 @@ onAuthStateChanged(auth, user => {
     userId=user.uid;
     document.getElementById("displayUid").innerText = userId.substring(0,12).toUpperCase();
     getDoc(doc(db,"users",userId)).then(snap => {
-      if(snap.exists()){ balance=snap.data().balance||0; document.getElementById("balance").innerText="₹ " + balance.toFixed(2); }
+      if(snap.exists()){ 
+          const data = snap.data();
+          balance=data.balance||0; 
+          document.getElementById("balance").innerText="₹ " + balance.toFixed(2); 
+          // Set Referral Code from Database
+          document.getElementById("myReferCode").innerText = data.referralCode || user.uid.substring(0,6).toUpperCase();
+      }
     });
   }
 });
@@ -300,11 +321,9 @@ async function processResult(){
 function showPopup(txt, type) {
     let p=document.createElement("div"); p.className="resultPopup "+type; p.innerText=txt;
     document.body.appendChild(p); p.style.display="block"; 
-    // Auto-close after 5 seconds (5000 ms)
     setTimeout(()=>p.remove(),5000);
 }
 window.logout=()=>{ signOut(auth); window.location.href="login.html"; }
 </script>
 </body>
 </html>
-
