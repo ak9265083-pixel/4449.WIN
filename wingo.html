@@ -2,75 +2,91 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>4449 WIN</title>
+<title>4449 WIN - PREMIUM</title>
 <style>
-body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:center;}
-.app{width:420px;background:white;min-height:100vh;text-align:center;padding-bottom:90px;overflow-x:hidden;}
-.header{background:#ff6b6b;color:white;padding:15px;font-size:22px;font-weight:bold;display:flex;align-items:center;gap:10px;}
-.header img{width:32px;height:32px;border-radius:50%;}
-.wallet{background:#f2f2f2;margin:15px;padding:15px;border-radius:12px;font-size:18px;}
-.timer{background:#ff6b6b;color:white;margin:10px 15px;padding:10px;border-radius:10px;font-size:18px;font-weight:bold;animation: pulse 1.5s infinite alternate;}
-@keyframes pulse{0%{background-color:#ff6b6b;}100%{background-color:#ff3b3b;}}
+:root { --primary: #ff6b6b; --big-color: #f39c12; --small-color: #3498db; --bg: #f5f6fa; }
+body{margin:0;font-family:'Segoe UI',Arial;background:#9fa3ad;display:flex;justify-content:center;}
+.app{width:420px;background:var(--bg);min-height:100vh;text-align:center;padding-bottom:90px;overflow-x:hidden;}
 
-/* Result Container */
-.result-display{position:relative; margin:20px auto; width:150px; height:150px; display:flex; align-items:center; justify-content:center;}
-.centerGame{width:110px;height:110px;border-radius:50%;background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:bold;box-shadow: 0 10px 20px rgba(0,0,0,0.2);z-index:2; transition: 0.5s;}
-.centerGame.animate{transform: rotateY(720deg) scale(1.1); filter: brightness(1.2);}
+/* Header & Balance Card */
+.header{background:var(--primary);color:white;padding:15px;font-size:20px;font-weight:bold;text-align:left;display:flex;align-items:center;gap:10px;}
+.profile-card{background: linear-gradient(135deg, #2c3e50, #000000); margin: 15px; padding: 20px; border-radius: 20px; color: white; text-align: left; box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative;}
+.profile-card h2 { margin: 0; font-size: 28px; letter-spacing: 1px; }
+.profile-card p { margin: 5px 0 0; opacity: 0.8; font-size: 13px; }
+.uid-box { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 15px; display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer; font-size: 12px;}
 
-/* Big/Small Badge Animation */
-.bs-badge{position:absolute; top:-10px; right:-10px; padding:8px 15px; border-radius:15px; color:white; font-weight:bold; font-size:20px; box-shadow:0 5px 15px rgba(0,0,0,0.3); transform: scale(0); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index:5;}
-.bs-badge.show{transform: scale(1) rotate(15deg);}
-.bg-big{background: linear-gradient(45deg, #f39c12, #e67e22);}
-.bg-small{background: linear-gradient(45deg, #3498db, #2980b9);}
+/* Timer Section */
+.timer-container{background:white; margin:0 15px; padding:15px; border-radius:15px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+.timer-label { font-weight: bold; color: #555; }
+#time { font-size: 24px; color: var(--primary); font-weight: 800; font-family: monospace; }
 
-.colors{display:flex;gap:10px;padding:10px 15px;}
-.colors button{flex:1;padding:12px;border:none;color:white;border-radius:8px;font-size:16px;cursor:pointer;font-weight: bold;}
-.green{background: linear-gradient(180deg, #2ecc71, #27ae60);}
-.red{background: linear-gradient(180deg, #e74c3c, #c0392b);}
-.violet{background: linear-gradient(180deg, #9b59b6, #8e44ad);}
+/* Result Display */
+.result-area{position:relative; margin:25px auto; width:160px; height:160px; display:flex; align-items:center; justify-content:center;}
+.centerGame{width:110px;height:110px;border-radius:50%;background: white;display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:bold;box-shadow: 0 10px 25px rgba(0,0,0,0.15);z-index:2; transition: 0.5s; border: 4px solid #eee;}
+.centerGame.animate{transform: rotateY(720deg) scale(1.1);}
 
-.numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:10px 15px;}
-.numbers button{width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 20px; font-weight: bold; color: white; cursor: pointer;}
+.bs-badge{position:absolute; top:0; right:0; padding:10px 20px; border-radius:12px; color:white; font-weight:900; font-size:22px; transform: scale(0); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index:5; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+.bs-badge.show{transform: scale(1) rotate(-10deg);}
+.bg-big{background: var(--big-color);}
+.bg-small{background: var(--small-color);}
+
+/* Betting Buttons */
+.colors, .bigsmall{display:flex;gap:10px;padding:10px 15px;}
+.colors button, .bigsmall button{flex:1;padding:15px;border:none;color:white;border-radius:12px;font-size:16px;cursor:pointer;font-weight: bold; transition: 0.2s;}
+.colors button:active, .bigsmall button:active { transform: scale(0.95); }
+.green{background: #2ecc71;} .red{background: #e74c3c;} .violet{background: #9b59b6;}
+.big{background: var(--big-color);} .small{background: var(--small-color);}
+
+.numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:10px 15px;}
+.numbers button{height: 55px; border-radius: 12px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer;}
 .ball-0 { background: linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%); } 
-.ball-1, .ball-3, .ball-7, .ball-9 { background: radial-gradient(circle at 30% 30%, #58d68d, #27ae60); } 
-.ball-2, .ball-4, .ball-6, .ball-8 { background: radial-gradient(circle at 30% 30%, #ec7063, #c0392b); } 
 .ball-5 { background: linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%); } 
+.ball-odd { background: #2ecc71; } .ball-even { background: #e74c3c; }
 
-.bigsmall{display:flex;gap:15px;padding:10px 15px;}
-.bigsmall button{flex:1;padding:15px;font-weight:bold;border:none;border-radius:10px;color:white;font-size:18px;}
-.big{background: #f39c12;}
-.small{background: #3498db;}
+/* History */
+.history{margin:15px; padding:15px; background:white; border-radius:15px; text-align:left;}
+.historyItem{border-bottom:1px solid #eee; padding:12px 0; display:flex; justify-content:space-between; font-weight:600; font-size:14px;}
+.res-num { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; margin-right: 10px;}
+.tag-bs { padding: 3px 10px; border-radius: 5px; color: white; font-size: 11px; }
 
-.history{margin:15px;text-align:left;max-height:400px;overflow-y:auto;}
-.historyItem{background:#eee;margin-bottom:6px;padding:10px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;}
-.colorGreen{background:#2ecc71; color:white; padding: 2px 8px; border-radius: 4px;}
-.colorRed{background:#e74c3c; color:white; padding: 2px 8px; border-radius: 4px;}
-.colorViolet{background:#9b59b6; color:white; padding: 2px 8px; border-radius: 4px;}
+/* Bottom Nav */
+.bottomWallet{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:380px;background:white;border-radius:30px;display:flex;justify-content:space-around;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:1000;}
+.navBtn{display:flex;flex-direction:column;align-items:center;cursor:pointer; color: #7f8c8d;}
+.icon{font-size:22px;}
+.label{font-size:11px;margin-top:4px;font-weight:600;}
 
-.bottomWallet{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);width:360px;background:white;border-radius:25px;display:flex;justify-content:space-around;padding:10px;box-shadow:0 5px 20px rgba(0,0,0,0.25);z-index:1000;}
-.navBtn{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
-.icon{width:48px;height:48px;border-radius:50%;background:#ff6b6b;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
-.label{font-size:13px;margin-top:4px;font-weight:bold;}
+/* Popup */
+.betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:2000;}
+.betBox{background:white;padding:25px;border-radius:20px;width:280px;text-align:center; animation: pop 0.3s;}
+@keyframes pop { from{transform:scale(0.8);} to{transform:scale(1);} }
+.betBox input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;margin:15px 0;box-sizing: border-box; font-size: 18px; text-align: center;}
+.betBtn{padding:12px;background:var(--primary);color:white;border:none;width:100%;border-radius:10px;cursor:pointer;font-weight: bold;}
 
-.betPopup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:2000;}
-.betBox{position:relative;background:white;padding:25px;border-radius:18px;width:260px;text-align:center;}
-.betBox input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;margin-top:10px;}
-.betBtn{margin-top:15px;padding:12px;background:#ff6b6b;color:white;border:none;width:100%;border-radius:10px;cursor:pointer;}
-.closeBtn{position:absolute;top:10px;right:10px;background:#ff6b6b;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;}
-
-.resultPopup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);border-radius:20px;padding:25px;text-align:center;font-size:20px;font-weight:bold;color:white;display:none;z-index:9999;animation:popupBounce 0.6s forwards;}
-.resultPopup.win{background:linear-gradient(45deg,#2ecc71,#27ae60);}
-.resultPopup.lose{background:linear-gradient(45deg,#e74c3c,#c0392b);}
+.resultPopup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);border-radius:20px;padding:30px;text-align:center;font-size:22px;font-weight:bold;color:white;display:none;z-index:9999;animation:popupBounce 0.6s forwards;}
+.resultPopup.win{background:linear-gradient(45deg,#2ecc71,#27ae60); box-shadow: 0 10px 30px rgba(46, 204, 113, 0.4);}
+.resultPopup.lose{background:linear-gradient(45deg,#e74c3c,#c0392b); box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);}
 @keyframes popupBounce{0%{transform:translate(-50%,-50%) scale(0);}100%{transform:translate(-50%,-50%) scale(1);}}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="header"><img src="logo.png"> 4449 WIN</div>
-  <div class="wallet">Balance ₹ <span id="balance">0</span></div>
-  <div class="timer">Next Result In <span id="time">30</span>s</div>
+  <div class="header">4449 WIN</div>
   
-  <div class="result-display">
+  <div class="profile-card">
+    <p>Available Balance</p>
+    <h2>₹ <span id="balance">0.00</span></h2>
+    <div class="uid-box" onclick="copyUID()">
+      <span>ID: <span id="displayUid">Loading...</span></span>
+      <span style="font-size: 14px;">📋</span>
+    </div>
+  </div>
+
+  <div class="timer-container">
+    <div class="timer-label">⏱ Wingo 30s</div>
+    <div id="time">00:30</div>
+  </div>
+  
+  <div class="result-area">
     <div id="bsBadge" class="bs-badge">BIG</div>
     <div class="centerGame" id="ball">?</div>
   </div>
@@ -86,35 +102,38 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
   </div>
   <div class="numbers">
     <button class="ball-0" onclick="selectBet(0)">0</button>
-    <button class="ball-1" onclick="selectBet(1)">1</button>
-    <button class="ball-2" onclick="selectBet(2)">2</button>
-    <button class="ball-3" onclick="selectBet(3)">3</button>
-    <button class="ball-4" onclick="selectBet(4)">4</button>
+    <button class="ball-odd" onclick="selectBet(1)">1</button>
+    <button class="ball-even" onclick="selectBet(2)">2</button>
+    <button class="ball-odd" onclick="selectBet(3)">3</button>
+    <button class="ball-even" onclick="selectBet(4)">4</button>
     <button class="ball-5" onclick="selectBet(5)">5</button>
-    <button class="ball-6" onclick="selectBet(6)">6</button>
-    <button class="ball-7" onclick="selectBet(7)">7</button>
-    <button class="ball-8" onclick="selectBet(8)">8</button>
-    <button class="ball-9" onclick="selectBet(9)">9</button>
+    <button class="ball-even" onclick="selectBet(6)">6</button>
+    <button class="ball-odd" onclick="selectBet(7)">7</button>
+    <button class="ball-even" onclick="selectBet(8)">8</button>
+    <button class="ball-odd" onclick="selectBet(9)">9</button>
   </div>
   
   <div class="history">
-    <h3>Game History (Last 10)</h3>
+    <h4 style="margin:0 0 10px 0; color:#666;">Recent History</h4>
     <div id="historyList"></div>
   </div>
 </div>
 
 <div class="bottomWallet">
-  <div class="navBtn" onclick="openWallet()"><div class="icon">💳</div><div class="label">Wallet</div></div>
-  <div class="navBtn" onclick="openHelp()"><div class="icon">🎧</div><div class="label">Help</div></div>
+  <div class="navBtn" onclick="location.reload()"><div class="icon">🏠</div><div class="label">Home</div></div>
+  <div class="navBtn" onclick="location.href='wallet.html'"><div class="icon">💳</div><div class="label">Wallet</div></div>
+  <div class="navBtn" onclick="location.href='help.html'"><div class="icon">🎧</div><div class="label">Help</div></div>
   <div class="navBtn" onclick="logout()"><div class="icon">🚪</div><div class="label">Logout</div></div>
 </div>
 
 <div class="betPopup" id="betPopup">
   <div class="betBox">
-    <button class="closeBtn" onclick="closeBetPopup()">✖</button>
-    <h3>Enter Amount</h3>
-    <input type="number" id="betInput" placeholder="Amount">
-    <button class="betBtn" onclick="placeBet()">Place Bet</button>
+    <h3 id="betTitle" style="margin:0; color:var(--primary);">Bet on </h3>
+    <input type="number" id="betInput" placeholder="Enter amount">
+    <div style="display:flex; gap:10px;">
+        <button class="betBtn" style="background:#ccc;" onclick="closeBetPopup()">Cancel</button>
+        <button class="betBtn" onclick="placeBet()">Confirm</button>
+    </div>
   </div>
 </div>
 
@@ -129,54 +148,80 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null;
-let timerTime = 30;
 
-async function updateOnlineStatus() {
-  if (userId) { await updateDoc(doc(db, "users", userId), { lastActive: Date.now() }); }
+// Copy UID
+window.copyUID = () => {
+    navigator.clipboard.writeText(userId);
+    alert("User ID Copied: " + userId);
 }
+
+// Global Sync Timer (Server logic replacement)
+function updateTimer() {
+    const now = new Date();
+    const seconds = now.getSeconds();
+    const remaining = 30 - (seconds % 30);
+    
+    document.getElementById("time").innerText = "00:" + (remaining < 10 ? "0" + remaining : remaining);
+    
+    if (remaining === 30) {
+        processResult();
+    }
+}
+setInterval(updateTimer, 1000);
 
 onAuthStateChanged(auth, user => {
   if(user){
     userId=user.uid;
+    document.getElementById("displayUid").innerText = userId.substring(0,10) + "...";
     updateOnlineStatus();
     getDoc(doc(db,"users",userId)).then(snap => {
-      if(snap.exists()){ balance=snap.data().balance||0; document.getElementById("balance").innerText=balance; }
+      if(snap.exists()){ balance=snap.data().balance||0; document.getElementById("balance").innerText=balance.toFixed(2); }
     });
   }
 });
 
+// History Sync
 onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(10)), (snap) => {
   let list = document.getElementById("historyList"); list.innerHTML = "";
   snap.forEach(d => {
     let item = d.data();
-    let colorClass = item.color === "green" ? "colorGreen" : item.color === "red" ? "colorRed" : "colorViolet";
-    list.innerHTML += `<div class="historyItem">Res ${item.num} (<span class="${colorClass}">${item.color}</span>) <span>${item.bigsmall}</span></div>`;
+    let bg = item.num === 0 ? "ball-0" : item.num === 5 ? "ball-5" : (item.color === "green" ? "ball-odd" : "ball-even");
+    let bsTag = item.bigsmall === "BIG" ? "bg-big" : "bg-small";
+    list.innerHTML += `
+      <div class="historyItem">
+        <div><span class="res-num ${bg}">${item.num}</span> <span>${item.color.toUpperCase()}</span></div>
+        <span class="tag-bs ${bsTag}">${item.bigsmall}</span>
+      </div>`;
   });
 });
 
-window.selectBet=v=>{ selectedValue=v; document.getElementById("betPopup").style.display="flex"; }
+async function updateOnlineStatus() {
+  if (userId) await updateDoc(doc(db, "users", userId), { lastActive: Date.now() });
+}
+
+window.selectBet=v=>{ 
+    selectedValue=v; 
+    document.getElementById("betTitle").innerText = "Bet on " + v.toString().toUpperCase();
+    document.getElementById("betPopup").style.display="flex"; 
+}
 window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="none"; }
+
 window.placeBet=async()=>{
   let amt=parseInt(document.getElementById("betInput").value);
-  if(balance<amt || amt<=0){ alert("Invalid Amount"); return; }
-  balance-=amt; document.getElementById("balance").innerText=balance;
+  if(balance<amt || amt<=0){ alert("Low Balance!"); return; }
+  balance-=amt; 
+  document.getElementById("balance").innerText=balance.toFixed(2);
   document.getElementById("betPopup").style.display="none";
   currentBet=selectedValue; betAmount=amt;
   await updateDoc(doc(db,"users",userId), {balance:balance});
-  updateOnlineStatus();
 }
 
-async function timerTick(){
-  document.getElementById("time").innerText=timerTime;
-  timerTime--;
-  if(timerTime<0){
-    timerTime=30;
-    updateOnlineStatus();
+async function processResult(){
     let ball=document.getElementById("ball");
     let badge=document.getElementById("bsBadge");
     ball.classList.add("animate");
-    badge.classList.remove("show"); // Reset badge
-    
+    badge.classList.remove("show");
+
     let result;
     try {
       const adminDoc = await getDoc(doc(db, "wingo", "result"));
@@ -191,44 +236,43 @@ async function timerTick(){
     let color = (result===0||result===5)?"violet":([1,3,7,9].includes(result)?"green":"red");
     let bs = result>=5?"BIG":"SMALL";
     
-    await addDoc(collection(db, "history"), { num:result, color:color, bigsmall:bs, createdAt:serverTimestamp() });
+    // Server History Update (Only first user in a real scenario would do this, but for simple Firebase apps, it's fine)
+    if(userId) {
+        addDoc(collection(db, "history"), { num:result, color:color, bigsmall:bs, createdAt:serverTimestamp() });
+    }
 
     setTimeout(async ()=>{
       ball.innerText=result; ball.classList.remove("animate");
-      
-      // Update Badge UI
       badge.innerText = bs;
       badge.className = "bs-badge show " + (bs==="BIG" ? "bg-big" : "bg-small");
 
-      // Ball colors update
-      if(result===0) ball.style.background = "linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%)";
-      else if(result===5) ball.style.background = "linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%)";
-      else if(color==="green") ball.style.background = "radial-gradient(circle at 30% 30%, #58d68d, #27ae60)";
-      else ball.style.background = "radial-gradient(circle at 30% 30%, #ec7063, #c0392b)";
-      ball.style.color="white";
+      // Ball UI Update
+      if(result===0) ball.style.borderColor = "#9b59b6";
+      else if(result===5) ball.style.borderColor = "#2ecc71";
+      else ball.style.borderColor = (color==="green") ? "#2ecc71" : "#e74c3c";
 
       if(currentBet !== null){
         let win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
         let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
         if(win) {
           balance += winAmt; 
-          document.getElementById("balance").innerText=balance;
+          document.getElementById("balance").innerText=balance.toFixed(2);
           await updateDoc(doc(db,"users",userId), {balance:balance});
-          let p=document.createElement("div"); p.className="resultPopup win"; p.innerText="Win ₹"+winAmt;
-          document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2500);
+          showPopup("Win ₹" + winAmt, "win");
         } else {
-          let p=document.createElement("div"); p.className="resultPopup lose"; p.innerText="Lose";
-          document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2500);
+          showPopup("Lose", "lose");
         }
-        currentBet=null; betAmount=0;
+        currentBet=null;
       }
-    },500);
-  }
+    },1000);
 }
 
-setInterval(timerTick,1000);
-window.openWallet=()=>{ window.location.href="wallet.html"; }
-window.openHelp=()=>{ window.location.href="help.html"; }
+function showPopup(txt, type) {
+    let p=document.createElement("div"); p.className="resultPopup "+type; p.innerText=txt;
+    document.body.appendChild(p); p.style.display="block"; 
+    setTimeout(()=>p.remove(),2500);
+}
+
 window.logout=()=>{ signOut(auth); window.location.href="login.html"; }
 </script>
 </body>
