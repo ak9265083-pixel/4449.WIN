@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,352 +7,438 @@
 <style>
 
 body{
-margin:0;
-font-family:Arial;
-background:#9fa3ad;
-display:flex;
-justify-content:center;
+  margin:0;
+  font-family:Arial;
+  background:#9fa3ad;
+  display:flex;
+  justify-content:center;
 }
 
 .app{
-width:420px;
-background:white;
-min-height:100vh;
-text-align:center;
-padding-bottom:100px;
+  width:420px;
+  background:white;
+  min-height:100vh;
+  text-align:center;
+  padding-bottom:90px;
 }
-
-/* HEADER */
 
 .header{
-background:#ff6b6b;
-color:white;
-padding:12px;
-font-size:22px;
-font-weight:bold;
-display:flex;
-align-items:center;
-justify-content:center;
-gap:10px;
+  background:#ff6b6b;
+  color:white;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
-.logo{
-width:40px;
-height:40px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid white;
+.header img{
+  width:32px;
+  height:32px;
+  border-radius:50%;
 }
-
-/* WALLET */
 
 .wallet{
-background:#f2f2f2;
-margin:15px;
-padding:15px;
-border-radius:12px;
-font-size:18px;
+  background:#f2f2f2;
+  margin:15px;
+  padding:15px;
+  border-radius:12px;
+  font-size:18px;
 }
-
-/* TIMER */
 
 .timer{
-background:#ff6b6b;
-color:white;
-margin:10px;
-padding:12px;
-border-radius:10px;
-font-size:20px;
-font-weight:bold;
-animation:pulse 1s infinite;
+  background:#ff6b6b;
+  color:white;
+  margin:10px 15px;
+  padding:10px;
+  border-radius:10px;
+  font-size:18px;
+  font-weight:bold;
+  animation: pulse 1.5s infinite alternate;
 }
 
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.05)}
-100%{transform:scale(1)}
+@keyframes pulse {
+  0% { background-color: #ff6b6b; }
+  100% { background-color: #ff3b3b; }
 }
-
-/* RESULT BALL */
 
 .centerGame{
-margin:20px auto;
-width:120px;
-height:120px;
-border-radius:50%;
-background:#eee;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:50px;
-font-weight:bold;
-box-shadow:0 5px 20px rgba(0,0,0,0.3);
+  margin:20px auto;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:#eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  font-weight:bold;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
 }
 
-/* COLORS */
+.centerGame.animate {
+  transform: scale(1.1);
+}
 
 .colors{
-display:flex;
-gap:10px;
-padding:10px;
+  display:flex;
+  gap:10px;
+  padding:10px 15px;
 }
 
 .colors button{
-flex:1;
-padding:12px;
-border:none;
-color:white;
-border-radius:8px;
-font-size:16px;
+  flex:1;
+  padding:12px;
+  border:none;
+  color:white;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+  transition: background 0.3s ease;
 }
 
 .green{background:#2ecc71;}
 .red{background:#e74c3c;}
 .violet{background:#9b59b6;}
 
-/* BIG SMALL */
-
-.bigSmall{
-display:flex;
-gap:10px;
-padding:10px;
-}
-
-.bigSmall button{
-flex:1;
-padding:14px;
-border:none;
-border-radius:10px;
-font-size:16px;
-color:white;
-font-weight:bold;
-}
-
-.big{background:#f39c12;}
-.small{background:#3498db;}
-
-/* BALLS */
-
 .numbers{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:10px;
-padding:10px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  padding:10px 15px;
 }
 
-.ball{
-width:60px;
-height:60px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-font-weight:bold;
-color:white;
-margin:auto;
-cursor:pointer;
-box-shadow:0 5px 10px rgba(0,0,0,0.3);
+.numbers button{
+  padding:20px;
+  border-radius:50%;
+  border:none;
+  font-size:18px;
+  background:#eee;
+  cursor:pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
 }
 
-.ball.green{
-background:radial-gradient(circle,#5eff9f,#1fbf5b);
+.numbers button:hover{
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
-.ball.red{
-background:radial-gradient(circle,#ff8a8a,#d60000);
+.bigsmall{
+  display:flex;
+  gap:15px;
+  padding:10px 15px;
+  margin-top:10px;
 }
 
-.ball.violet{
-background:radial-gradient(circle,#d48bff,#7b00ff);
+.bigsmall button{
+  flex:1;
+  padding:15px;
+  font-weight:bold;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:18px;
+  color:white;
+  transition: background 0.3s ease;
 }
 
-/* HISTORY */
+.big{
+  background:#f39c12;
+}
+
+.small{
+  background:#3498db;
+}
 
 .history{
-margin:15px;
-text-align:left;
+  margin:15px;
+  text-align:left;
+  max-height:250px;
+  overflow-y:auto;
+}
+
+.history h3{
+  margin-bottom:10px;
 }
 
 .historyItem{
-background:#eee;
-margin-bottom:6px;
-padding:10px;
-border-radius:6px;
-animation:slideIn .4s ease;
+  background:#eee;
+  margin-bottom:6px;
+  padding:10px 15px;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+  font-size:15px;
+  animation: fadeIn 0.5s ease forwards;
 }
 
-@keyframes slideIn{
-0%{transform:translateX(-20px);opacity:0;}
-100%{transform:translateX(0);opacity:1;}
+.historyItem .colorBox {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+  font-size: 13px;
+  text-transform: uppercase;
 }
 
-.bs{
-font-weight:bold;
-margin-left:8px;
-padding:2px 8px;
-border-radius:5px;
-color:white;
+.colorGreen {
+  background: #2ecc71;
 }
 
-.bigTag{
-background:#f39c12;
+.colorRed {
+  background: #e74c3c;
 }
 
-.smallTag{
-background:#3498db;
+.colorViolet {
+  background: #9b59b6;
 }
 
-/* BOTTOM */
+.bigTag {
+  background: #f39c12;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+/* Bottom Navigation */
 
 .bottomWallet{
-position:fixed;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-width:360px;
-background:white;
-border-radius:25px;
-display:flex;
-justify-content:space-around;
-padding:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.25);
+  position:fixed;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:360px;
+  background:white;
+  border-radius:25px;
+  display:flex;
+  justify-content:space-around;
+  padding:10px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.25);
+  z-index: 1000;
 }
 
 .navBtn{
-display:flex;
-flex-direction:column;
-align-items:center;
-cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
 }
 
 .icon{
-width:48px;
-height:48px;
-border-radius:50%;
-background:#ff6b6b;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-color:white;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#ff6b6b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  color:white;
 }
 
 .label{
-font-size:13px;
-margin-top:4px;
-font-weight:bold;
+  font-size:13px;
+  margin-top:4px;
+  font-weight:bold;
 }
 
 /* POPUP */
 
 .betPopup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:none;
-align-items:center;
-justify-content:center;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index: 2000;
 }
 
 .betBox{
-background:white;
-padding:25px;
-border-radius:18px;
-width:260px;
-text-align:center;
+  position:relative;
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  width:260px;
+  text-align:center;
+  animation:zoomPop .35s ease;
+}
+
+@keyframes zoomPop{
+  0%{transform:scale(.5);opacity:0;}
+  100%{transform:scale(1);opacity:1;}
 }
 
 .betBox input{
-width:100%;
-padding:12px;
-border-radius:10px;
-border:1px solid #ddd;
-font-size:16px;
-text-align:center;
-margin-top:10px;
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:16px;
+  text-align:center;
+  margin-top:10px;
 }
 
 .betBtn{
-margin-top:15px;
-padding:12px;
-background:#ff6b6b;
-color:white;
-border:none;
-width:100%;
-border-radius:10px;
-font-size:16px;
+  margin-top:15px;
+  padding:12px;
+  background:#ff6b6b;
+  color:white;
+  border:none;
+  width:100%;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+/* Close button for bet popup */
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Animated Win/Loss popup */
+.resultPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  border-radius: 20px;
+  padding: 25px 35px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  display: none;
+  animation: popupBounce 0.5s forwards;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+
+.resultPopup.win {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.resultPopup.lose {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+@keyframes popupBounce {
+  0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  60%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  80%  { transform: translate(-50%, -50%) scale(0.95); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="app">
 
-<div class="header">
-<img src="logo.png" class="logo">
-4449 WIN
+  <div class="header">
+    <img src="logo.png" alt="logo">
+    4449 WIN
+  </div>
+
+  <div class="wallet">
+    Balance ₹ <span id="balance">0</span>
+  </div>
+
+  <div class="timer">
+    Next Result In <span id="time">30</span>s
+  </div>
+
+  <div class="centerGame" id="ball">?</div>
+
+  <div class="colors">
+    <button class="green" onclick="selectBet('green')">Green</button>
+    <button class="violet" onclick="selectBet('violet')">Violet</button>
+    <button class="red" onclick="selectBet('red')">Red</button>
+  </div>
+
+  <div class="bigsmall">
+    <button class="big" onclick="selectBet('big')">BIG</button>
+    <button class="small" onclick="selectBet('small')">SMALL</button>
+  </div>
+
+  <div class="numbers">
+    <button onclick="selectBet(0)">0</button>
+    <button onclick="selectBet(1)">1</button>
+    <button onclick="selectBet(2)">2</button>
+    <button onclick="selectBet(3)">3</button>
+    <button onclick="selectBet(4)">4</button>
+    <button onclick="selectBet(5)">5</button>
+    <button onclick="selectBet(6)">6</button>
+    <button onclick="selectBet(7)">7</button>
+    <button onclick="selectBet(8)">8</button>
+    <button onclick="selectBet(9)">9</button>
+  </div>
+
+  <div class="history">
+    <h3>Last Results</h3>
+    <div id="historyList"></div>
+  </div>
+
 </div>
 
-<div class="wallet">
-Balance ₹ <span id="balance">0</span>
-</div>
+<div class="bottomWallet">
 
-<div class="timer">
-Next Result In <span id="time">30</span>s
-</div>
+  <div class="navBtn" onclick="openWallet()">
+    <div class="icon">💳</div>
+    <div class="label">Wallet</div>
+  </div>
 
-<div class="centerGame" id="ball">?</div>
+  <div class="navBtn" onclick="openHelp()">
+    <div class="icon">🎧</div>
+    <div class="label">Help</div>
+  </div>
 
-<div class="colors">
-<button class="green" onclick="selectBet('green')">Green</button>
-<button class="violet" onclick="selectBet('violet')">Violet</button>
-<button class="red" onclick="selectBet('red')">Red</button>
-</div>
-
-<div class="bigSmall">
-<button class="big" onclick="selectBet('big')">BIG</button>
-<button class="small" onclick="selectBet('small')">SMALL</button>
-</div>
-
-<div class="numbers">
-
-<div class="ball violet" onclick="selectBet(0)">0</div>
-<div class="ball green" onclick="selectBet(1)">1</div>
-<div class="ball red" onclick="selectBet(2)">2</div>
-<div class="ball green" onclick="selectBet(3)">3</div>
-<div class="ball red" onclick="selectBet(4)">4</div>
-
-<div class="ball violet" onclick="selectBet(5)">5</div>
-<div class="ball red" onclick="selectBet(6)">6</div>
-<div class="ball green" onclick="selectBet(7)">7</div>
-<div class="ball red" onclick="selectBet(8)">8</div>
-<div class="ball green" onclick="selectBet(9)">9</div>
-
-</div>
-
-<div class="history">
-<h3>Last Results</h3>
-<div id="historyList"></div>
-</div>
+  <div class="navBtn" onclick="logout()">
+    <div class="icon">🚪</div>
+    <div class="label">Logout</div>
+  </div>
 
 </div>
 
 <div class="betPopup" id="betPopup">
-<div class="betBox">
+  <div class="betBox">
 
-<h3>Enter Bet Amount</h3>
+    <button class="closeBtn" onclick="closeBetPopup()">✖</button>
 
-<input type="number" id="betInput">
+    <h3>Enter Bet Amount</h3>
 
-<button class="betBtn" onclick="placeBet()">Place Bet</button>
+    <input type="number" id="betInput" placeholder="Amount">
 
-</div>
+    <button class="betBtn" onclick="placeBet()">Place Bet</button>
+
+  </div>
 </div>
 
 <script type="module">
@@ -362,136 +447,173 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {getFirestore,doc,getDoc,updateDoc} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig={
-apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-authDomain:"win2-512e1.firebaseapp.com",
-projectId:"win2-512e1"
+const firebaseConfig = {
+  apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+  authDomain: "win2-512e1.firebaseapp.com",
+  projectId: "win2-512e1"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 let balance=0;
 let userId="";
 let currentBet=null;
 let betAmount=0;
 let selectedValue=null;
+let lastResult = null;  // To prevent duplicate history
 
-let startTime=localStorage.getItem("startTime");
-
-if(!startTime){
-startTime=Date.now();
-localStorage.setItem("startTime",startTime);
-}
+onAuthStateChanged(auth, async (user)=>{
+  if(user){
+    userId=user.uid;
+    let ref=doc(db,"users",userId);
+    let snap=await getDoc(ref);
+    if(snap.exists()){
+      balance=snap.data().balance || 0;
+      document.getElementById("balance").innerText=balance;
+    }
+  }
+});
 
 function getColor(n){
-
-if(n==0||n==5) return "violet";
-if([1,3,7,9].includes(n)) return "green";
-return "red";
-
+  if(n==0 || n==5) return "violet";
+  if(n==1 || n==3 || n==7 || n==9)
+    return "green";
+  if(n==2 || n==4 || n==6 || n==8)
+    return "red";
 }
 
 function getBigSmall(n){
-return n>=5 ? "BIG" : "SMALL";
+  return (n>=5) ? "BIG" : "SMALL";
 }
 
 window.selectBet=function(v){
+  selectedValue=v;
+  document.getElementById("betPopup").style.display="flex";
+}
 
-selectedValue=v;
-document.getElementById("betPopup").style.display="flex";
-
+window.closeBetPopup = function() {
+  document.getElementById("betPopup").style.display = "none";
 }
 
 window.placeBet=function(){
-
-betAmount=parseInt(document.getElementById("betInput").value);
-currentBet=selectedValue;
-
-document.getElementById("betPopup").style.display="none";
-
+  let amt=parseInt(document.getElementById("betInput").value);
+  if(balance<amt){
+    alert("Low Balance");
+    return;
+  }
+  balance-=amt;
+  document.getElementById("balance").innerText=balance;
+  currentBet=selectedValue;
+  betAmount=amt;
+  document.getElementById("betPopup").style.display="none";
 }
 
-function saveHistory(num,color){
-
-let history=JSON.parse(localStorage.getItem("history")||"[]");
-
-history.unshift({num,color});
-
-history=history.slice(0,10);
-
-localStorage.setItem("history",JSON.stringify(history));
-
-renderHistory();
-
+// Animated win/loss popup with colors
+function showResultPopup(message, isWin){
+  let popup = document.createElement("div");
+  popup.className = "resultPopup " + (isWin ? "win" : "lose");
+  popup.innerText = message;
+  document.body.appendChild(popup);
+  popup.style.display = "block";
+  setTimeout(()=>{
+      popup.remove();
+  }, 2000);
 }
 
-function renderHistory(){
+function addHistory(num,color,bigsmall){
+  if(lastResult === num + color + bigsmall) return;  // Prevent duplicate
+  
+  lastResult = num + color + bigsmall;
+  
+  let div=document.createElement("div");
+  div.className="historyItem";
 
-let history=JSON.parse(localStorage.getItem("history")||"[]");
+  let colorClass = color === "green" ? "colorGreen" : color === "red" ? "colorRed" : "colorViolet";
+  let colorBox = `<span class="colorBox ${colorClass}">${color}</span>`;
+  let bigSmallTag = `<span class="bigTag">${bigsmall}</span>`;
 
-let list=document.getElementById("historyList");
+  div.innerHTML = `Result ${num} (${colorBox}) ${bigSmallTag}`;
 
-list.innerHTML="";
+  let historyList = document.getElementById("historyList");
+  historyList.prepend(div);
 
-history.forEach(h=>{
-
-let bs=getBigSmall(h.num);
-
-let tagClass=bs=="BIG"?"bigTag":"smallTag";
-
-let div=document.createElement("div");
-
-div.className="historyItem";
-
-div.innerHTML=
-"Result "+h.num+
-" ("+h.color+") "+
-"<span class='bs "+tagClass+"'>"+bs+"</span>";
-
-list.appendChild(div);
-
-});
-
-}
-
-renderHistory();
-
-function showResult(num){
-
-let color=getColor(num);
-
-document.getElementById("ball").innerText=num;
-
-saveHistory(num,color);
-
+  // Keep only 10 latest
+  while(historyList.children.length > 10){
+    historyList.removeChild(historyList.lastChild);
+  }
 }
 
 let time=30;
 
-setInterval(async()=>{
+// Timer with animation on ball
+setInterval(async ()=>{
+  time--;
+  document.getElementById("time").innerText=time;
 
-let passed=Math.floor((Date.now()-startTime)/1000);
+  if(time <= 0){
+    time = 30;
+    document.getElementById("ball").classList.add("animate");
 
-let left=30-(passed%30);
+    // Fetch admin result
+    let resultDoc = await getDoc(doc(db,"wingo","result"));
+    let result = resultDoc.data().number;
+    let color = getColor(result);
+    let bigsmall = getBigSmall(result);
 
-document.getElementById("time").innerText=left;
+    // Show result ball after a short delay for animation
+    setTimeout(()=>{
+      document.getElementById("ball").innerText = result;
+      document.getElementById("ball").classList.remove("animate");
+    }, 300);
 
-if(left==30){
+    addHistory(result,color,bigsmall);
 
-let resultDoc=await getDoc(doc(db,"wingo","result"));
+    if(currentBet != null){
+      if(currentBet === result){
+        let winAmount = betAmount * (result == 0 ? 2 : result);
+        balance += winAmount;
+        showResultPopup("You Win ₹" + winAmount, true);
+      }
+      else if(currentBet === color){
+        balance += betAmount * 2;
+        showResultPopup("Color Win ₹" + betAmount * 2, true);
+      }
+      else if(currentBet === bigsmall.toLowerCase()){
+        balance += betAmount * 2;
+        showResultPopup("Big/Small Win ₹" + betAmount * 2, true);
+      }
+      else{
+        showResultPopup("You Lose", false);
+      }
 
-let result=resultDoc.data().number;
+      document.getElementById("balance").innerText = balance;
 
-showResult(result);
+      await updateDoc(doc(db,"users",userId),{
+        balance: balance
+      });
 
+      currentBet = null;
+      betAmount = 0;
+    }
+  }
+},1000);
+
+window.openWallet=function(){
+  window.location.href="wallet.html";
 }
 
-},1000);
+window.openHelp=function(){
+  window.location.href="help.html";
+}
+
+window.logout=function(){
+  signOut(auth);
+  window.location.href="login.html";
+}
 
 </script>
 
 </body>
 </html>
-```
