@@ -72,7 +72,7 @@ body{
   transition: transform 0.3s ease;
 }
 .centerGame.animate {
-  transform: scale(1.15);
+  transform: rotateY(360deg) scale(1.2);
 }
 .colors{
   display:flex;
@@ -171,7 +171,6 @@ body{
   font-size: 13px;
   text-transform: uppercase;
 }
-/* Bottom Navigation */
 .bottomWallet{
   position:fixed;
   bottom:10px;
@@ -208,7 +207,6 @@ body{
   margin-top:4px;
   font-weight:bold;
 }
-/* POPUP */
 .betPopup{
   position:fixed;
   top:0;
@@ -271,29 +269,36 @@ body{
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.5);
+  transform: translate(-50%, -50%) scale(0);
   border-radius: 20px;
   padding: 25px 35px;
   text-align: center;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: white;
   display: none;
-  animation: popupBounce 0.5s forwards;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
   z-index: 9999;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  animation: popupBounce 0.6s forwards;
+  text-shadow: 1px 1px 8px rgba(0,0,0,0.3);
 }
-.resultPopup.win { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-.resultPopup.lose { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-@keyframes popupBounce {
-  0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-  60%  { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-  80%  { transform: translate(-50%, -50%) scale(0.95); }
-  100% { transform: translate(-50%, -50%) scale(1); }
+.resultPopup.win {
+  background: linear-gradient(45deg,#2ecc71,#27ae60);
+  box-shadow: 0 0 25px #2ecc71, 0 0 40px #27ae60;
 }
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
+.resultPopup.lose {
+  background: linear-gradient(45deg,#e74c3c,#c0392b);
+  box-shadow: 0 0 25px #e74c3c,0 0 40px #c0392b;
+}
+@keyframes popupBounce{
+  0%{transform:translate(-50%,-50%) scale(0);}
+  60%{transform:translate(-50%,-50%) scale(1.2);}
+  80%{transform:translate(-50%,-50%) scale(0.9);}
+  100%{transform:translate(-50%,-50%) scale(1);}
+}
+@keyframes fadeIn{
+  from{opacity:0; transform: translateY(10px);}
+  to{opacity:1; transform: translateY(0);}
 }
 </style>
 
@@ -301,33 +306,21 @@ body{
 <body>
 
 <div class="app">
-
   <div class="header">
-    <img src="logo.png" alt="logo">
-    4449 WIN
+    <img src="logo.png" alt="logo"> 4449 WIN
   </div>
-
-  <div class="wallet">
-    Balance ₹ <span id="balance">0</span>
-  </div>
-
-  <div class="timer">
-    Next Result In <span id="time">30</span>s
-  </div>
-
+  <div class="wallet">Balance ₹ <span id="balance">0</span></div>
+  <div class="timer">Next Result In <span id="time">30</span>s</div>
   <div class="centerGame" id="ball">?</div>
-
   <div class="colors">
     <button class="green" onclick="selectBet('green')">Green</button>
     <button class="violet" onclick="selectBet('violet')">Violet</button>
     <button class="red" onclick="selectBet('red')">Red</button>
   </div>
-
   <div class="bigsmall">
     <button class="big" onclick="selectBet('big')">BIG</button>
     <button class="small" onclick="selectBet('small')">SMALL</button>
   </div>
-
   <div class="numbers">
     <button onclick="selectBet(0)">0</button>
     <button onclick="selectBet(1)">1</button>
@@ -340,12 +333,10 @@ body{
     <button onclick="selectBet(8)">8</button>
     <button onclick="selectBet(9)">9</button>
   </div>
-
   <div class="history">
     <h3>Last Results</h3>
     <div id="historyList"></div>
   </div>
-
 </div>
 
 <div class="bottomWallet">
@@ -383,11 +374,11 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, lastResults=[];
+let timerTime = localStorage.getItem("timerTime") ? parseInt(localStorage.getItem("timerTime")) : 30;
 
 // Load history & balance from localStorage
 if(localStorage.getItem("gameHistory")) lastResults = JSON.parse(localStorage.getItem("gameHistory"));
 if(localStorage.getItem("balance")) balance = parseInt(localStorage.getItem("balance"));
-
 document.getElementById("balance").innerText = balance;
 
 function renderHistory(){
@@ -408,7 +399,6 @@ function getBigSmall(n){ return (n>=5)?"BIG":"SMALL"; }
 
 window.selectBet=function(v){ selectedValue=v; document.getElementById("betPopup").style.display="flex"; }
 window.closeBetPopup=function(){ document.getElementById("betPopup").style.display="none"; }
-
 window.placeBet=function(){
   let amt=parseInt(document.getElementById("betInput").value);
   if(balance<amt){ alert("Low Balance"); return; }
@@ -424,7 +414,7 @@ function showResultPopup(msg,win){
   popup.innerText=msg;
   document.body.appendChild(popup);
   popup.style.display="block";
-  setTimeout(()=>popup.remove(),2000);
+  setTimeout(()=>popup.remove(),2500);
 }
 
 function addHistory(num,color,bigsmall){
@@ -434,22 +424,30 @@ function addHistory(num,color,bigsmall){
   renderHistory();
 }
 
-let time=30;
-function timerTick(){
-  document.getElementById("time").innerText=time;
-  time--;
-  if(time<0){
-    time=30;
+async function fetchAdminResult(){
+  try{
+    let resultDoc = await getDoc(doc(db,"wingo","result"));
+    return resultDoc.data().number;
+  }catch(e){ return Math.floor(Math.random()*10); }
+}
+
+async function timerTick(){
+  document.getElementById("time").innerText = timerTime;
+  timerTime--;
+  localStorage.setItem("timerTime",timerTime);
+  if(timerTime<0){
+    timerTime=30;
+    localStorage.setItem("timerTime",timerTime);
     document.getElementById("ball").classList.add("animate");
-    let result=Math.floor(Math.random()*10);
-    let color=getColor(result);
-    let bigsmall=getBigSmall(result);
+    let result = await fetchAdminResult();
+    let color = getColor(result);
+    let bigsmall = getBigSmall(result);
     setTimeout(()=>{
-      let ball=document.getElementById("ball");
-      ball.innerText=result;
-      ball.style.color=color;
+      let ball = document.getElementById("ball");
+      ball.innerText = result;
+      ball.style.color = color;
       ball.classList.remove("animate");
-    },300);
+    },500);
     addHistory(result,color,bigsmall);
 
     if(currentBet!=null){
@@ -457,12 +455,13 @@ function timerTick(){
       else if(currentBet===color){ balance+=betAmount*2; showResultPopup("Color Win ₹"+(betAmount*2),true);}
       else if(currentBet===bigsmall.toLowerCase()){ balance+=betAmount*2; showResultPopup("Big/Small Win ₹"+(betAmount*2),true);}
       else{ showResultPopup("You Lose",false);}
-      document.getElementById("balance").innerText=balance;
+      document.getElementById("balance").innerText = balance;
       localStorage.setItem("balance",balance);
       currentBet=null; betAmount=0;
     }
   }
 }
+
 setInterval(timerTick,1000);
 
 window.openWallet=function(){ window.location.href="wallet.html"; }
