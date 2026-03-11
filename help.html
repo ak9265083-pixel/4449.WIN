@@ -2,164 +2,168 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Help Centre</title>
+<title>4449 WIN - Help Centre</title>
 
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#9fa3ad;
-display:flex;
-justify-content:center;
+:root { 
+    --primary: #00f2ff;
+    --secondary: #ff007a;
+    --bg: #0b0e14; 
+    --card-bg: #161b22; 
+    --glass: rgba(255, 255, 255, 0.05);
 }
 
-.app{
-width:420px;
-background:white;
-min-height:100vh;
-text-align:center;
-}
+body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
+.app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 50px; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; }
 
-.header{
-background:#ff6b6b;
-color:white;
-padding:15px;
-font-size:22px;
-font-weight:bold;
-}
+/* Header */
+.header { background: rgba(22, 27, 34, 0.95); padding: 20px; font-size: 22px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); text-transform: uppercase; letter-spacing: 2px; }
 
-.box{
-margin:15px;
-background:#f2f2f2;
-padding:15px;
-border-radius:12px;
-text-align:left;
-}
+/* Boxes */
+.box { margin: 15px; background: linear-gradient(135deg, #1c2333, #0b0e14); padding: 20px; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.1); text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1px; }
 
-.title{
-font-size:18px;
-font-weight:bold;
-margin-bottom:10px;
-}
+/* Buttons */
+.btn { width: 100%; padding: 14px; margin-top: 15px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+.btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
+.btn-secondary { border-color: var(--secondary); color: var(--secondary); }
+.btn-secondary:hover { background: var(--secondary); color: white; box-shadow: 0 0 20px var(--secondary); }
 
-.btn{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#ff6b6b;
-border:none;
-color:white;
-border-radius:8px;
-font-size:16px;
-}
+/* Inputs */
+input, textarea { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: #05070a; color: white; outline: none; box-sizing: border-box; }
+input:focus, textarea:focus { border-color: var(--primary); }
 
-input,textarea{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:6px;
-border:1px solid #ccc;
-}
+.backBtn { margin-top: 20px; padding: 12px 40px; background: #222; color: #888; border: 1px solid #444; border-radius: 50px; cursor: pointer; transition: 0.3s; }
+.backBtn:hover { color: white; border-color: white; }
 
-.backBtn{
-margin:15px;
-padding:12px 30px;
-background:#444;
-color:white;
-border:none;
-border-radius:25px;
-}
-
+/* Status Popup */
+#status { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); padding: 10px 25px; border-radius: 50px; display: none; font-weight: bold; z-index: 9999; box-shadow: 0 0 20px rgba(255,0,122,0.4); }
 </style>
 </head>
 
 <body>
 
+<div id="status">Please wait...</div>
+
 <div class="app">
+    <div class="header">Help Centre</div>
 
-<div class="header">HELP CENTRE</div>
+    <div class="box">
+        <div class="title"><span>💬</span> Instant Support</div>
+        <p style="font-size: 12px; opacity: 0.6; margin: 0;">Connect with our official team on WhatsApp for fast resolutions.</p>
+        <button class="btn" onclick="whatsapp()">Open WhatsApp</button>
+    </div>
 
-<!-- WhatsApp -->
-<div class="box">
-<div class="title">💬 Instant Support</div>
-<button class="btn" onclick="whatsapp()">WhatsApp Support</button>
+    <div class="box" style="border-color: var(--secondary);">
+        <div class="title" style="color: var(--secondary);"><span>📸</span> Screenshot Upload</div>
+        <p style="font-size: 11px; opacity: 0.6;">Upload your payment proof to get credits faster.</p>
+        <input type="text" id="upiId" placeholder="Your UPI ID Used">
+        <input type="file" id="file" accept="image/*" style="border:none; padding: 10px 0;">
+        <button class="btn btn-secondary" onclick="uploadScreenshot()">Submit Proof</button>
+    </div>
+
+    <div class="box">
+        <div class="title"><span>📩</span> Support Ticket</div>
+        <input type="text" id="name" placeholder="Full Name">
+        <textarea id="msg" rows="4" placeholder="Describe your issue..."></textarea>
+        <button class="btn" onclick="sendTicket()">Send Ticket</button>
+    </div>
+
+    <button class="backBtn" onclick="location.href='index.html'">⬅ BACK TO GAME</button>
 </div>
 
-<!-- Deposit Screenshot -->
-<div class="box">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-<div class="title">📸 Deposit Screenshot</div>
+const firebaseConfig = {
+    apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
+    authDomain: "win2-512e1.firebaseapp.com",
+    projectId: "win2-512e1",
+    storageBucket: "win2-512e1.appspot.com" // Ensure this is correct
+};
 
-<input type="text" id="upi" placeholder="Enter UPI ID">
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const auth = getAuth(app);
 
-<input type="file" id="file">
+let userId = "Guest";
+onAuthStateChanged(auth, user => { if(user) userId = user.uid; });
 
-<button class="btn" onclick="submitDeposit()">Submit Deposit</button>
+// WhatsApp
+window.whatsapp = () => { window.open("https://wa.me/78578", "_blank"); };
 
-</div>
-
-<!-- Support Ticket -->
-
-<div class="box">
-
-<div class="title">📩 Create Support Ticket</div>
-
-<input type="text" id="name" placeholder="Your Name">
-
-<textarea id="msg" placeholder="Write your problem"></textarea>
-
-<button class="btn" onclick="sendTicket()">Send Ticket</button>
-
-</div>
-
-<button class="backBtn" onclick="goBack()">⬅ Back</button>
-
-</div>
-
-<script>
-
-function whatsapp(){
-window.open("https://wa.me/78578","_blank")
+// Show Popup
+function showMsg(m) {
+    let s = document.getElementById("status");
+    s.innerText = m;
+    s.style.display = "block";
+    setTimeout(() => { s.style.display = "none"; }, 4000);
 }
 
-function goBack(){
-window.location.href="index.html"
-}
+// Upload Screenshot to Firebase Storage & Admin Firestore
+window.uploadScreenshot = async () => {
+    let file = document.getElementById("file").files[0];
+    let upi = document.getElementById("upiId").value;
 
-function submitDeposit(){
+    if(!file || !upi) return showMsg("Select Image & Enter UPI!");
 
-let upi=document.getElementById("upi").value
+    showMsg("Uploading... Please wait");
 
-if(!upi) return alert("Enter UPI")
+    try {
+        // 1. Upload to Storage
+        const storageRef = ref(storage, 'screenshots/' + Date.now() + "_" + file.name);
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
 
-alert("Deposit request sent to admin")
+        // 2. Save Link to Firestore for Admin
+        await addDoc(collection(db, "supportUploads"), {
+            uid: userId,
+            upi: upi,
+            imageUrl: downloadURL,
+            type: "Deposit Screenshot",
+            status: "pending",
+            timestamp: serverTimestamp()
+        });
 
-}
+        showMsg("✅ Proof Sent to Admin!");
+        document.getElementById("upiId").value = "";
+        document.getElementById("file").value = "";
+    } catch (e) {
+        console.error(e);
+        showMsg("❌ Upload Failed!");
+    }
+};
 
-function sendTicket(){
+// Send Support Ticket to Admin
+window.sendTicket = async () => {
+    let name = document.getElementById("name").value;
+    let msg = document.getElementById("msg").value;
 
-let name=document.getElementById("name").value
-let msg=document.getElementById("msg").value
+    if(!name || !msg) return showMsg("Fill all details!");
 
-if(!name||!msg) return alert("Fill details")
+    showMsg("Sending Ticket...");
 
-let tickets=JSON.parse(localStorage.getItem("tickets")||"[]")
+    try {
+        await addDoc(collection(db, "tickets"), {
+            uid: userId,
+            name: name,
+            message: msg,
+            status: "open",
+            timestamp: serverTimestamp()
+        });
 
-tickets.push({
-name:name,
-msg:msg,
-time:new Date().toLocaleString()
-})
-
-localStorage.setItem("tickets",JSON.stringify(tickets))
-
-alert("Ticket sent")
-
-}
-
+        showMsg("✅ Ticket Sent Successfully!");
+        document.getElementById("name").value = "";
+        document.getElementById("msg").value = "";
+    } catch (e) {
+        showMsg("❌ Failed to send!");
+    }
+};
 </script>
 
 </body>
-
 </html>
