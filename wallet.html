@@ -29,6 +29,14 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
 .btn-submit { background: var(--primary); color: black; width: 90%; margin-top: 20px; border: none; }
 
+/* Package Grid Added */
+.pkg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; padding: 0 15px; }
+.pkg-card { background: rgba(255, 0, 122, 0.1); border: 1px solid var(--secondary); padding: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
+.pkg-card:active { transform: scale(0.95); }
+.pkg-card.active { background: var(--secondary); color: white; }
+.pkg-amt { font-weight: bold; font-size: 16px; display: block;}
+.pkg-bonus { font-size: 10px; color: #00ffaa; text-transform: uppercase; display: block;}
+
 /* Inputs */
 input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0, 242, 255, 0.2); color: white; border-radius: 10px; margin: 8px 0; outline: none; text-align: center; }
 
@@ -73,7 +81,27 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
     </div>
 
     <div id="depositBox" class="box" style="display:none; border-color: var(--secondary);">
-        <h3 style="color:var(--secondary); font-size: 14px; margin-top:0;">DEPOSIT CREDITS</h3>
+        <h3 style="color:var(--secondary); font-size: 14px; margin-top:0;">DEPOSIT PACKAGES</h3>
+        
+        <div class="pkg-grid">
+            <div class="pkg-card" onclick="selectPkg(100)">
+                <span class="pkg-amt">₹100</span>
+                <span class="pkg-bonus">+20% BONUS</span>
+            </div>
+            <div class="pkg-card" onclick="selectPkg(200)">
+                <span class="pkg-amt">₹200</span>
+                <span class="pkg-bonus">+25% BONUS</span>
+            </div>
+            <div class="pkg-card" onclick="selectPkg(300)">
+                <span class="pkg-amt">₹300</span>
+                <span class="pkg-bonus">+30% BONUS</span>
+            </div>
+            <div class="pkg-card" onclick="selectPkg(500)">
+                <span class="pkg-amt">₹500</span>
+                <span class="pkg-bonus">+50% BONUS</span>
+            </div>
+        </div>
+
         <img src="ui.png" style="width:150px; border:2px solid white; border-radius:10px; margin:10px 0;">
         <input type="number" id="amt" placeholder="Amount">
         <input type="text" id="utr" placeholder="12 Digit UTR Number">
@@ -121,6 +149,11 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+// Select Package Logic
+window.selectPkg = (val) => {
+    document.getElementById("amt").value = val;
+};
+
 window.showDeposit = () => {
     document.getElementById("depositBox").style.display = "block";
     document.getElementById("withdrawBox").style.display = "none";
@@ -140,12 +173,10 @@ window.sendWithdraw = async () => {
     if(amt > balance) return showPopup("Insufficient Credits!");
 
     try {
-        // 1. Update Balance in App & Firestore
         balance -= amt;
         document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         await updateDoc(doc(db, "users", currentUser), { balance: balance });
 
-        // 2. Save to history
         await addDoc(collection(db, "withdrawRequests"), {
             user: currentUser,
             amount: amt,
@@ -157,27 +188,47 @@ window.sendWithdraw = async () => {
         showPopup("Request Sent Successfully!");
         document.getElementById("wamt").value = "";
         document.getElementById("upi").value = "";
-        loadWithdrawHistory(); // Refresh List
+        loadWithdrawHistory(); 
     } catch (e) {
         showPopup("Error: Check Connection");
     }
 };
 
+// Updated Send Deposit with Bonus Calculation
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
+    
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
 
-    await addDoc(collection(db, "depositRequests"), {
-        user: currentUser,
-        amount: amt,
-        utr: utr,
-        status: "pending",
-        createdAt: serverTimestamp()
-    });
-    showPopup("Deposit Submitted!");
-    document.getElementById("amt").value = "";
-    document.getElementById("utr").value = "";
+    // Bonus Logic
+    let bonus = 0;
+    if(amt === 100) bonus = amt * 0.20;
+    else if(amt === 200) bonus = amt * 0.25;
+    else if(amt === 300) bonus = amt * 0.30;
+    else if(amt === 500) bonus = amt * 0.50;
+
+    let finalAmount = amt + bonus;
+
+    try {
+        await addDoc(collection(db, "depositRequests"), {
+            user: currentUser,
+            amount: amt,
+            bonus: bonus,
+            totalWithBonus: finalAmount,
+            utr: utr,
+            status: "pending",
+            createdAt: serverTimestamp()
+        });
+        
+        let msg = bonus > 0 ? `Deposit Submitted! (Bonus: ₹${bonus})` : "Deposit Submitted!";
+        showPopup(msg);
+        
+        document.getElementById("amt").value = "";
+        document.getElementById("utr").value = "";
+    } catch (e) {
+        showPopup("Error submitting deposit");
+    }
 };
 
 async function loadWithdrawHistory() {
@@ -194,8 +245,6 @@ async function loadWithdrawHistory() {
 
         let docsArray = [];
         snap.forEach(d => docsArray.push(d.data()));
-        
-        // Sorting manually: Latest first
         docsArray.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
         docsArray.forEach(d => {
