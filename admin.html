@@ -2,15 +2,17 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KD 4449 WIN</title>
+<title>Admin Dashboard - 4449 WIN</title>
 <style>
-:root { --primary: #ff6b6b; --dark: #2c3e50; --light: #ecf0f1; --success: #2ecc71; }
+:root { --primary: #ff6b6b; --dark: #2c3e50; --light: #ecf0f1; --success: #2ecc71; --issue: #f39c12; }
 body{font-family: 'Segoe UI', Arial; background: var(--light); margin:0; display: flex; flex-direction: column; min-height: 100vh;}
 
-/* Header & Sidebar */
-.header{background: var(--primary); color:white; padding:15px; font-size:20px; text-align:center; font-weight:bold; box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
-.nav-bar { display: flex; background: white; justify-content: space-around; padding: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.nav-item { padding: 10px 20px; cursor: pointer; border-radius: 20px; font-weight: 600; color: var(--dark); transition: 0.3s; }
+/* Header Style - Logo and Text aligned */
+.header{background: var(--primary); color:white; padding:10px 20px; font-size:22px; font-weight:bold; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; }
+.header-logo { width: 45px; height: 45px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; box-shadow: 0 0 8px rgba(0,0,0,0.2); }
+
+.nav-bar { display: flex; background: white; justify-content: space-around; padding: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; }
+.nav-item { padding: 8px 15px; cursor: pointer; border-radius: 20px; font-weight: 600; color: var(--dark); transition: 0.3s; margin: 2px; }
 .nav-item.active { background: var(--primary); color: white; }
 
 .container{max-width:1000px; margin:20px auto; padding:0 15px; flex: 1;}
@@ -18,20 +20,20 @@ body{font-family: 'Segoe UI', Arial; background: var(--light); margin:0; display
 
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* Stats */
 .stats{display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;}
 .stat{background: white; padding:15px; border-radius:12px; text-align:center; border-left: 5px solid var(--primary);}
 .stat b { font-size: 22px; color: var(--primary); }
 
-/* Search Bar */
-.search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 16px; outline: none; }
+.search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; font-size: 16px; box-sizing: border-box;}
 
-/* Buttons & Tables */
 button{padding:10px 18px; background: var(--primary); border:none; color:white; border-radius:8px; cursor:pointer; font-weight: 600;}
 .edit-btn{background:#3498db; font-size: 12px;}
+.del-btn{background:#e74c3c; font-size: 12px; margin-left: 5px;}
+.view-btn{background: var(--issue); font-size: 12px;}
+
 table{width:100%; border-collapse:collapse; margin-top:10px;}
 th,td{text-align:left; padding:12px; border-bottom:1px solid #eee; font-size:14px;}
-th{color: #7f8c8d; text-transform: uppercase; font-size: 12px;}
+th{color: #7f8c8d; text-transform: uppercase; font-size: 11px;}
 
 .online-status{color: var(--success); font-weight:bold; font-size: 12px;}
 .offline-status{color:#95a5a6; font-size: 12px;}
@@ -40,6 +42,9 @@ th{color: #7f8c8d; text-transform: uppercase; font-size: 12px;}
 .section.active { display: block; }
 
 .item-request { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+.issue-card { background: #fffcf5; border-left: 4px solid var(--issue); padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+.screenshot-img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; }
 </style>
 </head>
 <body>
@@ -49,13 +54,17 @@ var password = prompt("Enter Admin Password");
 if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.html"; }
 </script>
 
-<div class="header">4449 WIN ADMIN</div>
+<div class="header">
+    <img src="logo.png" alt="4449 WIN Logo" class="header-logo">
+    <span>4449 WIN ADMIN</span>
+</div>
 
 <div class="nav-bar">
     <div class="nav-item active" onclick="showSection('dash')">Dashboard</div>
     <div class="nav-item" onclick="showSection('users')">Users</div>
     <div class="nav-item" onclick="showSection('deposits')">Deposits</div>
     <div class="nav-item" onclick="showSection('withdraws')">Withdraws</div>
+    <div class="nav-item" onclick="showSection('issues')">User Issues ⚠️</div>
 </div>
 
 <div class="container">
@@ -65,11 +74,9 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
             <div class="stat">Total Users<br><b id="totalUsers">0</b></div>
             <div class="stat">Online Now<br><b id="activeUsers">0</b></div>
         </div>
-
         <div class="card">
-            <h3>🎯 Set Wingo Result</h3>
-            <p style="font-size: 13px; color: #666;">Set the number for the next round:</p>
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+            <h3>🎯 Set Next Result</h3>
+            <div style="display: grid; grid-template-columns: repeat(5, 2fr); gap: 8px;">
                 <button onclick="setResult(0)">0</button><button onclick="setResult(1)">1</button>
                 <button onclick="setResult(2)">2</button><button onclick="setResult(3)">3</button>
                 <button onclick="setResult(4)">4</button><button onclick="setResult(5)">5</button>
@@ -82,20 +89,11 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div id="users" class="section">
         <div class="card">
             <h3>👥 User Management</h3>
-            <input type="text" id="userSearch" class="search-box" placeholder="Search by Phone or UID..." onkeyup="searchUser()">
+            <input type="text" id="userSearch" class="search-box" placeholder="Search users..." onkeyup="searchUser()">
             <div style="overflow-x:auto;">
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Phone / ID</th>
-                            <th>Balance</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="userTableBody">
-                        <tr><td colspan="4">Loading Users...</td></tr>
-                    </tbody>
+                    <thead><tr><th>Status</th><th>User ID</th><th>Balance</th><th>Action</th></tr></thead>
+                    <tbody id="userTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -115,17 +113,28 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
         </div>
     </div>
 
+    <div id="issues" class="section">
+        <div class="card">
+            <h3 style="color: var(--issue);">📩 Support Tickets</h3>
+            <div id="ticketList">Loading tickets...</div>
+        </div>
+
+        <div class="card">
+            <h3 style="color: var(--issue);">📸 Uploaded Screenshots</h3>
+            <div id="screenshotList">Loading screenshots...</div>
+        </div>
+    </div>
+
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, getDoc, setDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Sidebar Navigation Logic
 window.showSection = function(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -133,103 +142,112 @@ window.showSection = function(id) {
     event.currentTarget.classList.add('active');
 }
 
-// User Search Logic
-window.searchUser = function() {
-    let input = document.getElementById("userSearch").value.toLowerCase();
-    let rows = document.getElementById("userTableBody").getElementsByTagName("tr");
-    for (let row of rows) {
-        let text = row.textContent.toLowerCase();
-        row.style.display = text.includes(input) ? "" : "none";
-    }
-}
+// Result Setting
+window.setResult = async (num) => {
+    await setDoc(doc(db,"wingo","result"),{ number:num, time:Date.now() });
+    alert("Result set to: " + num);
+};
 
 // Listeners
-function init() {
-    listenToUsers();
-    listenToRequests("depositRequests", "depositList", "approveDeposit");
-    listenToRequests("withdrawRequests", "withdrawList", "approveWithdraw");
-}
-init();
-
-function listenToUsers() {
-    onSnapshot(collection(db, "users"), (snap) => {
-        const body = document.getElementById("userTableBody");
-        body.innerHTML = "";
-        let online = 0;
-        document.getElementById("totalUsers").innerText = snap.size;
-
-        snap.forEach(docSnap => {
-            const u = docSnap.data();
-            const lastActive = u.lastActive || 0;
-            const isOnline = (Date.now() - lastActive) < 120000;
-            if(isOnline) online++;
-
-            body.innerHTML += `
-                <tr>
-                    <td>${isOnline ? '<span class="online-status">● Online</span>' : '<span class="offline-status">○ Offline</span>'}</td>
-                    <td><b>${u.phone || 'N/A'}</b><br><small>${docSnap.id}</small></td>
-                    <td>₹${u.balance || 0}</td>
-                    <td><button class="edit-btn" onclick="editBal('${docSnap.id}', ${u.balance})">Edit</button></td>
-                </tr>`;
-        });
-        document.getElementById("activeUsers").innerText = online;
+onSnapshot(collection(db, "users"), (snap) => {
+    const body = document.getElementById("userTableBody");
+    body.innerHTML = ""; let online = 0;
+    document.getElementById("totalUsers").innerText = snap.size;
+    snap.forEach(docSnap => {
+        const u = docSnap.data();
+        const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
+        if(isOnline) online++;
+        body.innerHTML += `<tr>
+            <td>${isOnline ? '<span class="online-status">●</span>' : '<span class="offline-status">○</span>'}</td>
+            <td><small>${docSnap.id}</small></td>
+            <td>₹${u.balance || 0}</td>
+            <td><button class="edit-btn" onclick="editBal('${docSnap.id}', ${u.balance})">Edit</button></td>
+        </tr>`;
     });
-}
+    document.getElementById("activeUsers").innerText = online;
+});
 
-function listenToRequests(coll, elementId, actionName) {
+// Deposits & Withdraws
+function listenRequests(coll, elementId, action) {
     onSnapshot(collection(db, coll), (snap) => {
         const list = document.getElementById(elementId);
         list.innerHTML = "";
-        let count = 0;
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
-                count++;
-                list.innerHTML += `
-                    <div class="item-request">
-                        <div>
-                            <b>User:</b> ${data.user}<br>
-                            <b>Amount:</b> ₹${data.amount} <br>
-                            <small>${data.utr || data.upi || ''}</small>
-                        </div>
-                        <button onclick='${actionName}("${d.id}","${data.user}",${data.amount})'>Approve</button>
-                    </div>`;
+                list.innerHTML += `<div class="item-request">
+                    <div><b>₹${data.amount}</b><br><small>${data.user}</small><br><small>${data.utr || data.upi || ''}</small></div>
+                    <button onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
+                </div>`;
             }
         });
-        if(count === 0) list.innerHTML = "<p style='color:#999'>No pending requests.</p>";
     });
 }
+listenRequests("depositRequests", "depositList", "approveDeposit");
+listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
+
+// --- SUPPORT ISSUES LOGIC ---
+
+// Listen to Tickets
+onSnapshot(collection(db, "tickets"), (snap) => {
+    const list = document.getElementById("ticketList");
+    list.innerHTML = "";
+    if(snap.empty) list.innerHTML = "<p>No tickets.</p>";
+    snap.forEach(d => {
+        const t = d.data();
+        list.innerHTML += `<div class="issue-card">
+            <b>User:</b> ${t.name} <small>(${t.uid})</small><br>
+            <b>Issue:</b> ${t.message}<br>
+            <small style="color:gray">${t.timestamp?.toDate().toLocaleString() || ''}</small><br><br>
+            <button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Solve & Delete</button>
+        </div>`;
+    });
+});
+
+// Listen to Screenshots
+onSnapshot(collection(db, "supportUploads"), (snap) => {
+    const list = document.getElementById("screenshotList");
+    list.innerHTML = "";
+    if(snap.empty) list.innerHTML = "<p>No screenshots.</p>";
+    snap.forEach(d => {
+        const s = d.data();
+        list.innerHTML += `<div class="issue-card" style="display:flex; gap:15px; align-items:center;">
+            <img src="${s.imageUrl}" class="screenshot-img" onclick="window.open('${s.imageUrl}')">
+            <div>
+                <b>UPI:</b> ${s.upi}<br>
+                <b>Type:</b> ${s.type}<br>
+                <b>UID:</b> ${s.uid}<br>
+                <button class="del-btn" style="margin-top:5px;" onclick="deleteDocData('supportUploads','${d.id}')">Delete</button>
+            </div>
+        </div>`;
+    });
+});
+
+window.deleteDocData = async (coll, id) => {
+    if(confirm("Mark as solved and delete?")) {
+        await deleteDoc(doc(db, coll, id));
+        alert("Removed.");
+    }
+};
 
 window.editBal = async (uid, old) => {
     let n = prompt("New Balance:", old);
     if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
 };
 
-window.setResult = async (num) => {
-    await setDoc(doc(db,"wingo","result"),{ number:num, time:Date.now() });
-    alert("Next Result set to: " + num);
-};
-
-// Re-using your existing approval logic
 window.approveDeposit = async (id, user, amt) => {
     let ref = doc(db,"users",user);
     let snap = await getDoc(ref);
     let bal = snap.data().balance || 0;
-    let bonus = (amt == 100 || amt == 200) ? amt * 0.2 : (amt == 500 ? amt * 0.5 : 0);
-    await updateDoc(ref, {balance: bal + amt + bonus});
+    await updateDoc(ref, {balance: bal + amt});
     await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
     alert("Approved!");
 };
 
 window.approveWithdraw = async (id, user, amt) => {
-    let ref = doc(db,"users",user);
-    let snap = await getDoc(ref);
-    let bal = snap.data().balance || 0;
-    await updateDoc(ref, {balance: Math.max(0, bal - amt)});
     await updateDoc(doc(db,"withdrawRequests",id), {status:"approved"});
-    alert("Withdrawn!");
+    alert("Withdrawal Approved!");
 };
 </script>
 </body>
 </html>
-
