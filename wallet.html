@@ -194,12 +194,13 @@ window.sendWithdraw = async () => {
     }
 };
 
-// Updated Send Deposit with Bonus Calculation
+// --- FIX: Updated Send Deposit with immediate Balance + Bonus Credit ---
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
     
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
+    if(utr.length < 12) return showPopup("Enter valid 12-digit UTR!");
 
     // Bonus Logic
     let bonus = 0;
@@ -211,25 +212,35 @@ window.sendDeposit = async () => {
     let finalAmount = amt + bonus;
 
     try {
+        // 1. Record the request in the database
         await addDoc(collection(db, "depositRequests"), {
             user: currentUser,
             amount: amt,
             bonus: bonus,
             totalWithBonus: finalAmount,
             utr: utr,
-            status: "pending",
+            status: "approved", // Set to approved because we are adding balance immediately
             createdAt: serverTimestamp()
         });
+
+        // 2. UPDATE THE BALANCE (Adding bonus to the current balance)
+        balance += finalAmount;
+        await updateDoc(doc(db, "users", currentUser), { balance: balance });
+
+        // 3. Update the UI
+        document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         
-        let msg = bonus > 0 ? `Deposit Submitted! (Bonus: ₹${bonus})` : "Deposit Submitted!";
+        let msg = bonus > 0 ? `Deposit Added! Bonus ₹${bonus} credited.` : "Deposit Added!";
         showPopup(msg);
         
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
     } catch (e) {
-        showPopup("Error submitting deposit");
+        console.error(e);
+        showPopup("Error: Transaction Failed");
     }
 };
+// --- END FIX ---
 
 async function loadWithdrawHistory() {
     try {
