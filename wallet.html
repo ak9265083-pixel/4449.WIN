@@ -3,7 +3,9 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wallet</title>
+
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -11,6 +13,7 @@ background:#8f939c;
 display:flex;
 justify-content:center;
 }
+
 .app{
 width:100%;
 max-width:420px;
@@ -19,10 +22,12 @@ min-height:100vh;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
 position:relative;
 }
+
 .header-container{
 position:relative;
 height:60px;
 }
+
 .header{
 background:#ff6b6b;
 color:white;
@@ -31,6 +36,7 @@ font-size:20px;
 font-weight:bold;
 text-align:center;
 }
+
 .logo-top{
 position:absolute;
 top:5px;
@@ -42,6 +48,7 @@ object-fit:cover;
 border:2px solid white;
 background:white;
 }
+
 .box{
 background:white;
 margin:15px;
@@ -49,6 +56,7 @@ padding:20px;
 border-radius:12px;
 text-align:center;
 }
+
 .btn{
 padding:12px 20px;
 background:#ff6b6b;
@@ -60,7 +68,11 @@ font-size:16px;
 cursor:pointer;
 transition:.3s;
 }
-.btn:hover{transform:scale(1.05);}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
 input{
 padding:10px;
 width:80%;
@@ -69,11 +81,48 @@ border-radius:6px;
 border:1px solid #ccc;
 margin:5px;
 }
+
 .qr{
 width:200px;
 display:block;
 margin:auto;
 }
+
+/* PACKAGE DESIGN */
+
+.package-container{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:10px;
+}
+
+.pkg{
+background:#ff6b6b;
+color:white;
+padding:12px;
+border-radius:10px;
+width:90px;
+cursor:pointer;
+font-weight:bold;
+transition:.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.2);
+animation:fadeUp .4s ease;
+}
+
+.pkg:hover{
+transform:scale(1.1);
+background:#ff3b3b;
+}
+
+@keyframes fadeUp{
+0%{opacity:0;transform:translateY(10px);}
+100%{opacity:1;transform:translateY(0);}
+}
+
+/* POPUP */
+
 .bet-popup{
 position:fixed;
 top:50%;
@@ -89,10 +138,14 @@ animation:zoomPop .4s ease;
 color:white;
 text-align:center;
 }
+
 @keyframes zoomPop{
 0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}
 100%{transform:translate(-50%,-50%) scale(1);opacity:1;}
 }
+
+/* HISTORY */
+
 .history-box{
 background:white;
 margin:15px;
@@ -102,17 +155,21 @@ max-height:250px;
 overflow-y:auto;
 text-align:left;
 }
+
 .history-item{
 border-bottom:1px solid #ddd;
 padding:8px 0;
 display:flex;
 justify-content:space-between;
 }
+
 .history-pending{color:orange;font-weight:bold;}
 .history-approved{color:green;font-weight:bold;}
 .history-rejected{color:red;font-weight:bold;}
+
 </style>
 </head>
+
 <body>
 
 <div class="app">
@@ -122,27 +179,66 @@ justify-content:space-between;
 <div class="header">Wallet</div>
 </div>
 
-<div class="box">Balance ₹ <span id="balance">0</span></div>
+<div class="box">
+Balance ₹ <span id="balance">0</span>
+</div>
 
 <div class="box">
 <button class="btn" onclick="showDeposit()">Deposit</button>
 <button class="btn" onclick="showWithdraw()">Withdraw</button>
 </div>
 
+<!-- DEPOSIT -->
+
 <div id="depositBox" class="box" style="display:none">
-<h3>Deposit</h3>
-<img src="ui.png" class="qr"><br>
-<input type="number" id="amt" placeholder="Amount"><br>
-<input type="text" id="utr" placeholder="Enter UTR Number"><br><br>
-<button class="btn" onclick="sendDeposit()">Submit</button>
+
+<h3>Select Package</h3>
+
+<div class="package-container">
+
+<div class="pkg" onclick="selectPkg(100,20)">
+₹100<br><small>+20%</small>
 </div>
 
-<div id="withdrawBox" class="box" style="display:none">
-<h3>Withdraw</h3>
-<input type="number" id="wamt" placeholder="Amount"><br>
-<input type="text" id="upi" placeholder="UPI ID"><br><br>
-<button class="btn" onclick="sendWithdraw()">Submit</button>
+<div class="pkg" onclick="selectPkg(200,20)">
+₹200<br><small>+20%</small>
 </div>
+
+<div class="pkg" onclick="selectPkg(500,50)">
+₹500<br><small>+50%</small>
+</div>
+
+</div>
+
+<h3>Deposit</h3>
+
+<img src="ui.png" class="qr"><br>
+
+<input type="number" id="amt" placeholder="Amount"><br>
+
+<input type="text" id="utr" placeholder="Enter UTR Number"><br><br>
+
+<div id="bonusPreview"></div>
+
+<button class="btn" onclick="sendDeposit()">Submit</button>
+
+</div>
+
+<!-- WITHDRAW -->
+
+<div id="withdrawBox" class="box" style="display:none">
+
+<h3>Withdraw</h3>
+
+<input type="number" id="wamt" placeholder="Amount"><br>
+
+<input type="text" id="upi" placeholder="UPI ID"><br><br>
+
+<button class="btn" onclick="sendWithdraw()">Submit</button>
+
+</div>
+
+<!-- HISTORY -->
 
 <div class="history-box">
 <h3>Withdrawal History</h3>
@@ -154,6 +250,7 @@ justify-content:space-between;
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -164,8 +261,7 @@ authDomain: "win2-512e1.firebaseapp.com",
 projectId: "win2-512e1",
 storageBucket: "win2-512e1.firebasestorage.app",
 messagingSenderId: "577913579227",
-appId: "1:577913579227:web:1e073059c2d3d881720efe",
-measurementId: "G-4V1SCSMTM6"
+appId: "1:577913579227:web:1e073059c2d3d881720efe"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -174,64 +270,110 @@ const db = getFirestore(app);
 
 let currentUser="";
 let balance=0;
-let history = [];
+let history=[];
 
 onAuthStateChanged(auth, async (user)=>{
+
 if(user){
-currentUser = user.uid;
-let ref = doc(db,"users",user.uid);
-let snap = await getDoc(ref);
+
+currentUser=user.uid;
+
+let ref=doc(db,"users",user.uid);
+
+let snap=await getDoc(ref);
+
 if(!snap.exists()){
 await setDoc(ref,{balance:0});
 }
+
 let data=(await getDoc(ref)).data();
+
 balance=data.balance;
+
 document.getElementById("balance").innerText=balance;
+
 }
+
 });
 
 window.showDeposit=function(){
 document.getElementById("depositBox").style.display="block";
 document.getElementById("withdrawBox").style.display="none";
 }
+
 window.showWithdraw=function(){
 document.getElementById("withdrawBox").style.display="block";
 document.getElementById("depositBox").style.display="none";
 }
 
+/* PACKAGE SELECT */
+
+window.selectPkg=function(amount,bonus){
+
+document.getElementById("amt").value=amount;
+
+let bonusAmount=(amount*bonus)/100;
+
+let total=amount+bonusAmount;
+
+document.getElementById("bonusPreview").innerHTML=
+"Bonus ₹"+bonusAmount+" | Total Credit ₹"+total;
+
+showPopup("Package Selected ₹"+amount);
+
+}
+
+/* SEND DEPOSIT */
+
 window.sendDeposit=async function(){
+
 let amt=parseInt(document.getElementById("amt").value);
+
 let utr=document.getElementById("utr").value;
+
 if(!amt) return alert("Enter amount");
+
 if(!utr) return alert("Enter UTR Number");
+
 await addDoc(collection(db,"depositRequests"),{
 user:currentUser,
 amount:amt,
 utr:utr,
 status:"pending"
 });
+
 showPopup("Deposit request sent. Waiting for admin approval");
+
 document.getElementById("amt").value="";
 document.getElementById("utr").value="";
+document.getElementById("bonusPreview").innerHTML="";
+
 }
 
+/* WITHDRAW */
+
 window.sendWithdraw=async function(){
+
 let amt=parseInt(document.getElementById("wamt").value);
+
 let upi=document.getElementById("upi").value;
+
 if(!amt) return alert("Enter amount");
+
 if(amt>balance) return alert("Insufficient balance");
+
 if(!upi) return alert("Enter UPI ID");
 
-// Deduct balance immediately
-balance -= amt;
+balance-=amt;
+
 document.getElementById("balance").innerText=balance;
 
-// Add to history
-let request = {id:Date.now(),amount:amt,upi:upi,status:"Pending"};
+let request={id:Date.now(),amount:amt,upi:upi,status:"Pending"};
+
 history.unshift(request);
+
 renderHistory();
 
-// Add to Firebase collection
 await addDoc(collection(db,"withdrawRequests"),{
 user:currentUser,
 amount:amt,
@@ -240,28 +382,46 @@ status:"pending"
 });
 
 showPopup("Withdraw request sent. Waiting for admin approval");
+
 document.getElementById("wamt").value="";
 document.getElementById("upi").value="";
+
 }
 
 function renderHistory(){
+
 let container=document.getElementById("historyList");
+
 container.innerHTML="";
+
 history.forEach(item=>{
-let statusClass = item.status==="Pending"?"history-pending":item.status==="Approved"?"history-approved":"history-rejected";
+
+let statusClass=item.status==="Pending"?"history-pending":item.status==="Approved"?"history-approved":"history-rejected";
+
 let div=document.createElement("div");
+
 div.className="history-item "+statusClass;
-div.innerHTML=`<span>ID: ${item.id}</span><span>Amount: ₹${item.amount}</span><span>Status: ${item.status}</span>`;
+
+div.innerHTML=`<span>ID:${item.id}</span><span>₹${item.amount}</span><span>${item.status}</span>`;
+
 container.appendChild(div);
+
 });
+
 }
 
 function showPopup(msg){
+
 let popup=document.getElementById("popupMessage");
+
 popup.innerText=msg;
+
 popup.style.display="block";
+
 setTimeout(()=>{popup.style.display="none"},3000);
+
 }
+
 </script>
 
 </body>
