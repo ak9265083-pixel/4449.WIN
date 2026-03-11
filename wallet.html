@@ -29,7 +29,7 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
 .btn-submit { background: var(--primary); color: black; width: 90%; margin-top: 20px; border: none; }
 
-/* Package Grid Added */
+/* Package Grid */
 .pkg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; padding: 0 15px; }
 .pkg-card { background: rgba(255, 0, 122, 0.1); border: 1px solid var(--secondary); padding: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
 .pkg-card:active { transform: scale(0.95); }
@@ -53,7 +53,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 /* Popup */
 .bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); }
 
-/* New Total Display Style */
+/* Total Display */
 #totalDisplay { margin-top: 10px; font-size: 14px; font-weight: bold; color: #00ffaa; display: none; }
 </style>
 </head>
@@ -109,7 +109,6 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
         <input type="number" id="amt" placeholder="Amount" oninput="calculatePreview()">
         <input type="text" id="utr" placeholder="12 Digit UTR Number">
         <button class="btn btn-submit" onclick="sendDeposit()" style="background:var(--secondary);">Submit Deposit</button>
-        
         <div id="totalDisplay">Final Amount to Receive: ₹ <span id="finalAmtVal">0</span></div>
     </div>
 
@@ -154,13 +153,11 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Select Package Logic
 window.selectPkg = (val) => {
     document.getElementById("amt").value = val;
-    window.calculatePreview(); // Show total immediately on click
+    window.calculatePreview();
 };
 
-// --- NEW: Calculate Preview to show below Submit Button ---
 window.calculatePreview = () => {
     let amt = parseInt(document.getElementById("amt").value) || 0;
     let bonus = 0;
@@ -171,7 +168,6 @@ window.calculatePreview = () => {
 
     let total = amt + bonus;
     let display = document.getElementById("totalDisplay");
-    
     if(amt > 0) {
         display.style.display = "block";
         document.getElementById("finalAmtVal").innerText = total;
@@ -190,6 +186,7 @@ window.showWithdraw = () => {
     document.getElementById("depositBox").style.display = "none";
 };
 
+// --- WITHDRAWAL FIX FOR ADMIN LOADING ---
 window.sendWithdraw = async () => {
     let amt = parseInt(document.getElementById("wamt").value);
     let upi = document.getElementById("upi").value;
@@ -199,15 +196,19 @@ window.sendWithdraw = async () => {
     if(amt > balance) return showPopup("Insufficient Credits!");
 
     try {
+        // User balance update (immediately)
         balance -= amt;
         document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         await updateDoc(doc(db, "users", currentUser), { balance: balance });
 
+        // Withdrawal Request with clean fields for Admin
         await addDoc(collection(db, "withdrawRequests"), {
             user: currentUser,
             amount: amt,
             upi: upi,
             status: "pending",
+            type: "withdrawal", // Added for easier filtering
+            timestamp: Date.now(), // Fixed numeric timestamp for easy admin sorting
             createdAt: serverTimestamp()
         });
 
@@ -216,15 +217,14 @@ window.sendWithdraw = async () => {
         document.getElementById("upi").value = "";
         loadWithdrawHistory(); 
     } catch (e) {
+        console.error(e);
         showPopup("Error: Check Connection");
     }
 };
 
-// --- FIXED: Sending 'amount' as the total so Admin Panel approves full value ---
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
-    
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
 
     let bonus = 0;
@@ -238,18 +238,16 @@ window.sendDeposit = async () => {
     try {
         await addDoc(collection(db, "depositRequests"), {
             user: currentUser,
-            // Hum 'amount' field mein hi total bhej rahe hain 
-            // taaki aapka Admin jab ise approve kare toh pura amount add ho.
             amount: finalAmount, 
             baseAmount: amt,
             bonus: bonus,
             utr: utr,
             status: "pending",
+            timestamp: Date.now(),
             createdAt: serverTimestamp()
         });
         
         showPopup("Deposit Request Sent!");
-        
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
         document.getElementById("totalDisplay").style.display = "none";
@@ -272,7 +270,8 @@ async function loadWithdrawHistory() {
 
         let docsArray = [];
         snap.forEach(d => docsArray.push(d.data()));
-        docsArray.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        // Sorting using local timestamp to avoid index errors
+        docsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
         docsArray.forEach(d => {
             let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Syncing...";
