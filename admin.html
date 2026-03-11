@@ -143,9 +143,9 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div id="users" class="section">
         <div class="card">
             <h3>👥 USER DATABASE</h3>
-            <input type="text" id="userSearch" class="search-box" placeholder="Search by UID or Email...">
+            <input type="text" id="userSearch" class="search-box" placeholder="Type User ID or Email to search..." oninput="filterUsers()">
             <div style="overflow-x:auto;">
-                <table>
+                <table id="userTable">
                     <thead><tr><th>Status</th><th>User Info</th><th>Balance</th><th>Refers</th><th>Action</th></tr></thead>
                     <tbody id="userTableBody"></tbody>
                 </table>
@@ -178,12 +178,12 @@ const db = getFirestore(app);
 
 window.showSection = function(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.nav-bar .nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     event.currentTarget.classList.add('active');
 }
 
-// Result Setting - UPDATED FOR HYBRID LOGIC
+// Result Setting
 window.setResult = async (num) => {
     try {
         await setDoc(doc(db, "wingo", "result"), { 
@@ -194,6 +194,25 @@ window.setResult = async (num) => {
         alert("Success: Next result fixed to " + num);
     } catch (e) { alert("Error: " + e.message); }
 };
+
+// Search Logic
+window.filterUsers = function() {
+    let input = document.getElementById("userSearch").value.toUpperCase();
+    let table = document.getElementById("userTableBody");
+    let tr = table.getElementsByTagName("tr");
+
+    for (let i = 0; i < tr.length; i++) {
+        let td = tr[i].getElementsByTagName("td")[1]; // User Info column
+        if (td) {
+            let txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(input) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
 
 // Listeners & REFERRAL LOGIC
 onSnapshot(collection(db, "users"), async (snap) => {
@@ -221,13 +240,15 @@ onSnapshot(collection(db, "users"), async (snap) => {
 
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
-            <td><small>${u.email || u.id}</small><br><small style="color:var(--primary)">${u.id.substring(0,8)}</small></td>
+            <td><small>${u.email || u.id}</small><br><small style="color:var(--primary)">${u.id}</small></td>
             <td>₹${u.balance || 0}</td>
             <td><span class="ref-badge">${refCount} Refs</span></td>
             <td><button class="edit-btn" onclick="editBal('${u.id}', ${u.balance})">Edit</button></td>
         </tr>`;
     }
     document.getElementById("activeUsers").innerText = online;
+    // Keep search filter active after data updates
+    filterUsers();
 });
 
 window.approveDeposit = async (id, user, amt) => {
@@ -242,7 +263,7 @@ window.approveDeposit = async (id, user, amt) => {
 
 window.editBal = async (uid, old) => {
     let n = prompt("New Balance for " + uid, old);
-    if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
+    if(n !== null && n !== "") await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
 };
 
 function listenRequests(coll, elementId, action) {
