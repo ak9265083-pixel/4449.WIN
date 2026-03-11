@@ -12,8 +12,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .timer{background:#ff6b6b;color:white;margin:10px 15px;padding:10px;border-radius:10px;font-size:18px;font-weight:bold;animation: pulse 1.5s infinite alternate;}
 @keyframes pulse{0%{background-color:#ff6b6b;}100%{background-color:#ff3b3b;}}
 
-/* Ball Animation */
-.centerGame{margin:20px auto;width:120px;height:120px;border-radius:50%;background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:bold;box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.2);transition: all 0.6s ease;text-shadow: 2px 2px 4px rgba(0,0,0,0.2);}
+.centerGame{margin:20px auto;width:120px;height:120px;border-radius:50%;background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:bold;box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.2);transition: all 0.6s ease;}
 .centerGame.animate{transform: rotateY(720deg) scale(1.1); filter: brightness(1.2);}
 
 .colors{display:flex;gap:10px;padding:10px 15px;}
@@ -23,7 +22,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .violet{background: linear-gradient(180deg, #9b59b6, #8e44ad);}
 
 .numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:10px 15px;}
-.numbers button{width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 20px; font-weight: bold; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+.numbers button{width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 20px; font-weight: bold; color: white; cursor: pointer;}
 .ball-0 { background: linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%); } 
 .ball-1, .ball-3, .ball-7, .ball-9 { background: radial-gradient(circle at 30% 30%, #58d68d, #27ae60); } 
 .ball-2, .ball-4, .ball-6, .ball-8 { background: radial-gradient(circle at 30% 30%, #ec7063, #c0392b); } 
@@ -34,7 +33,6 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 .big{background: #f39c12;}
 .small{background: #3498db;}
 
-/* Tabs Styling */
 .history-tabs{display:flex; margin:15px; border-bottom: 2px solid #eee;}
 .tab-btn{flex:1; padding: 10px; cursor:pointer; font-weight: bold; color: #777; border:none; background:none;}
 .tab-btn.active{color: #ff6b6b; border-bottom: 2px solid #ff6b6b;}
@@ -117,7 +115,7 @@ body{margin:0;font-family:Arial;background:#9fa3ad;display:flex;justify-content:
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,where,orderBy,limit,onSnapshot,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore,doc,getDoc,updateDoc,collection,addDoc,query,where,orderBy,limit,onSnapshot,serverTimestamp,deleteDoc,setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
@@ -126,7 +124,6 @@ const db = getFirestore(app);
 
 let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, currentBetId=null;
 let timerTime = 30;
-let lastUsedAdminResult = null;
 
 // Online Status Update
 async function updateOnlineStatus() {
@@ -143,7 +140,7 @@ window.switchTab = (type) => {
   document.getElementById('betTab').classList.toggle('active', type==='bet');
 }
 
-// History & Bet Listeners
+// Listeners
 onAuthStateChanged(auth, user => {
   if(user){
     userId=user.uid;
@@ -195,11 +192,21 @@ async function timerTick(){
     timerTime=30;
     updateOnlineStatus();
     let ball=document.getElementById("ball"); ball.classList.add("animate");
-    let result = 0;
+    
+    // --- SMART RESULT LOGIC ---
+    let result;
     try {
-      let r = await getDoc(doc(db,"wingo","result"));
-      result = r.data().number;
-    } catch(e) { result = Math.floor(Math.random()*10); }
+      const adminDoc = await getDoc(doc(db, "wingo", "result"));
+      if (adminDoc.exists() && adminDoc.data().number !== null && adminDoc.data().number !== undefined) {
+          result = adminDoc.data().number;
+          // Admin result use hone ke baad use null kar do taaki agli baar random aaye
+          await setDoc(doc(db, "wingo", "result"), { number: null, time: Date.now() });
+      } else {
+          result = Math.floor(Math.random() * 10);
+      }
+    } catch(e) { 
+      result = Math.floor(Math.random() * 10); 
+    }
 
     let color = (result===0||result===5)?"violet":([1,3,7,9].includes(result)?"green":"red");
     let bs = result>=5?"BIG":"SMALL";
@@ -208,6 +215,14 @@ async function timerTick(){
 
     setTimeout(async ()=>{
       ball.innerText=result; ball.classList.remove("animate");
+      
+      // Ball colors update
+      if(result===0) ball.style.background = "linear-gradient(135deg, #e74c3c 50%, #9b59b6 50%)";
+      else if(result===5) ball.style.background = "linear-gradient(135deg, #2ecc71 50%, #9b59b6 50%)";
+      else if(color==="green") ball.style.background = "radial-gradient(circle at 30% 30%, #58d68d, #27ae60)";
+      else ball.style.background = "radial-gradient(circle at 30% 30%, #ec7063, #c0392b)";
+      ball.style.color="white";
+
       if(currentBetId){
         let win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
         let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
@@ -217,17 +232,18 @@ async function timerTick(){
           await updateDoc(doc(db,"users",userId), {balance:balance});
           await updateDoc(doc(db,"userBets",currentBetId), {status:"Win ₹"+winAmt});
           let p=document.createElement("div"); p.className="resultPopup win"; p.innerText="Win ₹"+winAmt;
-          document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2000);
+          document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2500);
         } else {
           await updateDoc(doc(db,"userBets",currentBetId), {status:"Lose"});
           let p=document.createElement("div"); p.className="resultPopup lose"; p.innerText="Lose";
-          document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2000);
+          document.body.appendChild(p); p.style.display="block"; setTimeout(()=>p.remove(),2500);
         }
         currentBetId=null;
       }
     },500);
   }
 }
+
 setInterval(timerTick,1000);
 window.openWallet=()=>{ window.location.href="wallet.html"; }
 window.openHelp=()=>{ window.location.href="help.html"; }
