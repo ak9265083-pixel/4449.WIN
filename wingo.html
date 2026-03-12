@@ -70,7 +70,7 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .historyItem { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
 .res-num { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
 
-/* UPGRADED BET POPUP - FIXED CENTER */
+/* Betting Popup */
 .betPopup { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: flex-end; justify-content: center; z-index: 3000; }
 .betBox { background: #1c2333; padding: 25px 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; width: 420px; border-top: 3px solid var(--primary); animation: slideUp 0.3s ease-out; box-sizing: border-box; text-align: center; }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -81,13 +81,71 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .multiplier-btns { display: flex; gap: 10px; margin-bottom: 20px; }
 .multiplier-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; background: #333; color: white; cursor: pointer; }
 
-/* BDG WIN STYLE POPUP */
-.result-win-loss { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 9999; text-align: center; pointer-events: none; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.result-win-loss.show { transform: translate(-50%, -50%) scale(1); }
-.win-content { background: linear-gradient(180deg, #ffde59 0%, #ff914d 100%); padding: 40px; border-radius: 30px; box-shadow: 0 0 50px rgba(255, 222, 89, 0.5); border: 4px solid #fff; }
-.win-content h1 { margin: 0; color: #fff; font-size: 35px; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
-.win-content .amt { font-size: 30px; font-weight: 900; color: #733d8a; margin: 10px 0; }
-.loss-content { background: #2c3e50; padding: 30px 50px; border-radius: 20px; border: 2px solid #95a5a6; color: white; }
+/* --- NEW WINNING POPUP (SC STYLE) --- */
+.result-win-loss { 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%) scale(0); 
+    z-index: 9999; 
+    transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    width: 340px;
+    pointer-events: none;
+}
+.result-win-loss.show { transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+
+.win-container {
+    background: linear-gradient(180deg, #ff714a 0%, #ee3a31 100%);
+    border-radius: 30px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.rocket-header {
+    width: 90px;
+    height: 90px;
+    background: #ffcf31;
+    border-radius: 50%;
+    margin: -65px auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 6px solid #ee3a31;
+    box-shadow: 0 0 20px #ffcf31;
+    animation: float 2s ease-in-out infinite;
+    font-size: 45px;
+}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+.win-title { color: white; font-size: 26px; font-weight: 900; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+.res-tags { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+.tag { background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 6px; font-size: 13px; color: white; font-weight: bold; }
+
+.bonus-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 10px;
+    position: relative;
+    overflow: hidden;
+}
+.bonus-card::before, .bonus-card::after {
+    content: ''; position: absolute; top: 50%; width: 20px; height: 20px; background: #ee3a31; border-radius: 50%;
+}
+.bonus-card::before { left: -10px; transform: translateY(-50%); }
+.bonus-card::after { right: -10px; transform: translateY(-50%); }
+
+.b-label { color: #ee3a31; font-size: 14px; font-weight: bold; margin: 0; }
+.b-amount { color: #ee3a31; font-size: 32px; font-weight: 900; margin: 5px 0; }
+.b-period { color: #888; font-size: 11px; margin: 0; }
+
+.auto-close-txt { margin-top: 15px; color: white; font-size: 12px; opacity: 0.9; }
+
+/* Loss Popup */
+.loss-content { background: #2c3e50; padding: 30px; border-radius: 20px; border: 2px solid #95a5a6; color: white; text-align: center; }
 
 /* Navigation */
 .bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 2000; }
@@ -306,17 +364,35 @@ async function processResult(){
           let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
           balance += winAmt;
           await updateDoc(doc(db,"users",userId), {balance:balance});
-          showBdgPopup(winAmt, true);
+          showBdgPopup(winAmt, true, result, color, bs);
         } else { showBdgPopup(0, false); }
         currentBet=null;
       }
     },1000);
 }
 
-function showBdgPopup(amt, isWin) {
+// --- UPDATED POPUP FUNCTION ---
+function showBdgPopup(amt, isWin, num, col, bs) {
     const pop = document.getElementById("winLossPopup");
     if(isWin) {
-        pop.innerHTML = `<div class="win-content"><h1>CONGRATULATIONS</h1><div class="amt">₹${amt.toFixed(2)}</div><div style="font-size:12px; color:white;">Added to wallet</div></div>`;
+        const period = "wingo1 " + new Date().getTime().toString().substring(5);
+        pop.innerHTML = `
+            <div class="win-container">
+                <div class="rocket-header">🚀</div>
+                <div class="win-title">Congratulations</div>
+                <div class="res-tags">
+                    <span class="tag">Lottery results</span>
+                    <span class="tag" style="background:${col==='red'?'#e74c3c':'#2ecc71'}">${col.charAt(0).toUpperCase() + col.slice(1)}</span>
+                    <span class="tag" style="background:rgba(255,255,255,0.1)">${num}</span>
+                    <span class="tag" style="background:${bs==='BIG'?'#fccf31':'#00f2ff'}; color:black;">${bs}</span>
+                </div>
+                <div class="bonus-card">
+                    <p class="b-label">Bonus</p>
+                    <p class="b-amount">₹${amt.toFixed(2)}</p>
+                    <p class="b-period">Period: ${period}</p>
+                </div>
+                <div class="auto-close-txt">3 seconds auto close</div>
+            </div>`;
     } else {
         pop.innerHTML = `<div class="loss-content"><h2>SORRY</h2><p>Better luck next time!</p></div>`;
     }
