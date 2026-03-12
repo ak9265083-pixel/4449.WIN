@@ -74,7 +74,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1" };
     const app = initializeApp(firebaseConfig);
@@ -83,39 +83,47 @@
 
     onAuthStateChanged(auth, async (user) => {
         if(user) {
-            // Real-time listener for current user stats
+            // User profile snapshot for referral code
             onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if(snap.exists()) {
                     const d = snap.data();
-                    // Referral Code Fix: Agar database mein referralCode nahi hai toh UID ka 8 char use karega
                     const myCode = d.referralCode || user.uid.substring(0, 8).toUpperCase();
-                    
                     const myLink = `https://4449-win.vercel.app/index.html?ref=${myCode}`;
                     document.getElementById("referLink").innerText = myLink;
 
-                    const active = d.activeRefer || 0;
-                    document.getElementById("totalInvited").innerText = d.totalRefer || 0;
-                    document.getElementById("activeInvited").innerText = active;
-                    document.getElementById("progBar").style.width = Math.min((active/6*100), 100) + "%";
-                    document.getElementById("progText").innerText = `PROGRESS: ${active}/6`;
-                    document.getElementById("remainText").innerText = `LEFT: ${active >= 6 ? 0 : 6-active}`;
-
-                    // Referral List Fix: Using 'myCode' for real-time query
+                    // Real-time Query to count referrals and update history
                     const q = query(collection(db, "users"), where("referredBy", "==", myCode));
                     onSnapshot(q, (listSnap) => {
                         const list = document.getElementById("referralList");
+                        let totalCount = 0;
+                        let activeCount = 0;
+                        let listHTML = "";
+
                         if(listSnap.empty) {
                             list.innerHTML = `<p style="padding:20px; text-align:center; font-size:11px; opacity:0.3;">No Joins Yet</p>`;
-                            return;
+                        } else {
+                            listSnap.forEach(userDoc => {
+                                const u = userDoc.data();
+                                totalCount++; 
+                                if(u.firstBetDone) activeCount++;
+
+                                listHTML += `<div class="user-row">
+                                    <div><b>${u.email ? u.email.split('@')[0] : 'User'}</b><br><small style="opacity:0.4;">ID: ${userDoc.id.substring(0,6)}</small></div>
+                                    <div class="badge ${u.firstBetDone ? 'active' : 'pending'}">${u.firstBetDone ? 'ACTIVE' : 'PENDING'}</div>
+                                </div>`;
+                            });
+                            list.innerHTML = listHTML;
                         }
-                        list.innerHTML = "";
-                        listSnap.forEach(userDoc => {
-                            const u = userDoc.data();
-                            list.innerHTML += `<div class="user-row">
-                                <div><b>${u.email.split('@')[0]}</b><br><small style="opacity:0.4;">ID: ${userDoc.id.substring(0,6)}</small></div>
-                                <div class="badge ${u.firstBetDone ? 'active' : 'pending'}">${u.firstBetDone ? 'ACTIVE' : 'PENDING'}</div>
-                            </div>`;
-                        });
+
+                        // Update UI Counters
+                        document.getElementById("totalInvited").innerText = totalCount;
+                        document.getElementById("activeInvited").innerText = activeCount;
+
+                        // Update Mission Progress
+                        const progressPercent = Math.min((activeCount / 6 * 100), 100);
+                        document.getElementById("progBar").style.width = progressPercent + "%";
+                        document.getElementById("progText").innerText = `PROGRESS: ${activeCount}/6`;
+                        document.getElementById("remainText").innerText = `LEFT: ${activeCount >= 6 ? 0 : 6 - activeCount}`;
                     });
                 }
             });
