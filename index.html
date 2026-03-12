@@ -55,6 +55,7 @@
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, doc, setDoc, updateDoc, increment, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // Original Firebase Config
     const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1" };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -81,15 +82,19 @@
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             
-            // 1. Naye user ka document banana
+            // 1. Naye user ka data save karna (Original fields preserved)
             await setDoc(doc(db, "users", user.uid), {
-                email, uid: user.uid,
+                email, 
+                uid: user.uid,
                 referralCode: user.uid.substring(0, 8).toUpperCase(),
                 referredBy: inviteCode || "NONE",
-                totalRefer: 0, activeRefer: 0, firstBetDone: false, createdAt: serverTimestamp()
+                totalRefer: 0, 
+                activeRefer: 0, 
+                firstBetDone: false, 
+                createdAt: serverTimestamp()
             });
 
-            // 2. Referrer ka count badhana
+            // 2. FEATURE ADDED: Referrer ka count increment karna
             if(inviteCode && inviteCode !== "NONE") {
                 const q = query(collection(db, "users"), where("referralCode", "==", inviteCode));
                 const snap = await getDocs(q);
