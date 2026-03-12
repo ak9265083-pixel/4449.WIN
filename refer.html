@@ -13,24 +13,30 @@
         .logo { height: 40px; width: 40px; border-radius: 50%; border: 2px solid var(--primary); }
         .header span { font-size: 20px; font-weight: 800; color: var(--primary); text-transform: uppercase; }
 
-        .link-card { margin: 20px 15px; padding: 25px; background: #161b22; border-radius: 20px; border: 1px dashed rgba(0, 242, 255, 0.3); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .link-box { background: #05070a; padding: 14px; border-radius: 12px; color: var(--primary); margin: 15px 0; font-size: 13px; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); min-height: 45px; }
+        .link-card { margin: 20px 15px; padding: 25px; background: #161b22; border-radius: 20px; border: 1px dashed rgba(0, 242, 255, 0.3); text-align: center; }
+        .link-box { background: #05070a; padding: 14px; border-radius: 12px; color: var(--primary); margin: 15px 0; font-size: 13px; word-break: break-all; border: 1px solid rgba(255,255,255,0.05); }
         
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         button { padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .copy-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .copy-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
         .share-btn { background: #fff; color: #000; }
 
-        .mission-card { margin: 25px 15px; padding: 25px; background: linear-gradient(135deg, #1c2333, #0b0e14); border-radius: 20px; border: 1px solid rgba(255, 0, 122, 0.3); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .mission-card { margin: 25px 15px; padding: 25px; background: linear-gradient(135deg, #1c2333, #0b0e14); border-radius: 20px; border: 1px solid rgba(255, 0, 122, 0.3); position: relative; }
         .reward-tag { position: absolute; top: -12px; right: 15px; background: var(--accent); color: #000; padding: 5px 15px; border-radius: 50px; font-size: 11px; font-weight: 900; }
         .bar-bg { background: rgba(255,255,255,0.05); height: 12px; border-radius: 10px; margin: 18px 0; overflow: hidden; }
         .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--secondary), var(--primary)); transition: 1s; }
         
+        /* Claim Button Animation */
+        #claimBtn { 
+            width: 100%; margin-top: 15px; background: var(--accent); color: #000; 
+            display: none; animation: pulse 1.5s infinite; box-shadow: 0 0 20px var(--accent);
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
         .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 0 15px; }
         .s-item { background: #161b22; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
         .list-box { margin: 25px 15px; background: #161b22; border-radius: 20px; overflow: hidden; }
-        .list-h { padding: 15px; background: rgba(255,255,255,0.03); font-size: 13px; font-weight: bold; color: var(--primary); text-transform: uppercase; }
+        .list-h { padding: 15px; background: rgba(255,255,255,0.03); font-size: 13px; font-weight: bold; color: var(--primary); }
         .user-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
         .badge { font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: bold; }
         .active { color: #2ecc71; border: 1px solid #2ecc71; }
@@ -58,6 +64,7 @@
             <span id="progText">PROGRESS: 0/6</span>
             <span id="remainText" style="color:var(--secondary)">LEFT: 6</span>
         </div>
+        <button id="claimBtn" onclick="claimReward()">CLAIM ₹500 BONUS</button>
     </div>
     
     <div class="stats">
@@ -67,79 +74,86 @@
     
     <div class="list-box">
         <div class="list-h">REFERRAL DETAILS</div>
-        <div id="referralList"><p style="padding:20px; text-align:center; font-size:11px; opacity:0.3;">No Joins Yet</p></div>
+        <div id="referralList"></div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, where, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1" };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    onAuthStateChanged(auth, async (user) => {
+    let currentUserId = null;
+    let isClaimed = false;
+
+    onAuthStateChanged(auth, (user) => {
         if(user) {
-            // User profile snapshot for referral code
+            currentUserId = user.uid;
             onSnapshot(doc(db, "users", user.uid), (snap) => {
                 if(snap.exists()) {
                     const d = snap.data();
+                    isClaimed = d.missionClaimed || false;
                     const myCode = d.referralCode || user.uid.substring(0, 8).toUpperCase();
-                    const myLink = `https://4449-win.vercel.app/index.html?ref=${myCode}`;
-                    document.getElementById("referLink").innerText = myLink;
+                    document.getElementById("referLink").innerText = `https://4449-win.vercel.app/index.html?ref=${myCode}`;
 
-                    // Real-time Query to count referrals and update history
                     const q = query(collection(db, "users"), where("referredBy", "==", myCode));
                     onSnapshot(q, (listSnap) => {
-                        const list = document.getElementById("referralList");
-                        let totalCount = 0;
-                        let activeCount = 0;
-                        let listHTML = "";
-
-                        if(listSnap.empty) {
-                            list.innerHTML = `<p style="padding:20px; text-align:center; font-size:11px; opacity:0.3;">No Joins Yet</p>`;
-                        } else {
-                            listSnap.forEach(userDoc => {
-                                const u = userDoc.data();
-                                totalCount++; 
-                                if(u.firstBetDone) activeCount++;
-
-                                listHTML += `<div class="user-row">
-                                    <div><b>${u.email ? u.email.split('@')[0] : 'User'}</b><br><small style="opacity:0.4;">ID: ${userDoc.id.substring(0,6)}</small></div>
-                                    <div class="badge ${u.firstBetDone ? 'active' : 'pending'}">${u.firstBetDone ? 'ACTIVE' : 'PENDING'}</div>
-                                </div>`;
-                            });
-                            list.innerHTML = listHTML;
+                        let total = 0, active = 0, listHTML = "";
+                        listSnap.forEach(doc => {
+                            total++;
+                            if(doc.data().firstBetDone) active++;
+                            listHTML += `<div class="user-row">
+                                <div><b>${doc.data().email.split('@')[0]}</b></div>
+                                <div class="badge ${doc.data().firstBetDone ? 'active' : 'pending'}">${doc.data().firstBetDone ? 'ACTIVE' : 'PENDING'}</div>
+                            </div>`;
+                        });
+                        document.getElementById("referralList").innerHTML = listHTML || '<p style="padding:20px;text-align:center;opacity:0.3;">No Joins</p>';
+                        document.getElementById("totalInvited").innerText = total;
+                        document.getElementById("activeInvited").innerText = active;
+                        
+                        // Progress Bar & Claim Button Logic
+                        let prog = Math.min((active/6)*100, 100);
+                        document.getElementById("progBar").style.width = prog + "%";
+                        document.getElementById("progText").innerText = `PROGRESS: ${active}/6`;
+                        
+                        if(active >= 6 && !isClaimed) {
+                            document.getElementById("claimBtn").style.display = "block";
+                        } else if(isClaimed) {
+                            document.getElementById("claimBtn").style.display = "block";
+                            document.getElementById("claimBtn").innerText = "REWARD CLAIMED ✅";
+                            document.getElementById("claimBtn").style.background = "#2ecc71";
+                            document.getElementById("claimBtn").disabled = true;
                         }
-
-                        // Update UI Counters
-                        document.getElementById("totalInvited").innerText = totalCount;
-                        document.getElementById("activeInvited").innerText = activeCount;
-
-                        // Update Mission Progress
-                        const progressPercent = Math.min((activeCount / 6 * 100), 100);
-                        document.getElementById("progBar").style.width = progressPercent + "%";
-                        document.getElementById("progText").innerText = `PROGRESS: ${activeCount}/6`;
-                        document.getElementById("remainText").innerText = `LEFT: ${activeCount >= 6 ? 0 : 6 - activeCount}`;
                     });
                 }
             });
         } else { window.location.href = "login.html"; }
     });
 
-    window.copyLink = () => {
-        const link = document.getElementById("referLink").innerText;
-        if(link.includes("Generating")) return;
-        navigator.clipboard.writeText(link);
-        alert("Link Copied!");
+    window.claimReward = async () => {
+        try {
+            const userRef = doc(db, "users", currentUserId);
+            await updateDoc(userRef, {
+                balance: increment(500), // Wallet mein 500 add honge
+                missionClaimed: true    // Taaki baar baar claim na kar sake
+            });
+            alert("Congratulations! ₹500 added to your wallet.");
+        } catch (e) {
+            alert("Error claiming reward. Try again.");
+        }
     };
-    window.shareLink = () => {
-        const link = document.getElementById("referLink").innerText;
-        if(link.includes("Generating")) return;
-        window.open(`https://wa.me/?text=Join 4449 WIN and claim bonus: ${link}`);
+
+    window.copyLink = () => { 
+        navigator.clipboard.writeText(document.getElementById("referLink").innerText); 
+        alert("Copied!"); 
+    };
+    window.shareLink = () => { 
+        window.open(`https://wa.me/?text=Join 4449 WIN: ${document.getElementById("referLink").innerText}`); 
     };
 </script>
 </body>
