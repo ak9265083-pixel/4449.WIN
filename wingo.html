@@ -29,7 +29,7 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .profile-card h2 { margin: 5px 0; font-size: 32px; color: var(--primary); text-shadow: 0 0 15px rgba(0,242,255,0.4); }
 .uid-box { background: rgba(0, 242, 255, 0.05); padding: 6px 12px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 12px; border: 1px solid rgba(0, 242, 255, 0.2); cursor: pointer; }
 
-/* REFERRAL BOX STYLE */
+/* REFERRAL BOX */
 .refer-container { margin: 10px 15px 20px 15px; padding: 15px; background: var(--glass); border-radius: 15px; border: 1px dashed var(--primary); display: flex; justify-content: space-between; align-items: center; }
 .refer-info p { margin: 0; font-size: 10px; color: #8b949e; text-transform: uppercase; }
 .refer-info b { font-size: 18px; color: var(--primary); letter-spacing: 1px; }
@@ -37,22 +37,21 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 
 /* Timer Section */
 .timer-container { background: var(--card-bg); margin: 0 15px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--glass); }
-.timer-label { font-weight: bold; color: #8b949e; display: flex; align-items: center; gap: 6px; }
 #time { font-size: 28px; color: var(--secondary); font-weight: 900; text-shadow: 0 0 10px var(--secondary); font-family: monospace; }
+.lock-msg { color: #ff3e3e; font-size: 12px; font-weight: bold; display: none; animation: blink 0.5s infinite; }
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
 /* RESULT BOX */
 .result-area { margin: 25px auto; width: 90%; }
 .centerGame { width: 100%; height: 130px; background: #1a1f29; border-radius: 20px; border: 2px solid var(--primary); box-shadow: 0 0 25px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 70px; font-weight: 900; position: relative; transition: 0.5s; overflow: hidden; }
 .centerGame.animate { animation: neonGlitch 0.3s infinite; }
-@keyframes neonGlitch { 0% { border-color: var(--primary); box-shadow: 0 0 20px var(--primary); } 50% { border-color: var(--secondary); box-shadow: 0 0 20px var(--secondary); } 100% { border-color: var(--primary); box-shadow: 0 0 20px var(--primary); } }
-
-.bs-badge { position: absolute; bottom: 12px; right: 20px; padding: 5px 15px; border-radius: 8px; font-size: 16px; font-weight: 900; transform: skew(-15deg) scale(0); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+@keyframes neonGlitch { 0% { border-color: var(--primary); } 50% { border-color: var(--secondary); } 100% { border-color: var(--primary); } }
+.bs-badge { position: absolute; bottom: 12px; right: 20px; padding: 5px 15px; border-radius: 8px; font-size: 16px; font-weight: 900; transform: skew(-15deg) scale(0); transition: 0.4s; }
 .bs-badge.show { transform: skew(-15deg) scale(1); }
 
 /* Classic Number Colors */
 .numbers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 10px 15px; }
 .numbers button { height: 55px; border-radius: 12px; border: none; font-size: 20px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.3); }
-.numbers button:active { transform: translateY(2px); box-shadow: none; }
 .ball-0 { background: linear-gradient(135deg, var(--red) 50%, var(--violet) 50%); } 
 .ball-5 { background: linear-gradient(135deg, var(--green) 50%, var(--violet) 50%); } 
 .ball-odd { background: var(--green); } 
@@ -61,38 +60,41 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 /* Betting Buttons */
 .colors, .bigsmall { display: flex; gap: 10px; padding: 10px 15px; }
 .colors button, .bigsmall button { flex: 1; padding: 16px; border: none; color: white; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-.green-btn { background: var(--green); box-shadow: 0 4px 0 #1b8a4d; }
-.red-btn { background: var(--red); box-shadow: 0 4px 0 #b02d1f; }
-.violet-btn { background: var(--violet); box-shadow: 0 4px 0 #733d8a; }
-.big { background: var(--big-color); color: black !important; box-shadow: 0 4px 0 #c48a0d; }
-.small { background: var(--primary); color: black !important; box-shadow: 0 4px 0 #00b8c2; }
+.green-btn { background: var(--green); }
+.red-btn { background: var(--red); }
+.violet-btn { background: var(--violet); }
+.big { background: var(--big-color); color: black !important; }
+.small { background: var(--primary); color: black !important; }
 
 /* History */
-.history { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+.history { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 15px; text-align: left; }
 .historyItem { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 0; display: flex; justify-content: space-between; align-items: center; }
-.res-num { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+.res-num { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
 
-/* BOTTOM NAVIGATION */
-.bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 2000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
-.navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; transition: 0.3s; flex: 1; text-decoration: none; }
-.navBtn.active, .navBtn:hover { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
-.nav-icon { font-size: 22px; margin-bottom: 4px; transition: 0.3s; }
-.nav-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+/* NEW BET POPUP STYLE */
+.betPopup { position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: flex-end; justify-content: center; z-index: 3000; }
+.betBox { background: #1c2333; padding: 25px 20px; border-top-left-radius: 30px; border-top-right-radius: 30px; width: 420px; border-top: 3px solid var(--primary); animation: slideUp 0.3s ease-out; box-sizing: border-box; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.preset-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+.preset-btns button { padding: 10px; border-radius: 8px; border: 1px solid var(--primary); background: transparent; color: white; cursor: pointer; font-weight: bold; }
+.multiplier-btns { display: flex; gap: 10px; margin-bottom: 20px; }
+.multiplier-btns button { flex: 1; padding: 8px; border-radius: 5px; border: none; background: #333; color: white; cursor: pointer; }
+.betBox input { width: 100%; padding: 12px; background: #0b0e14; border: 1px solid var(--primary); color: var(--primary); font-size: 20px; text-align: center; border-radius: 10px; margin-bottom: 15px; outline: none; }
 
-/* Popup */
-.betPopup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 3000; backdrop-filter: blur(8px); }
-.betBox { background: var(--card-bg); padding: 30px; border-radius: 20px; width: 320px; border: 2px solid var(--primary); box-shadow: 0 0 30px rgba(0,242,255,0.3); animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
-@keyframes pop { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
-.betBox h3 { margin: 0 0 20px; font-size: 18px; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
-.betBox input { width: 100%; padding: 15px; background: #0b0e14; border: 1px solid var(--glass); color: var(--primary); font-size: 28px; text-align: center; margin-bottom: 25px; border-radius: 12px; font-weight: bold; outline: none; transition: 0.3s; }
-.popup-btns { display:flex; gap:15px; width: 100%; }
-.confirmBtn { flex:1; padding:15px; border-radius:12px; border:none; background:var(--primary); color:black; font-weight:bold; cursor:pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-.cancelBtn { flex:1; padding:15px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; cursor:pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+/* BDG STYLE WIN POPUP */
+.result-win-loss { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 9999; text-align: center; pointer-events: none; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.result-win-loss.show { transform: translate(-50%, -50%) scale(1); }
+.win-content { background: linear-gradient(180deg, #ffde59 0%, #ff914d 100%); padding: 40px; border-radius: 30px; box-shadow: 0 0 50px rgba(255, 222, 89, 0.5); border: 4px solid #fff; }
+.win-content h1 { margin: 0; color: #fff; font-size: 40px; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
+.win-content .amt { font-size: 30px; font-weight: 900; color: #733d8a; margin: 10px 0; }
+.loss-content { background: #2c3e50; padding: 30px 50px; border-radius: 20px; border: 2px solid #95a5a6; }
 
-.resultPopup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0); padding: 40px 60px; border-radius: 25px; font-weight: 900; font-size: 32px; z-index: 9999; animation: popupBounce 0.6s forwards; text-transform: uppercase; letter-spacing: 2px; }
-@keyframes popupBounce { 0% { transform: translate(-50%,-50%) scale(0); } 80% { transform: translate(-50%,-50%) scale(1.1); } 100% { transform: translate(-50%,-50%) scale(1); } }
-.resultPopup.win { background: linear-gradient(135deg, #1c2333, #0b0e14); color: var(--primary); border: 3px solid var(--primary); box-shadow: 0 0 50px rgba(0,242,255,0.4); text-shadow: 0 0 15px var(--primary); }
-.resultPopup.lose { background: linear-gradient(135deg, #111, #000); color: white; border: 3px solid #444; box-shadow: 0 0 30px rgba(0,0,0,0.8); opacity: 0.9; }
+/* Bottom Nav */
+.bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 2000; }
+.navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; text-decoration: none; }
+.nav-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+
+.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 </style>
 </head>
 <body>
@@ -121,8 +123,11 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
   </div>
 
   <div class="timer-container">
-    <div class="timer-label">⏱ <span>WINGO 30S</span></div>
-    <div id="time">00:30</div>
+    <div class="timer-label">⏱ <span id="modeName">WINGO 30S</span></div>
+    <div>
+        <div id="time">00:30</div>
+        <div id="lockMsg" class="lock-msg">LOCKING...</div>
+    </div>
   </div>
   
   <div class="result-area">
@@ -132,64 +137,70 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
     </div>
   </div>
   
-  <div class="colors">
-    <button class="green-btn" onclick="selectBet('green')">Green</button>
-    <button class="violet-btn" onclick="selectBet('violet')">Violet</button>
-    <button class="red-btn" onclick="selectBet('red')">Red</button>
-  </div>
-  <div class="bigsmall">
-    <button class="big" onclick="selectBet('big')">BIG</button>
-    <button class="small" onclick="selectBet('small')">SMALL</button>
-  </div>
+  <div id="betButtonsArea">
+      <div class="colors">
+        <button class="green-btn" onclick="selectBet('green')">Green</button>
+        <button class="violet-btn" onclick="selectBet('violet')">Violet</button>
+        <button class="red-btn" onclick="selectBet('red')">Red</button>
+      </div>
+      <div class="bigsmall">
+        <button class="big" onclick="selectBet('big')">BIG</button>
+        <button class="small" onclick="selectBet('small')">SMALL</button>
+      </div>
 
-  <div class="numbers">
-    <button class="ball-0" onclick="selectBet(0)">0</button>
-    <button class="ball-odd" onclick="selectBet(1)">1</button>
-    <button class="ball-even" onclick="selectBet(2)">2</button>
-    <button class="ball-odd" onclick="selectBet(3)">3</button>
-    <button class="ball-even" onclick="selectBet(4)">4</button>
-    <button class="ball-5" onclick="selectBet(5)">5</button>
-    <button class="ball-even" onclick="selectBet(6)">6</button>
-    <button class="ball-odd" onclick="selectBet(7)">7</button>
-    <button class="ball-even" onclick="selectBet(8)">8</button>
-    <button class="ball-odd" onclick="selectBet(9)">9</button>
+      <div class="numbers">
+        <button class="ball-0" onclick="selectBet(0)">0</button>
+        <button class="ball-odd" onclick="selectBet(1)">1</button>
+        <button class="ball-even" onclick="selectBet(2)">2</button>
+        <button class="ball-odd" onclick="selectBet(3)">3</button>
+        <button class="ball-even" onclick="selectBet(4)">4</button>
+        <button class="ball-5" onclick="selectBet(5)">5</button>
+        <button class="ball-even" onclick="selectBet(6)">6</button>
+        <button class="ball-odd" onclick="selectBet(7)">7</button>
+        <button class="ball-even" onclick="selectBet(8)">8</button>
+        <button class="ball-odd" onclick="selectBet(9)">9</button>
+      </div>
   </div>
   
   <div class="history">
-    <h4 style="margin:0 0 15px 0; color:var(--primary); font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Live Game History</h4>
+    <h4 style="margin:0 0 15px 0; color:var(--primary); font-size: 13px; text-transform: uppercase;">Live Game History</h4>
     <div id="historyList"></div>
   </div>
 </div>
 
 <div class="bottomWallet">
-  <div class="navBtn" onclick="location.href='refer.html'">
-    <div class="nav-icon">📢</div>
-    <div class="nav-label">Refer</div>
-  </div>
-  <div class="navBtn" onclick="location.href='wallet.html'">
-    <div class="nav-icon">💳</div>
-    <div class="nav-label">Wallet</div>
-  </div>
-  <div class="navBtn" onclick="location.href='help.html'">
-    <div class="nav-icon">🎧</div>
-    <div class="nav-label">Help</div>
-  </div>
-  <div class="navBtn" onclick="logout()">
-    <div class="nav-icon">🚪</div>
-    <div class="nav-label">Logout</div>
-  </div>
+  <div class="navBtn" onclick="location.href='refer.html'">📢<div class="nav-label">Refer</div></div>
+  <div class="navBtn" onclick="location.href='wallet.html'">💳<div class="nav-label">Wallet</div></div>
+  <div class="navBtn" onclick="location.href='help.html'">🎧<div class="nav-label">Help</div></div>
+  <div class="navBtn" onclick="logout()">🚪<div class="nav-label">Logout</div></div>
 </div>
 
 <div class="betPopup" id="betPopup">
   <div class="betBox">
-    <h3 id="betTitle">SELECT Credits</h3>
-    <input type="number" id="betInput" placeholder="0">
-    <div class="popup-btns">
-        <button onclick="closeBetPopup()" class="cancelBtn">CANCEL</button>
-        <button onclick="placeBet()" class="confirmBtn">CONFIRM</button>
+    <h3 id="betTitle" style="color:var(--primary); margin-top:0;">SELECT AMOUNT</h3>
+    <input type="number" id="betInput" value="10">
+    
+    <div class="preset-btns">
+        <button onclick="setBetAmt(10)">10</button>
+        <button onclick="setBetAmt(50)">50</button>
+        <button onclick="setBetAmt(100)">100</button>
+        <button onclick="setBetAmt(500)">500</button>
+    </div>
+
+    <div class="multiplier-btns">
+        <button onclick="multiplyAmt(1)">x1</button>
+        <button onclick="multiplyAmt(5)">x5</button>
+        <button onclick="multiplyAmt(10)">x10</button>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+        <button onclick="closeBetPopup()" style="flex:1; padding:15px; border-radius:10px; border:none; background:#333; color:white;">CANCEL</button>
+        <button onclick="placeBet()" style="flex:2; padding:15px; border-radius:10px; border:none; background:var(--primary); color:black; font-weight:bold;">CONFIRM BET</button>
     </div>
   </div>
 </div>
+
+<div id="winLossPopup" class="result-win-loss"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -203,26 +214,36 @@ const db = getFirestore(app);
 
 let balance=0, userId="", currentBet=null, betAmount=0, selectedValue=null, firstBetDone=false;
 
-window.copyUID = () => {
-    navigator.clipboard.writeText(userId);
-    alert("UID Copied!");
-}
-
-window.copyReferCode = () => {
-    const code = document.getElementById("myReferCode").innerText;
-    if(code !== "LOADING...") {
-        navigator.clipboard.writeText(code);
-        alert("Referral Code Copied!");
-    }
-}
-
+// --- TIMER & LOCK LOGIC ---
 function updateTimer() {
-    const remaining = 30 - (new Date().getSeconds() % 30);
+    const seconds = new Date().getSeconds();
+    const remaining = 30 - (seconds % 30);
     document.getElementById("time").innerText = "00:" + (remaining < 10 ? "0" + remaining : remaining);
+    
+    const btnArea = document.getElementById("betButtonsArea");
+    const lockMsg = document.getElementById("lockMsg");
+
+    if (remaining <= 5) {
+        btnArea.classList.add("disabled");
+        lockMsg.style.display = "block";
+        closeBetPopup();
+    } else {
+        btnArea.classList.remove("disabled");
+        lockMsg.style.display = "none";
+    }
+
     if (remaining === 30) { processResult(); }
 }
 setInterval(updateTimer, 1000);
 
+// --- BET POPUP HELPERS ---
+window.setBetAmt = (a) => { document.getElementById("betInput").value = a; }
+window.multiplyAmt = (m) => { 
+    let val = parseInt(document.getElementById("betInput").value) || 10;
+    document.getElementById("betInput").value = val * m; 
+}
+
+// --- REST OF YOUR ORIGINAL FIREBASE LOGIC ---
 onAuthStateChanged(auth, user => {
   if(user){
     userId=user.uid;
@@ -231,7 +252,7 @@ onAuthStateChanged(auth, user => {
       if(snap.exists()){ 
           const data = snap.data();
           balance=data.balance||0; 
-          firstBetDone = data.firstBetDone || false; // Status check
+          firstBetDone = data.firstBetDone || false;
           document.getElementById("balance").innerText="₹ " + balance.toFixed(2); 
           document.getElementById("myReferCode").innerText = data.referralCode || user.uid.substring(0,6).toUpperCase();
       }
@@ -244,10 +265,9 @@ onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(
   snap.forEach(d => {
     let item = d.data();
     let bg = item.num === 0 ? "ball-0" : item.num === 5 ? "ball-5" : (item.color === "green" ? "ball-odd" : "ball-even");
-    list.innerHTML += `
-      <div class="historyItem">
+    list.innerHTML += `<div class="historyItem">
         <div><span class="res-num ${bg}">${item.num}</span> <span style="font-size:12px; opacity:0.7; margin-left:5px;">${item.color.toUpperCase()}</span></div>
-        <span style="color:${item.bigsmall==='BIG'?'var(--big-color)':'var(--primary)'}; font-weight:900; letter-spacing:1px;">${item.bigsmall}</span>
+        <span style="color:${item.bigsmall==='BIG'?'var(--big-color)':'var(--primary)'}; font-weight:900;">${item.bigsmall}</span>
       </div>`;
   });
 });
@@ -265,14 +285,8 @@ window.placeBet=async()=>{
   currentBet=selectedValue; 
   betAmount=amt;
 
-  // UPDATED LOGIC: Jab user ₹20+ ki bet lagaye
   let updateData = { balance: balance };
-  
-  if (amt >= 20 && !firstBetDone) {
-      updateData.firstBetDone = true;
-      // Isse refer karne wale ka mission progress badh jayega
-  }
-
+  if (amt >= 20 && !firstBetDone) { updateData.firstBetDone = true; }
   await updateDoc(doc(db,"users",userId), updateData);
 }
 
@@ -286,9 +300,7 @@ async function processResult(){
         if (adminSnap.exists() && adminSnap.data().manual === true) {
             result = adminSnap.data().number;
             await updateDoc(doc(db, "wingo", "result"), { manual: false });
-        } else {
-            result = Math.floor(Math.random() * 10);
-        }
+        } else { result = Math.floor(Math.random() * 10); }
     } catch (e) { result = Math.floor(Math.random() * 10); }
 
     let color = (result===0||result===5)?"violet":([1,3,7,9].includes(result)?"green":"red");
@@ -304,20 +316,39 @@ async function processResult(){
       if(currentBet !== null){
         let win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
         if(win) {
-          let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
-          balance += winAmt; document.getElementById("balance").innerText="₹ "+balance.toFixed(2);
+          let winAmt = (currentBet===result)?betAmount*9: (currentBet==='violet' && (result===0||result===5)) ? betAmount*4.5 : betAmount*2;
+          balance += winAmt;
           await updateDoc(doc(db,"users",userId), {balance:balance});
-          showPopup("WIN ₹" + winAmt, "win");
-        } else { showPopup("LOSE", "lose"); }
+          showBdgPopup(winAmt, true);
+        } else { showBdgPopup(0, false); }
         currentBet=null;
       }
     },1000);
 }
 
-function showPopup(txt, type) {
-    let p=document.createElement("div"); p.className="resultPopup "+type; p.innerText=txt;
-    document.body.appendChild(p); p.style.display="block"; 
-    setTimeout(()=>p.remove(),5000);
+function showBdgPopup(amt, isWin) {
+    const pop = document.getElementById("winLossPopup");
+    if(isWin) {
+        pop.innerHTML = `<div class="win-content">
+            <h1>CONGRATULATIONS</h1>
+            <div style="color:white; margin:10px 0;">Lottery Result: <b style="color:#733d8a;">${amt/betAmount}x</b></div>
+            <div class="amt">₹${amt.toFixed(2)}</div>
+            <div style="font-size:12px; color:white;">Bonus has been added to wallet</div>
+        </div>`;
+    } else {
+        pop.innerHTML = `<div class="loss-content">
+            <h2 style="color:#bdc3c7; margin:0;">SORRY</h2>
+            <p style="color:white;">Better luck next time!</p>
+        </div>`;
+    }
+    pop.classList.add("show");
+    setTimeout(() => pop.classList.remove("show"), 4000);
+}
+
+window.copyUID = () => { navigator.clipboard.writeText(userId); alert("UID Copied!"); }
+window.copyReferCode = () => {
+    const code = document.getElementById("myReferCode").innerText;
+    navigator.clipboard.writeText(code); alert("Code Copied!");
 }
 window.logout=()=>{ signOut(auth); window.location.href="login.html"; }
 </script>
