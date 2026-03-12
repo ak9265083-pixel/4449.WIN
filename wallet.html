@@ -49,7 +49,16 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
 .history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
 
-.bet-popup { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; display: none; z-index: 5000; font-weight: bold; box-shadow: 0 0 20px rgba(255,0,122,0.4); }
+/* Animated Popup */
+.bet-popup { 
+    position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
+    background: var(--secondary); color: white; padding: 12px 25px; 
+    border-radius: 50px; z-index: 5000; font-weight: bold; 
+    box-shadow: 0 0 20px rgba(255,0,122,0.4);
+    transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.bet-popup.show { top: 30px; }
+
 #totalDisplay { margin-top: 10px; font-size: 14px; font-weight: bold; color: #00ffaa; display: none; }
 </style>
 </head>
@@ -74,6 +83,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 
     <div id="withdrawBox" class="box" style="display:none; border-color: var(--primary);">
         <h3 style="color:var(--primary); font-size: 14px; margin-top:0;">WITHDRAWAL REQUEST</h3>
+        <p style="font-size: 10px; color: #8b949e; margin-bottom: 10px;">Min Withdrawal: ₹110</p>
         <input type="number" id="wamt" placeholder="Enter Amount">
         <input type="text" id="upi" placeholder="Enter UPI ID">
         <button class="btn btn-submit" onclick="sendWithdraw()">Confirm Withdrawal</button>
@@ -81,6 +91,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 
     <div id="depositBox" class="box" style="display:none; border-color: var(--secondary);">
         <h3 style="color:var(--secondary); font-size: 14px; margin-top:0;">DEPOSIT PACKAGES</h3>
+        <p style="font-size: 10px; color: #8b949e; margin-bottom: 10px;">Min Deposit: ₹100</p>
         <div class="pkg-grid">
             <div class="pkg-card" onclick="selectPkg(100)">
                 <span class="pkg-amt">₹100</span>
@@ -151,23 +162,20 @@ onAuthStateChanged(auth, async (user) => {
             balance = snap.data().balance || 0;
             document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         }
-        loadWithdrawHistory();
+        loadCombinedHistory();
     }
 });
 
-// Naya function Copy karne ke liye
 window.copyUPI = (e) => {
-    e.stopPropagation(); // Pay function ko trigger hone se rokne ke liye
+    e.stopPropagation();
     let upiText = document.getElementById("upiToCopy").innerText;
     navigator.clipboard.writeText(upiText);
     showPopup("UPI ID Copied!");
 };
 
-// Naya function UPI Apps kholne ke liye
 window.payViaUPI = () => {
     let amt = document.getElementById("amt").value || "0";
     let upiId = "4449winkumar@fam";
-    // UPI Deep Link
     let url = `upi://pay?pa=${upiId}&pn=4449WIN&am=${amt}&cu=INR`;
     window.location.href = url;
 };
@@ -197,7 +205,10 @@ window.sendWithdraw = async () => {
     let amt = parseInt(document.getElementById("wamt").value);
     let upi = document.getElementById("upi").value;
     if(!amt || !upi) return showPopup("Please enter all details!");
-    if(amt < 100) return showPopup("Min Withdraw ₹100");
+    
+    // Minimum Withdrawal Check
+    if(amt < 110) return showPopup("Minimum Withdrawal ₹110");
+    
     if(amt > balance) return showPopup("Insufficient Credits!");
 
     try {
@@ -210,14 +221,15 @@ window.sendWithdraw = async () => {
             amount: amt,
             upi: upi,
             status: "pending",
+            type: "WITHDRAW",
             createdAt: serverTimestamp(),
             time: Date.now() 
         });
 
-        showPopup("Request Sent Successfully!");
+        showPopup("Withdrawal Sent Successfully!");
         document.getElementById("wamt").value = "";
         document.getElementById("upi").value = "";
-        loadWithdrawHistory(); 
+        loadCombinedHistory(); 
     } catch (e) { showPopup("Error: Check Connection"); }
 };
 
@@ -225,6 +237,10 @@ window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
+    
+    // Minimum Deposit Check
+    if(amt < 100) return showPopup("Minimum Deposit ₹100");
+
     let bonus = 0;
     if(amt === 100) bonus = amt * 0.20;
     else if(amt === 200) bonus = amt * 0.25;
@@ -238,6 +254,7 @@ window.sendDeposit = async () => {
             amount: finalAmount, 
             utr: utr,
             status: "pending",
+            type: "DEPOSIT",
             createdAt: serverTimestamp(),
             time: Date.now()
         });
@@ -245,19 +262,35 @@ window.sendDeposit = async () => {
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
         document.getElementById("totalDisplay").style.display = "none";
+        loadCombinedHistory();
     } catch (e) { showPopup("Error submitting deposit"); }
 };
 
-async function loadWithdrawHistory() {
+async function loadCombinedHistory() {
     try {
-        const snap = await getDocs(collection(db, "withdrawRequests"));
         let container = document.getElementById("historyList");
-        container.innerHTML = "";
-
         let docsArray = [];
-        snap.forEach(d => {
+
+        // Fetch Withdrawals
+        const wSnap = await getDocs(collection(db, "withdrawRequests"));
+        wSnap.forEach(d => {
             let data = d.data();
-            if(data.user === currentUser) docsArray.push(data);
+            if(data.user === currentUser) {
+                data.id = d.id;
+                data.isWithdraw = true;
+                docsArray.push(data);
+            }
+        });
+
+        // Fetch Deposits
+        const dSnap = await getDocs(collection(db, "depositRequests"));
+        dSnap.forEach(d => {
+            let data = d.data();
+            if(data.user === currentUser) {
+                data.id = d.id;
+                data.isWithdraw = false;
+                docsArray.push(data);
+            }
         });
 
         if (docsArray.length === 0) {
@@ -266,10 +299,15 @@ async function loadWithdrawHistory() {
         }
 
         docsArray.sort((a, b) => (b.time || 0) - (a.time || 0));
+        container.innerHTML = "";
 
         docsArray.forEach(d => {
             let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
             let status = d.status || "pending";
+            let typeLabel = d.isWithdraw ? "WITHDRAW" : "DEPOSIT";
+            let typeColor = d.isWithdraw ? "var(--primary)" : "var(--secondary)";
+            let detailLabel = d.isWithdraw ? `UPI: ${d.upi}` : `UTR: ${d.utr}`;
+            
             let div = document.createElement("div");
             div.className = "history-item";
             div.innerHTML = `
@@ -277,8 +315,11 @@ async function loadWithdrawHistory() {
                     <span style="font-weight:900; color:white; font-size:16px;">₹${d.amount}</span>
                     <span class="history-${status}" style="font-size:11px; font-weight:bold; letter-spacing:1px;">${status.toUpperCase()}</span>
                 </div>
-                <div class="history-details">UPI: ${d.upi}</div>
-                <div class="history-details" style="opacity:0.4;">${date}</div>
+                <div style="display:flex; justify-content:between; font-size:10px; margin-top:2px;">
+                    <span style="color:${typeColor}; font-weight:bold; margin-right:10px;">${typeLabel}</span>
+                    <span class="history-details">${detailLabel}</span>
+                </div>
+                <div class="history-details" style="opacity:0.4; font-size:9px;">${date}</div>
             `;
             container.appendChild(div);
         });
@@ -287,8 +328,9 @@ async function loadWithdrawHistory() {
 
 function showPopup(msg) {
     let p = document.getElementById("popupMessage");
-    p.innerText = msg; p.style.display = "block";
-    setTimeout(() => { p.style.display = "none"; }, 3000);
+    p.innerText = msg; 
+    p.classList.add("show");
+    setTimeout(() => { p.classList.remove("show"); }, 3000);
 }
 </script>
 
