@@ -51,43 +51,41 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .multiplier-btns { display: flex; gap: 10px; margin-bottom: 20px; }
 .multiplier-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; background: #333; color: white; cursor: pointer; }
 
-/* Naya Winning Pop-up Style (Image jaisa) */
-.result-win-loss { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 9999; text-align: center; pointer-events: none; opacity: 0; transition: 0.5s; background: rgba(0,0,0,0.6); }
+/* --- UPGRADED POPUP STYLE (Aapke theme ke hisaab se) --- */
+.result-win-loss { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 9999; text-align: center; pointer-events: none; opacity: 0; transition: 0.5s; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
 .result-win-loss.show { opacity: 1; pointer-events: auto; }
 
-/* Win Style */
-.upgraded-win-content { width: 320px; padding: 40px 20px 20px 20px; border-radius: 20px; background: linear-gradient(to bottom, #FF8C33, #FF5533); position: relative; color: white; box-shadow: 0 5px 20px rgba(0,0,0,0.5); transform: scale(0); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.result-win-loss.show .upgraded-win-content { transform: scale(1); }
+/* Win Style: Gradient primary aur secondary color se match karta hua */
+.win-content-card { width: 340px; border-radius: 25px; background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%); position: relative; color: white; padding-bottom: 20px; transform: scale(0); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0,242,255,0.4); border: 2px solid white; }
+.result-win-loss.show .win-content-card { transform: scale(1); }
 
-/* Rocket Icon aur Wing */
-.upgraded-win-content::before { content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 120px; height: 120px; background: url('rocket.png') no-repeat center center; background-size: contain; z-index: 1; }
-.upgraded-win-content::after { content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 180px; height: 60px; background: url('wings.png') no-repeat center center; background-size: contain; z-index: 0; }
+/* Congratulations Header: Ribbon Effect (CSS se banaya hai) */
+.win-header-ribbon { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); background: #FFD700; color: #000; padding: 10px 25px; border-radius: 30px; font-weight: bold; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.win-header-ribbon::before, .win-header-ribbon::after { content: ''; position: absolute; bottom: -8px; width: 0; height: 0; border-top: 8px solid #B8860B; }
+.win-header-ribbon::before { left: 10px; border-left: 1px solid transparent; }
+.win-header-ribbon::after { right: 10px; border-right: 1px solid transparent; }
 
-.upgraded-win-content h1 { margin: 10px 0 20px 0; font-size: 28px; text-transform: uppercase; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+/* Lottery Results Info */
+.lottery-res-info { margin-top: 55px; font-size: 14px; display: flex; justify-content: center; gap: 8px; align-items: center; margin-bottom: 20px; }
+.lottery-label { color: #fff; font-weight: bold; }
+.pills { display: flex; gap: 5px; }
+.pills span { padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; color: black; background: #fff; text-transform: uppercase; }
 
-/* Result Details */
-.win-results { font-size: 14px; margin-bottom: 25px; display: flex; justify-content: center; gap: 10px; align-items: center; }
-.res-pill { padding: 4px 10px; border-radius: 5px; font-weight: bold; background: rgba(255,255,255,0.2); }
-.res-pill.green { background: var(--green); }
-.res-pill.red { background: var(--red); }
-.res-pill.violet { background: var(--violet); }
-.res-pill.big { background: var(--big-color); color: black; }
-.res-pill.small { background: var(--primary); color: black; }
-
-/* Bonus Paper */
-.bonus-paper { background: white; color: black; padding: 20px 15px; border-radius: 10px; position: relative; margin-top: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
-.bonus-paper::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 80%; height: 20px; background: white; border-radius: 10px; z-index: -1; box-shadow: 0 4px 5px rgba(0,0,0,0.1); }
-.bonus-label { font-size: 12px; color: #FF5533; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-.win-amt { font-size: 32px; font-weight: 900; color: #FF5533; margin: 0; }
-.period-info { font-size: 10px; color: #777; margin-top: 10px; }
+/* Bonus Paper Box: Premium feel ke liye deep background */
+.bonus-paper-box { background: rgba(255,255,255,0.9); margin: 0 20px; padding: 25px 15px; border-radius: 15px; color: black; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); border: 1px dashed var(--secondary); }
+.bonus-title { font-size: 14px; color: var(--secondary); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.win-amount-txt { font-size: 40px; font-weight: 900; color: #2ecc71; text-shadow: 0 0 10px rgba(46, 204, 113, 0.2); margin: 10px 0; }
+.added-to-wallet-msg { font-size: 11px; color: #777; font-weight: 500; }
+.auto-close-txt { color: #888; font-size: 10px; margin-top: 15px; }
 
 /* Loss Style */
-.upgraded-loss-content { background: #2c3e50; padding: 30px 50px; border-radius: 20px; border: 2px solid #95a5a6; color: white; transform: scale(0); transition: 0.4s; }
-.result-win-loss.show .upgraded-loss-content { transform: scale(1); }
-.upgraded-loss-content h2 { margin-top: 0; color: #95a5a6; }
+.loss-content-card { background: #2c3e50; padding: 30px 50px; border-radius: 20px; border: 2px solid #95a5a6; color: white; transform: scale(0); transition: 0.4s; }
+.result-win-loss.show .loss-content-card { transform: scale(1); }
+.loss-content-card h2 { margin: 0 0 10px 0; color: #95a5a6; }
 
-/* Popup Close Button (X) */
-.popup-close { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); width: 35px; height: 35px; background: rgba(255,255,255,0.2); border-radius: 50%; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; border: 1px solid white; }
+/* Popup Close (X) Button */
+.popup-close-btn { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); width: 35px; height: 35px; background: rgba(255,255,255,0.1); border-radius: 50%; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; border: 1px solid white; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+.popup-close-btn:hover { background: rgba(255,255,255,0.3); }
 
 .bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 2000; }
 .navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; text-decoration: none; }
@@ -136,25 +134,29 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 </div>
 
 <div id="winLossPopup" class="result-win-loss">
-    <div class="upgraded-win-content" id="winContent" style="display:none;">
-        <h1>Congratulations</h1>
-        <div class="win-results">
-            <span>Lottery results</span>
-            <span class="res-pill" id="popColor">Red</span>
-            <span class="res-pill" id="popNum">6</span>
-            <span class="res-pill" id="popBs">Big</span>
+    <div class="win-content-card" id="winContentCard" style="display:none;">
+        <div class="win-header-ribbon">Congratulations</div>
+        <div class="lottery-res-info">
+            <span class="lottery-label">Lottery results</span>
+            <div class="pills">
+                <span id="popColorPill">Violet</span>
+                <span id="popNumPill">5</span>
+                <span id="popBsPill">Big</span>
+            </div>
         </div>
-        <div class="bonus-paper">
-            <div class="bonus-label">Bonus</div>
-            <div class="win-amt" id="popAmt">₹0.00</div>
-            <div class="period-info" id="popPeriod">Period: WINGO 30S Loading...</div>
+        <div class="bonus-paper-box">
+            <div class="bonus-title">Bonus</div>
+            <div class="win-amount-txt" id="popWinAmt">₹1,000.00</div>
+            <div class="added-to-wallet-msg">Added to wallet</div>
         </div>
-        <div class="popup-close" onclick="closeWinLossPopup()">X</div>
+        <div class="auto-close-txt">5 seconds auto close</div>
+        <div class="popup-close-btn" onclick="closeWinLossPopup()">X</div>
     </div>
-    <div class="upgraded-loss-content" id="lossContent" style="display:none;">
+    
+    <div class="loss-content-card" id="lossContentCard" style="display:none;">
         <h2>SORRY</h2>
         <p>Better luck next time!</p>
-        <div class="popup-close" onclick="closeWinLossPopup()">X</div>
+        <div class="popup-close-btn" onclick="closeWinLossPopup()">X</div>
     </div>
 </div>
 
@@ -244,49 +246,58 @@ async function processResult(){
       badge.innerText = bs; badge.className = "bs-badge show";
       badge.style.background = (bs==="BIG" ? "var(--big-color)" : "var(--primary)");
       
-      // Popup Details Update karein
-      document.getElementById("popColor").innerText = color.toUpperCase();
-      document.getElementById("popColor").className = "res-pill " + color;
-      document.getElementById("popNum").innerText = result;
-      document.getElementById("popBs").innerText = bs;
-      document.getElementById("popBs").className = "res-pill " + bs.toLowerCase();
-      document.getElementById("popPeriod").innerText = "Period: WINGO 30S " + new Date().getTime();
-
       if(currentBet !== null){
         let win = (currentBet===result || currentBet===color || currentBet===bs.toLowerCase());
         if(win) {
           let winAmt = (currentBet===result)?betAmount*9:betAmount*2;
           balance += winAmt; await updateDoc(doc(db,"users",userId), {balance:balance});
-          showBdgPopup(winAmt, true);
-        } else { showBdgPopup(0, false); }
+          showUpgradedPopup(winAmt, true, result, color, bs);
+        } else { showUpgradedPopup(0, false, result, color, bs); }
         currentBet=null;
       }
     },1000);
 }
 
-// Upgraded Popup Logic
-function showBdgPopup(amt, isWin) {
+// Naya Upgraded Popup Function
+let autoCloseTimer = null;
+function showUpgradedPopup(amt, isWin, result, color, bs) {
     const pop = document.getElementById("winLossPopup");
-    const winCont = document.getElementById("winContent");
-    const lossCont = document.getElementById("lossContent");
+    const winCont = document.getElementById("winContentCard");
+    const lossCont = document.getElementById("lossContentCard");
     
-    pop.classList.remove("show"); // Pehle hide karein agar khula ho
+    if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    pop.classList.remove("show");
     winCont.style.display = "none";
     lossCont.style.display = "none";
 
     if(isWin) { 
-        document.getElementById("popAmt").innerText = "₹" + amt.toFixed(2);
+        // Update results pills and amount in Win Popup
+        document.getElementById("popWinAmt").innerText = "₹" + amt.toFixed(2);
+        document.getElementById("popNumPill").innerText = result;
+        document.getElementById("popNumPill").style.background = `var(--${result === 0 ? 'red' : result === 5 ? 'green' : ([1,3,7,9].includes(result) ? 'green' : 'red')})`;
+        document.getElementById("popNumPill").style.color = "white";
+
+        document.getElementById("popColorPill").innerText = color.toUpperCase();
+        document.getElementById("popColorPill").style.background = `var(--${color})`;
+        document.getElementById("popColorPill").style.color = "white";
+
+        document.getElementById("popBsPill").innerText = bs;
+        document.getElementById("popBsPill").style.background = `var(--${bs === 'BIG' ? 'big-color' : 'primary'})`;
+        document.getElementById("popBsPill").style.color = "black";
+
         winCont.style.display = "block";
+        // Auto close after 5 seconds as mentioned in image
+        autoCloseTimer = setTimeout(closeWinLossPopup, 5000);
     } else { 
         lossCont.style.display = "block";
     }
     
     pop.classList.add("show"); 
-    // Auto close nahi rakhenge, X button se close hoga image jaisa
 }
 
-window.closeWinLossPopup = () => {
+window.closeWinLossPopup=()=>{
     document.getElementById("winLossPopup").classList.remove("show");
+    if (autoCloseTimer) clearTimeout(autoCloseTimer);
 }
 
 window.copyUID = () => { navigator.clipboard.writeText(userId); alert("UID Copied!"); }
