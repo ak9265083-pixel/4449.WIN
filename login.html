@@ -4,248 +4,73 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4449 WIN - Login</title>
-
 <style>
-:root { 
-    --primary: #00f2ff; /* Neon Cyan */
-    --secondary: #ff007a; /* Neon Pink */
-    --bg: #0b0e14; 
-    --card-bg: #161b22; 
-}
-
+:root { --primary: #00f2ff; --secondary: #ff007a; --bg: #0b0e14; --card-bg: #161b22; }
 * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-
-body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: var(--bg);
-    color: white;
-    overflow: hidden;
-}
-
-/* Background Effect */
-body::before {
-    content: "";
-    position: absolute;
-    width: 100%; height: 100%;
-    background: radial-gradient(circle at center, #1a1f29 0%, #0b0e14 100%);
-    z-index: -1;
-}
-
-.login-container {
-    width: 380px;
-    background: var(--card-bg);
-    padding: 40px;
-    border-radius: 24px;
-    text-align: center;
-    border: 1px solid rgba(0, 242, 255, 0.1);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    animation: fadeIn 0.8s ease;
-    position: relative;
-}
-
-/* Logo Attractive Shape & Animation */
-.logo-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 30px;
-}
-
-.logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%; /* Circle Shape */
-    object-fit: cover;
-    border: 3px solid var(--primary);
-    box-shadow: 0 0 20px var(--primary), inset 0 0 15px var(--primary);
-    animation: float 3s ease-in-out infinite;
-    background: white;
-}
-
-/* Logo ke piche ka glow */
-.logo-wrapper::after {
-    content: "";
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px; height: 120px;
-    background: var(--primary);
-    filter: blur(30px);
-    opacity: 0.2;
-    z-index: -1;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
-
-.input-field {
-    width: 100%;
-    padding: 14px;
-    margin: 12px 0;
-    background: #05070a;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    font-size: 15px;
-    color: white;
-    outline: none;
-    transition: 0.3s;
-}
-
-.input-field:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 12px rgba(0, 242, 255, 0.3);
-}
-
-.login-button {
-    width: 100%;
-    padding: 15px;
-    margin-top: 15px;
-    border: none;
-    border-radius: 12px;
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.login-button:hover {
-    background: var(--primary);
-    color: #000;
-    box-shadow: 0 0 25px var(--primary);
-}
-
-.links {
-    margin-top: 25px;
-    font-size: 13px;
-    color: #8b949e;
-}
-
-.links a {
-    color: var(--secondary);
-    text-decoration: none;
-    font-weight: bold;
-    margin: 0 10px;
-    transition: 0.3s;
-}
-
+body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg); color: white; overflow: hidden; }
+body::before { content: ""; position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a1f29 0%, #0b0e14 100%); z-index: -1; }
+.login-container { width: 380px; background: var(--card-bg); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(0, 242, 255, 0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.6); animation: fadeIn 0.8s ease; position: relative; }
+.logo-wrapper { position: relative; display: inline-block; margin-bottom: 30px; }
+.logo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); box-shadow: 0 0 20px var(--primary), inset 0 0 15px var(--primary); animation: float 3s ease-in-out infinite; background: white; }
+.logo-wrapper::after { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120px; height: 120px; background: var(--primary); filter: blur(30px); opacity: 0.2; z-index: -1; }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+.input-field { width: 100%; padding: 14px; margin: 12px 0; background: #05070a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 15px; color: white; outline: none; transition: 0.3s; }
+.input-field:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0, 242, 255, 0.3); }
+.login-button { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 12px; background: transparent; border: 1px solid var(--primary); color: var(--primary); font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
+.login-button:hover { background: var(--primary); color: #000; box-shadow: 0 0 25px var(--primary); }
+.links { margin-top: 25px; font-size: 13px; color: #8b949e; }
+.links a { color: var(--secondary); text-decoration: none; font-weight: bold; margin: 0 10px; transition: 0.3s; }
 .links a:hover { text-shadow: 0 0 8px var(--secondary); }
-
-/* Welcome Screen */
-#welcomeScreen {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: var(--bg);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 999;
-}
-
-.welcome-text {
-    font-size: 40px;
-    font-weight: 900;
-    text-align: center;
-    color: var(--primary);
-    letter-spacing: 2px;
-    animation: glow 1.5s infinite alternate;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes glow {
-    from { text-shadow: 0 0 10px var(--primary); opacity: 0.8; }
-    to { text-shadow: 0 0 30px var(--primary); opacity: 1; }
-}
-
-@media (max-width:450px) {
-    .login-container { width: 90%; padding: 30px; }
-    .welcome-text { font-size: 28px; }
-}
+#welcomeScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: none; justify-content: center; align-items: center; flex-direction: column; z-index: 999; }
+.welcome-text { font-size: 40px; font-weight: 900; text-align: center; color: var(--primary); letter-spacing: 2px; animation: glow 1.5s infinite alternate; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes glow { from { text-shadow: 0 0 10px var(--primary); opacity: 0.8; } to { text-shadow: 0 0 30px var(--primary); opacity: 1; } }
+@media (max-width:450px) { .login-container { width: 90%; padding: 30px; } .welcome-text { font-size: 28px; } }
 </style>
 </head>
-
 <body>
-
 <div class="login-container">
-    <div class="logo-wrapper">
-        <img src="logo.png" class="logo" alt="4449 WIN">
-    </div>
-
+    <div class="logo-wrapper"><img src="logo.png" class="logo" alt="4449 WIN"></div>
     <input type="email" id="email" class="input-field" placeholder="Email Address">
     <input type="password" id="password" class="input-field" placeholder="Password">
-
     <button class="login-button" onclick="login()">Enter Arena</button>
-
-    <div class="links">
-        <a href="#">Forgot?</a> |
-        <a href="index.html">Create Account</a>
-    </div>
+    <div class="links"><a href="#">Forgot?</a> | <a href="index.html">Create Account</a></div>
 </div>
-
 <div id="welcomeScreen">
-    <div class="logo-wrapper">
-        <img src="logo.png" class="logo" style="width: 120px; height: 120px;">
-    </div>
-    <div class="welcome-text">
-        ACCESS GRANTED<br>4449 WIN
-    </div>
+    <div class="logo-wrapper"><img src="logo.png" class="logo" style="width: 120px; height: 120px;"></div>
+    <div class="welcome-text">ACCESS GRANTED<br>4449 WIN</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-    authDomain: "win2-512e1.firebaseapp.com",
-    projectId: "win2-512e1",
-    storageBucket: "win2-512e1.firebasestorage.app",
-    messagingSenderId: "577913579227",
-    appId: "1:577913579227:web:1e073059c2d3d881720efe",
-    measurementId: "G-4V1SCSMTM6"
-};
-
+const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1", storageBucket: "win2-512e1.firebasestorage.app", messagingSenderId: "577913579227", appId: "1:577913579227:web:1e073059c2d3d881720efe", measurementId: "G-4V1SCSMTM6" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 window.login = function() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
-    if(!email || !password) {
-        alert("Please enter credentials");
-        return;
-    }
+    if(!email || !password) { alert("Please enter credentials"); return; }
 
     signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
+    .then(async (userCredential) => {
+        const user = userCredential.user;
+        const newSessionId = Date.now().toString(); // Har login par naya ID
+
+        // Update session in Firestore
+        await updateDoc(doc(db, "users", user.uid), { currentSessionId: newSessionId });
+        localStorage.setItem("user_session_id", newSessionId);
+
         document.querySelector(".login-container").style.display = "none";
         document.getElementById("welcomeScreen").style.display = "flex";
-
-        setTimeout(() => {
-            window.location.href = "wingo.html";
-        }, 2500);
+        setTimeout(() => { window.location.href = "wingo.html"; }, 2500);
     })
-    .catch((error) => {
-        alert("Invalid Email or Password");
-    });
+    .catch((error) => { alert("Invalid Email or Password"); });
 }
 </script>
-
 </body>
 </html>
