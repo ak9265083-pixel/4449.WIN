@@ -9,30 +9,54 @@
 * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
 body { margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg); color: white; overflow: hidden; }
 body::before { content: ""; position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a1f29 0%, #0b0e14 100%); z-index: -1; }
+
 .login-container { width: 380px; background: var(--card-bg); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid rgba(0, 242, 255, 0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.6); animation: fadeIn 0.8s ease; position: relative; }
+
+/* Success Animation Screen */
+#successOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--card-bg); border-radius: 24px; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10; animation: fadeIn 0.5s ease; }
+.check-icon { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary); display: flex; justify-content: center; align-items: center; font-size: 40px; color: var(--primary); box-shadow: 0 0 20px var(--primary); margin-bottom: 20px; animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
 .logo-wrapper { position: relative; display: inline-block; margin-bottom: 30px; }
 .logo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); box-shadow: 0 0 20px var(--primary), inset 0 0 15px var(--primary); animation: float 3s ease-in-out infinite; background: white; }
+
 @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+@keyframes scaleUp { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 .title { color: var(--primary); font-size: 20px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
 .input-field { width: 100%; padding: 14px; margin: 12px 0; background: #05070a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-size: 15px; color: white; outline: none; transition: 0.3s; }
 .input-field:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0, 242, 255, 0.3); }
+
 .reset-button { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 12px; background: transparent; border: 1px solid var(--primary); color: var(--primary); font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: 0.3s; }
 .reset-button:hover { background: var(--primary); color: #000; box-shadow: 0 0 25px var(--primary); }
+
 .links { margin-top: 25px; font-size: 13px; color: #8b949e; }
 .links a { color: var(--secondary); text-decoration: none; font-weight: bold; margin: 0 10px; transition: 0.3s; }
-.links a:hover { text-shadow: 0 0 8px var(--secondary); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
 @media (max-width:450px) { .login-container { width: 90%; padding: 30px; } }
 </style>
 </head>
 <body>
+
 <div class="login-container">
-    <div class="logo-wrapper"><img src="logo.png" class="logo" alt="4449 WIN"></div>
-    <div class="title">Reset Password</div>
-    <p style="font-size: 13px; color: #8b949e; margin-bottom: 15px;">Enter your email to receive a recovery link.</p>
-    <input type="email" id="resetEmail" class="input-field" placeholder="Email Address">
-    <button class="reset-button" onclick="resetPassword()">Send Reset Link</button>
-    <div class="links"><a href="login.html">Back to Login</a></div>
+    <div id="successOverlay">
+        <div class="check-icon">✓</div>
+        <div class="title" style="font-size: 16px;">Link Sent!</div>
+        <p style="font-size: 12px; color: #8b949e; padding: 0 20px;">Check your email to reset your password.</p>
+    </div>
+
+    <div id="formContent">
+        <div class="logo-wrapper"><img src="logo.png" class="logo" alt="4449 WIN"></div>
+        <div class="title">Reset Access</div>
+        <p style="font-size: 13px; color: #8b949e; margin-bottom: 15px;">Enter your email to recover your account.</p>
+        
+        <input type="email" id="resetEmail" class="input-field" placeholder="Registered Email">
+        <button class="reset-button" id="btnText" onclick="resetPassword()">Send Reset Link</button>
+        
+        <div class="links">
+            <a href="login.html">← Back to Login</a>
+        </div>
+    </div>
 </div>
 
 <script type="module">
@@ -54,14 +78,26 @@ const auth = getAuth(app);
 
 window.resetPassword = function() {
     const email = document.getElementById("resetEmail").value;
+    const btn = document.getElementById("btnText");
+
     if(!email) { alert("Please enter your email"); return; }
+
+    btn.innerText = "Sending...";
+    btn.style.opacity = "0.5";
 
     sendPasswordResetEmail(auth, email)
     .then(() => {
-        alert("Password reset email sent! Check your inbox.");
-        window.location.href = "login.html"; // Wapas login page par
+        // Show Success Animation
+        document.getElementById("successOverlay").style.display = "flex";
+        
+        // Auto Redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = "login.html"; 
+        }, 3000);
     })
     .catch((error) => {
+        btn.innerText = "Send Reset Link";
+        btn.style.opacity = "1";
         alert("Error: " + error.message);
     });
 }
