@@ -88,8 +88,8 @@ td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
     padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;
 }
 
-.edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
-.del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; }
+.edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; margin-right: 5px; }
+.del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
 
 .section { display: none; }
 .section.active { display: block; animation: fadeIn 0.5s ease; }
@@ -237,12 +237,27 @@ onSnapshot(collection(db, "users"), async (snap) => {
             <td><small>${u.email || u.id}</small><br><small style="color:var(--primary)">${u.id}</small></td>
             <td>₹${u.balance || 0}</td>
             <td><span class="ref-badge">${refCount} Refs</span></td>
-            <td><button class="edit-btn" onclick="editBal('${u.id}', ${u.balance})">Edit</button></td>
+            <td>
+                <button class="edit-btn" onclick="editBal('${u.id}', ${u.balance})">Edit</button>
+                <button class="del-btn" onclick="deleteUser('${u.id}')">Delete</button>
+            </td>
         </tr>`;
     }
     document.getElementById("activeUsers").innerText = online;
     filterUsers();
 });
+
+// DELETE USER PERMANENTLY
+window.deleteUser = async (uid) => {
+    if(confirm("⚠ WARNING: Are you sure you want to PERMANENTLY delete user " + uid + "? This cannot be undone.")) {
+        try {
+            await deleteDoc(doc(db, "users", uid));
+            alert("User deleted successfully!");
+        } catch(e) {
+            alert("Error deleting user: " + e.message);
+        }
+    }
+};
 
 // APPROVE DEPOSIT
 window.approveDeposit = async (id, user, amt) => {
