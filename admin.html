@@ -88,8 +88,9 @@ td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
     padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;
 }
 
-.edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; margin-right: 5px; }
+.edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
 .del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
+.rej-btn { background: #555; color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; margin-left: 5px; }
 
 .section { display: none; }
 .section.active { display: block; animation: fadeIn 0.5s ease; }
@@ -270,7 +271,17 @@ window.approveDeposit = async (id, user, amt) => {
     }
 };
 
-// NEW: APPROVE WITHDRAW
+// REJECT REQUEST (COMMON)
+window.rejectRequest = async (coll, id) => {
+    if(confirm("Are you sure you want to REJECT this request?")) {
+        try {
+            await updateDoc(doc(db, coll, id), { status: "rejected" });
+            alert("Request Rejected!");
+        } catch(e) { alert("Error: " + e.message); }
+    }
+};
+
+// APPROVE WITHDRAW
 window.approveWithdraw = async (id, user, amt) => {
     if(confirm("Mark this withdrawal as paid?")) {
         try {
@@ -299,7 +310,10 @@ function listenRequests(coll, elementId, action) {
                 
                 list.innerHTML += `<div class="item-request">
                     <div><b>₹${data.amount}</b><br><small>${data.user}</small>${info}</div>
-                    <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
+                    <div>
+                        <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
+                        <button class="rej-btn" onclick='rejectRequest("${coll}","${d.id}")'>Reject</button>
+                    </div>
                 </div>`;
             }
         });
