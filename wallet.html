@@ -16,7 +16,67 @@
 body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
 .app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 50px; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; overflow-x: hidden; }
 
-/* Header */
+/* --- Scanner Zoom UI --- */
+.scanner-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.scanner-overlay img {
+    width: 80%;
+    max-width: 320px;
+    border: 4px solid white;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+.zoom-controls {
+    width: 80%;
+    max-width: 320px;
+    background: #161b22;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid var(--primary);
+    text-align: center;
+}
+.zoom-upi-text {
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 15px;
+}
+.zoom-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.z-btn {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+}
+.z-copy { background: white; color: black; }
+.z-pay { background: var(--primary); color: black; }
+.close-scan {
+    margin-top: 25px;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- Original CSS --- */
 .header { background: rgba(22, 27, 34, 0.95); padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); position: sticky; top: 0; z-index: 1000; }
 .logo-top { position: absolute; top: 8px; left: 15px; width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); background: white; }
 
@@ -48,7 +108,6 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
 .history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
 
-/* Pop-up Animation */
 .bet-popup { 
     position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
     background: var(--secondary); color: white; padding: 12px 25px; 
@@ -63,6 +122,18 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 </head>
 
 <body>
+
+<div id="scannerOverlay" class="scanner-overlay">
+    <img src="ui.png" alt="QR Code">
+    <div class="zoom-controls">
+        <span class="zoom-upi-text">4449winkumar@fam</span>
+        <div class="zoom-btns">
+            <button class="z-btn z-copy" onclick="copyUPI(event)">COPY UPI</button>
+            <button class="z-btn z-pay" onclick="payViaUPI()">PAY NOW</button>
+        </div>
+    </div>
+    <button class="close-scan" onclick="closeScanner()">CLOSE</button>
+</div>
 
 <div class="app">
     <div class="header">
@@ -108,9 +179,14 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
                 <span class="pkg-amt">₹500</span>
                 <span class="pkg-bonus">+50% BONUS</span>
             </div>
+            <div class="pkg-card" onclick="selectPkg(1000)" style="grid-column: span 2; border-style: dashed; background: rgba(0, 242, 255, 0.05); border-color: var(--primary);">
+                <span class="pkg-amt">₹1000</span>
+                <span class="pkg-bonus">+50% PREMIUM BONUS</span>
+            </div>
         </div>
         
-        <img src="ui.png" style="width:150px; border:2px solid white; border-radius:10px; margin:10px 0;">
+        <p style="font-size: 10px; color: var(--primary); margin-bottom: 5px;">Click scanner to zoom</p>
+        <img src="ui.png" onclick="openScanner()" style="width:140px; border:2px solid white; border-radius:10px; margin:5px 0; cursor: zoom-in;">
         
         <div class="upi-copy-box" onclick="payViaUPI()">
             <span style="display:block; font-size:10px; opacity:0.8; margin-bottom:5px;">TAP TO PAY OR COPY UPI</span>
@@ -152,6 +228,10 @@ const db = getFirestore(app);
 let currentUser = "";
 let balance = 0;
 
+// Zoom Functions
+window.openScanner = () => { document.getElementById("scannerOverlay").style.display = "flex"; };
+window.closeScanner = () => { document.getElementById("scannerOverlay").style.display = "none"; };
+
 onAuthStateChanged(auth, async (user) => {
     if(user) {
         currentUser = user.uid;
@@ -164,7 +244,6 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Animation helper
 function showPopup(msg) {
     let p = document.getElementById("popupMessage");
     p.innerText = msg;
@@ -174,7 +253,7 @@ function showPopup(msg) {
 
 window.copyUPI = (e) => {
     e.stopPropagation();
-    let upiText = document.getElementById("upiToCopy").innerText;
+    let upiText = "4449winkumar@fam";
     navigator.clipboard.writeText(upiText);
     showPopup("UPI ID Copied!");
 };
@@ -198,13 +277,13 @@ window.calculatePreview = () => {
     else if(amt === 200) bonus = amt * 0.25;
     else if(amt === 300) bonus = amt * 0.30;
     else if(amt === 500) bonus = amt * 0.50;
+    else if(amt === 1000) bonus = amt * 0.50;
     let total = amt + bonus;
     let display = document.getElementById("totalDisplay");
     if(amt > 0) { display.style.display = "block"; document.getElementById("finalAmtVal").innerText = total; }
     else { display.style.display = "none"; }
 };
 
-// Switch Boxes and Load Specific History
 window.showDeposit = () => { 
     document.getElementById("depositBox").style.display = "block"; 
     document.getElementById("withdrawBox").style.display = "none"; 
@@ -228,20 +307,13 @@ window.sendWithdraw = async () => {
         balance -= amt;
         document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
         await updateDoc(doc(db, "users", currentUser), { balance: balance });
-
         await addDoc(collection(db, "withdrawRequests"), {
-            user: currentUser,
-            amount: amt,
-            upi: upi,
-            status: "pending",
-            createdAt: serverTimestamp(),
-            time: Date.now() 
+            user: currentUser, amount: amt, upi: upi, status: "pending", createdAt: serverTimestamp(), time: Date.now() 
         });
-
         showPopup("Withdrawal Sent Successfully!");
         document.getElementById("wamt").value = "";
         document.getElementById("upi").value = "";
-        showWithdraw(); // Refresh history
+        showWithdraw(); 
     } catch (e) { showPopup("Error: Check Connection"); }
 };
 
@@ -256,22 +328,18 @@ window.sendDeposit = async () => {
     else if(amt === 200) bonus = amt * 0.25;
     else if(amt === 300) bonus = amt * 0.30;
     else if(amt === 500) bonus = amt * 0.50;
+    else if(amt === 1000) bonus = amt * 0.50;
     let finalAmount = amt + bonus;
 
     try {
         await addDoc(collection(db, "depositRequests"), {
-            user: currentUser,
-            amount: finalAmount, 
-            utr: utr,
-            status: "pending",
-            createdAt: serverTimestamp(),
-            time: Date.now()
+            user: currentUser, amount: finalAmount, utr: utr, status: "pending", createdAt: serverTimestamp(), time: Date.now()
         });
         showPopup("Deposit Request Sent!");
         document.getElementById("amt").value = "";
         document.getElementById("utr").value = "";
         document.getElementById("totalDisplay").style.display = "none";
-        showDeposit(); // Refresh history
+        showDeposit(); 
     } catch (e) { showPopup("Error submitting deposit"); }
 };
 
@@ -279,12 +347,10 @@ async function loadHistory(colName, title, themeColor) {
     const historyMain = document.getElementById("historyMain");
     const container = document.getElementById("historyList");
     const hTitle = document.getElementById("historyTitle");
-    
     historyMain.style.display = "block";
     hTitle.innerText = title;
     hTitle.style.color = themeColor;
     container.innerHTML = "<p style='font-size:12px; opacity:0.5; text-align:center;'>Loading...</p>";
-
     try {
         const snap = await getDocs(collection(db, colName));
         let docsArray = [];
@@ -292,20 +358,16 @@ async function loadHistory(colName, title, themeColor) {
             let data = d.data();
             if(data.user === currentUser) docsArray.push(data);
         });
-
         if (docsArray.length === 0) {
             container.innerHTML = "<p style='font-size:12px; opacity:0.4; text-align:center;'>No records found.</p>";
             return;
         }
-
         docsArray.sort((a, b) => (b.time || 0) - (a.time || 0));
         container.innerHTML = "";
-
         docsArray.forEach(d => {
             let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
             let status = d.status || "pending";
             let subDetail = d.upi ? `UPI: ${d.upi}` : `UTR: ${d.utr}`;
-            
             let div = document.createElement("div");
             div.className = "history-item";
             div.innerHTML = `
