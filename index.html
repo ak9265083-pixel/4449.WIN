@@ -31,6 +31,9 @@
         .login-link { color: var(--secondary); text-decoration: none; font-weight: bold; margin-left: 5px; transition: 0.3s; }
         .login-link:hover { text-decoration: underline; color: #ff3399; }
         .success-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--card-bg); border: 2px solid var(--primary); color: var(--primary); padding: 20px 40px; border-radius: 15px; display: none; z-1000; text-align: center; }
+
+        /* Custom Download Pop-up Style */
+        #install-banner { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; background: #161b22; border: 2px solid #00f2ff; padding: 12px 18px; border-radius: 18px; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.9); align-items: center; justify-content: space-between; }
     </style>
 </head>
 <body>
@@ -52,6 +55,18 @@
             </div>
         </div>
     </div>
+
+    <div id="install-banner">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="icon-192.png" style="width: 45px; height: 45px; border-radius: 10px; border: 1px solid #00f2ff;">
+            <div>
+                <div style="color: #00f2ff; font-weight: 800; font-size: 14px;">4449 WIN APP</div>
+                <div style="color: #8b949e; font-size: 11px;">Fast & Secure Gaming</div>
+            </div>
+        </div>
+        <button id="install-button" style="background: #00f2ff; color: #000; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 12px; text-transform: uppercase;">Install</button>
+    </div>
+
     <div id="successPopup" class="success-popup">
         🚀 REGISTRATION SUCCESS!<br>
         <small style="color:white">Taking you to Login...</small>
@@ -124,6 +139,11 @@
 </script>
 
 <script>
+  let deferredPrompt;
+  const installBanner = document.getElementById('install-banner');
+  const installButton = document.getElementById('install-button');
+
+  // Service Worker Registration
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
@@ -131,6 +151,29 @@
         .catch(err => console.log('Service Worker failed', err));
     });
   }
+
+  // Handle Install Prompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.style.display = 'flex';
+  });
+
+  installButton.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted the install');
+      }
+      deferredPrompt = null;
+      installBanner.style.display = 'none';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBanner.style.display = 'none';
+  });
 </script>
 
 </body>
