@@ -1,102 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel | 4449 WIN</title>
-<style>
-:root { 
-    --primary: #00f2ff; 
-    --secondary: #ff007a; 
-    --bg: #0b0e14; 
-    --card-bg: #161b22; 
-    --success: #2ecc71;
-    --violet: #9b59b6;
-    --glass: rgba(255, 255, 255, 0.05);
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | 4449 WIN</title>
+    <style>
+        :root { 
+            --primary: #00f2ff; 
+            --secondary: #ff007a; 
+            --bg: #0b0e14; 
+            --card-bg: #161b22; 
+            --success: #2ecc71;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
 
-body {
-    font-family: 'Segoe UI', Arial; 
-    background: var(--bg); 
-    color: white; 
-    margin: 0; 
-    display: flex; 
-    flex-direction: column; 
-    min-height: 100vh;
-}
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+        }
 
-/* Header & Nav */
-.header { background: var(--card-bg); padding: 15px 25px; display: flex; align-items: center; gap: 15px; border-bottom: 2px solid var(--primary); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
-.header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
-.header span { font-size: 22px; font-weight: 800; color: var(--primary); }
-.nav-bar { display: flex; background: #05070a; justify-content: space-around; padding: 10px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass); }
-.nav-item { padding: 10px 20px; cursor: pointer; border-radius: 12px; font-weight: 600; color: #8b949e; transition: 0.3s; }
-.nav-item.active { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
+        /* Header & Nav */
+        .header { background: var(--card-bg); padding: 15px 25px; display: flex; align-items: center; gap: 15px; border-bottom: 2px solid var(--primary); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+        .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
+        .header span { font-size: 22px; font-weight: 800; color: var(--primary); letter-spacing: 1px; }
 
-.container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
-.card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); }
+        .nav-bar { display: flex; background: #05070a; justify-content: space-around; padding: 10px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass); }
+        .nav-item { padding: 10px 20px; cursor: pointer; border-radius: 12px; font-weight: 600; color: #8b949e; transition: 0.3s; }
+        .nav-item.active { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
 
-/* Table Styling */
-table { width: 100%; border-collapse: collapse; }
-th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
-td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
-.win-text { color: var(--success); font-size: 11px; font-weight: bold; display: block; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
+        .card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-/* Buttons */
-.edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
-.del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
+        td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; vertical-align: middle; }
+        .win-text { color: var(--success); font-size: 11px; font-weight: bold; display: block; margin-top: 2px; }
 
-/* ANIMATED MODAL (POPUP) */
-#editModal {
-    display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); align-items: center; justify-content: center;
-}
-.modal-content {
-    background: var(--card-bg); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px;
-    border: 1px solid var(--primary); box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
-    animation: zoomIn 0.3s ease-out;
-}
-@keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-.modal-content h3 { margin-top: 0; color: var(--primary); text-align: center; }
-.modal-content label { display: block; margin: 10px 0 5px; font-size: 12px; color: #8b949e; }
-.modal-content input {
-    width: 100%; padding: 12px; background: #0b0e14; border: 1px solid var(--glass);
-    border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; outline: none;
-}
-.modal-content input:focus { border-color: var(--primary); }
-.modal-actions { display: flex; gap: 10px; }
-.modal-actions button { flex: 1; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
-.btn-save { background: var(--primary); color: black; }
-.btn-cancel { background: #333; color: white; }
+        /* Animated Modal */
+        #editModal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 30px; border-radius: 24px; width: 90%; max-width: 380px;
+            border: 1px solid var(--primary); box-shadow: 0 0 40px rgba(0, 242, 255, 0.3);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-content h3 { margin: 0 0 20px; color: var(--primary); text-align: center; font-size: 20px; }
+        .modal-content label { display: block; margin-bottom: 8px; font-size: 12px; color: #8b949e; font-weight: bold; }
+        .modal-content input {
+            width: 100%; padding: 14px; background: #0b0e14; border: 1px solid var(--glass);
+            border-radius: 12px; color: white; margin-bottom: 20px; box-sizing: border-box; outline: none; font-size: 16px;
+        }
+        .modal-content input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
+        
+        .modal-actions { display: flex; gap: 12px; }
+        .modal-actions button { flex: 1; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-save { background: var(--primary); color: black; }
+        .btn-save:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-cancel { background: #2a2f3a; color: white; }
 
-/* Stats & Result Control (Original) */
-.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-.stat { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border-top: 4px solid var(--secondary); }
-.stat b { font-size: 28px; color: var(--secondary); }
-.result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-.result-grid button { padding: 15px; background: #0b0e14; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; cursor: pointer; }
-.section { display: none; }
-.section.active { display: block; animation: fadeIn 0.5s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-</style>
+        /* Control Buttons */
+        .edit-btn { background: var(--primary); color: black; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor:pointer; margin-right: 5px; }
+        .del-btn { background: var(--secondary); color: white; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor:pointer; }
+        
+        .result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .result-grid button { padding: 15px; background: #0b0e14; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .result-grid button:hover { background: var(--primary); color: black; }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
 <body>
 
 <script>
-var password = prompt("Enter Admin Password");
-if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.html"; }
+    var password = prompt("Enter Admin Password");
+    if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.html"; }
 </script>
 
 <div id="editModal">
     <div class="modal-content">
-        <h3>Edit User Balance</h3>
+        <h3>Update User Funds</h3>
         <input type="hidden" id="editUid">
-        <label>MAIN BALANCE (₹)</label>
-        <input type="number" id="editMainBal">
-        <label>WINNING BALANCE (₹)</label>
-        <input type="number" id="editWinBal">
+        
+        <label>MAIN BALANCE (Deposit)</label>
+        <input type="number" id="editMainBal" placeholder="0">
+        
+        <label>WINNING BALANCE (Profit)</label>
+        <input type="number" id="editWinBal" placeholder="0">
+        
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-            <button class="btn-save" id="saveBtn">Update Now</button>
+            <button class="btn-save" id="saveBtn">Save Changes</button>
         </div>
     </div>
 </div>
@@ -111,15 +116,10 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div class="nav-item" onclick="showSection('users')">Users</div>
     <div class="nav-item" onclick="showSection('deposits')">Deposit</div>
     <div class="nav-item" onclick="showSection('withdraws')">Withdraw</div>
-    <div class="nav-item" onclick="showSection('issues')">Support</div>
 </div>
 
 <div class="container">
     <div id="dash" class="section active">
-        <div class="stats">
-            <div class="stat">TOTAL USERS<br><b id="totalUsers">0</b></div>
-            <div class="stat">ONLINE NOW<br><b id="activeUsers">0</b></div>
-        </div>
         <div class="card">
             <h3 style="color:var(--primary)">🎯 CONTROL NEXT RESULT</h3>
             <div class="result-grid">
@@ -134,11 +134,17 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
 
     <div id="users" class="section">
         <div class="card">
-            <h3>👥 USER DATABASE</h3>
-            <input type="text" id="userSearch" oninput="filterUsers()" class="search-box" style="width:100%; padding:10px; margin-bottom:10px; background:#05070a; color:white; border:1px solid var(--glass); border-radius:10px;" placeholder="Search User...">
+            <h3 style="color:var(--primary)">👥 USER MANAGEMENT</h3>
             <div style="overflow-x:auto;">
                 <table>
-                    <thead><tr><th>Status</th><th>User Info</th><th>Balance & Win</th><th>Action</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>User ID / Email</th>
+                            <th>Current Balance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
                     <tbody id="userTableBody"></tbody>
                 </table>
             </div>
@@ -146,10 +152,11 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     </div>
 
     <div id="deposits" class="section">
-        <div class="card"><h3>💰 DEPOSIT REQUESTS</h3><div id="depositList"></div></div>
+        <div class="card"><h3>💰 PENDING DEPOSITS</h3><div id="depositList"></div></div>
     </div>
+
     <div id="withdraws" class="section">
-        <div class="card"><h3>💸 WITHDRAW REQUESTS</h3><div id="withdrawList"></div></div>
+        <div class="card"><h3>💸 PENDING WITHDRAWS</h3><div id="withdrawList"></div></div>
     </div>
 </div>
 
@@ -161,31 +168,36 @@ const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authD
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Navigation
 window.showSection = (id) => {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.currentTarget.classList.add('active');
-}
-
-// Result Setting
-window.setResult = async (num) => {
-    await setDoc(doc(db, "wingo", "result"), { number: num, time: Date.now(), manual: true });
-    alert("Result set to " + num);
+    if(event) event.currentTarget.classList.add('active');
 };
 
-// Listen Users
+// Result Control
+window.setResult = async (num) => {
+    try {
+        await setDoc(doc(db, "wingo", "result"), { number: num, time: Date.now(), manual: true });
+        alert("Next result set to: " + num);
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+// Fetch Users
 onSnapshot(collection(db, "users"), (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = "";
-    document.getElementById("totalUsers").innerText = snap.size;
     snap.forEach(d => {
         const u = d.data(); const uid = d.id;
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         body.innerHTML += `<tr>
-            <td><span style="color:${isOnline?'#2ecc71':'#555'}">●</span></td>
-            <td><small>${u.email || uid}</small></td>
-            <td><b>₹${u.balance || 0}</b><span class="win-text">Win: ₹${u.winning || 0}</span></td>
+            <td><span style="color:${isOnline ? 'var(--success)' : '#555'}">●</span></td>
+            <td><small>${u.email || uid}</small><br><code style="color:var(--primary); font-size:10px;">${uid}</code></td>
+            <td>
+                <b>₹${u.balance || 0}</b>
+                <span class="win-text">Winning: ₹${u.winning || 0}</span>
+            </td>
             <td>
                 <button class="edit-btn" onclick="openEditModal('${uid}', ${u.balance || 0}, ${u.winning || 0})">Edit</button>
                 <button class="del-btn" onclick="deleteUser('${uid}')">Del</button>
@@ -194,50 +206,64 @@ onSnapshot(collection(db, "users"), (snap) => {
     });
 });
 
-// MODAL LOGIC
+// MODAL CONTROLS
 window.openEditModal = (uid, bal, win) => {
     document.getElementById('editUid').value = uid;
     document.getElementById('editMainBal').value = bal;
     document.getElementById('editWinBal').value = win;
     document.getElementById('editModal').style.display = 'flex';
-}
-window.closeModal = () => { document.getElementById('editModal').style.display = 'none'; }
+};
 
+window.closeModal = () => {
+    document.getElementById('editModal').style.display = 'none';
+};
+
+// SAVE BUTTON LOGIC (Syncs both balances)
 document.getElementById('saveBtn').onclick = async () => {
     const uid = document.getElementById('editUid').value;
-    const b = parseInt(document.getElementById('editMainBal').value);
-    const w = parseInt(document.getElementById('editWinBal').value);
-    
+    const newBal = parseInt(document.getElementById('editMainBal').value) || 0;
+    const newWin = parseInt(document.getElementById('editWinBal').value) || 0;
+
     try {
-        await updateDoc(doc(db, "users", uid), { balance: b, winning: w });
+        await updateDoc(doc(db, "users", uid), {
+            balance: newBal,
+            winning: newWin
+        });
         closeModal();
-        alert("Updated!");
-    } catch(e) { alert(e.message); }
-}
+        alert("Balances updated successfully!");
+    } catch(e) { alert("Update failed: " + e.message); }
+};
 
-window.deleteUser = async (uid) => { if(confirm("Delete?")) await deleteDoc(doc(db, "users", uid)); };
+// Actions
+window.deleteUser = async (uid) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, "users", uid)); };
 
-// Basic logic for other tabs
+// Real-time Requests (Deposits/Withdraws)
 function listenReq(coll, el, act) {
     onSnapshot(collection(db, coll), (snap) => {
-        const list = document.getElementById(el); list.innerHTML = "";
+        const list = document.getElementById(el);
+        list.innerHTML = "";
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
-                list.innerHTML += `<div style="background:#05070a; padding:10px; margin-bottom:5px; border-radius:10px; display:flex; justify-content:space-between;">
-                    <span>₹${data.amount} (${data.user})</span>
+                list.innerHTML += `<div style="background:#0b0e14; padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--glass);">
+                    <div><b style="color:var(--success)">₹${data.amount}</b><br><small>${data.user}</small></div>
                     <button class="edit-btn" onclick="${act}('${d.id}','${data.user}',${data.amount})">Approve</button>
                 </div>`;
             }
         });
     });
 }
+
 window.approveDeposit = async (id, user, amt) => {
-    const ref = doc(db,"users",user);
+    const ref = doc(db, "users", user);
     const snap = await getDoc(ref);
-    await updateDoc(ref, {balance: (snap.data().balance || 0) + amt});
-    await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
+    if(snap.exists()) {
+        await updateDoc(ref, { balance: (snap.data().balance || 0) + amt });
+        await updateDoc(doc(db, "depositRequests", id), { status: "approved" });
+        alert("Deposit Approved!");
+    }
 };
+
 listenReq("depositRequests", "depositList", "approveDeposit");
 </script>
 </body>
