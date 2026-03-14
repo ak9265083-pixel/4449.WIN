@@ -279,18 +279,36 @@ onSnapshot(collection(db, "users"), async (snap) => {
     document.getElementById("activeUsers").innerText = online;
 });
 
-// REJECT WITH REASON LOGIC
+// REJECT WITH REASON + REFUND LOGIC (UPDATED)
 window.rejectWithReason = async (coll, id) => {
     let reason = prompt("Enter rejection reason (e.g. Wrong UPI, Play more games):");
-    if(reason === null) return; // Cancelled
+    if(reason === null) return; 
     if(reason === "") reason = "Request Rejected by Admin";
 
     try {
-        await updateDoc(doc(db, coll, id), { 
-            status: "rejected",
-            reason: reason 
-        });
-        alert("Rejected with reason: " + reason);
+        const reqRef = doc(db, coll, id);
+        const reqSnap = await getDoc(reqRef);
+        
+        if (reqSnap.exists()) {
+            const reqData = reqSnap.data();
+            
+            // Refund only for withdrawals
+            if(coll === "withdrawRequests") {
+                const userRef = doc(db, "users", reqData.user);
+                const userSnap = await getDoc(userRef);
+                if(userSnap.exists()) {
+                    const currentBal = Number(userSnap.data().balance || 0);
+                    const refundAmt = Number(reqData.amount || 0);
+                    await updateDoc(userRef, { balance: currentBal + refundAmt });
+                }
+            }
+
+            await updateDoc(reqRef, { 
+                status: "rejected",
+                reason: reason 
+            });
+            alert("Rejected & Amount Refunded!");
+        }
     } catch(e) { alert("Error: " + e.message); }
 };
 
