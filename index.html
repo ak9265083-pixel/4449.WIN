@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="8mGNrLs_MQIxb5axw0z2tFUpU4HSSktCEYAVg3vklU0" />
-    <title>4449 WIN - Register</title>
+    
+    <title>4449 WIN - Official Register & Gaming Portal</title>
+    <meta name="description" content="Register on 4449 WIN today. The official portal for online gaming and rewards. Create your account and start winning now!">
+    <meta name="keywords" content="4449 WIN, 4449 win register, 4449 win login, 4449 win official, online gaming portal">
+    <meta name="author" content="4449 WIN">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --primary: #00f2ff; --secondary: #ff007a; --bg: #0b0e14; --card-bg: #161b22; }
@@ -31,6 +36,7 @@
     <div class="container">
         <div class="header"><img src="logo.png" class="logo"><span>4449 WIN</span></div>
         <div class="content">
+            <h1 style="font-size: 0.1px; color: transparent; position: absolute;">4449 WIN Register Account</h1>
             <h3>Create Account</h3>
             <label>Email Address</label>
             <input type="email" class="input-box" id="email" placeholder="Enter your email">
@@ -79,7 +85,6 @@
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             
-            // 1. New User Data
             const userData = {
                 email: email,
                 uid: user.uid,
@@ -93,7 +98,6 @@
 
             await setDoc(doc(db, "users", user.uid), userData);
 
-            // 2. Update Referrer Count (Important Fix)
             if(inviteCode && inviteCode !== "NONE") {
                 const usersRef = collection(db, "users");
                 const q = query(usersRef, where("referralCode", "==", inviteCode));
