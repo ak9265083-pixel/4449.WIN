@@ -69,9 +69,31 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .loss-content-card { background: #2c3e50; padding: 30px 50px; border-radius: 20px; border: 2px solid #95a5a6; color: white; transform: scale(0); transition: 0.4s; }
 .result-win-loss.show .loss-content-card { transform: scale(1); }
 .popup-close-btn { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); width: 35px; height: 35px; background: rgba(255,255,255,0.1); border-radius: 50%; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; border: 1px solid white; }
-.bottomWallet { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 420px; background: #161b22; border-top: 1px solid var(--primary); display: flex; justify-content: space-around; padding: 15px 0; z-index: 2000; }
-.navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; text-decoration: none; }
-.nav-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+
+/* PROFESSIONAL NAVIGATION START */
+.bottomWallet { 
+    position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); 
+    width: 90%; max-width: 400px; 
+    background: rgba(22, 27, 34, 0.85); 
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    border-radius: 25px; 
+    display: flex; justify-content: space-around; padding: 12px 0; 
+    z-index: 2000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 10px rgba(0,242,255,0.1);
+}
+.navBtn { 
+    display: flex; flex-direction: column; align-items: center; 
+    color: #8b949e; cursor: pointer; text-decoration: none; 
+    transition: 0.3s;
+    width: 25%;
+}
+.navBtn:active { transform: scale(0.9); }
+.nav-icon { font-size: 22px; margin-bottom: 4px; }
+.nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.navBtn.active { color: var(--primary); text-shadow: 0 0 10px rgba(0,242,255,0.5); }
+/* PROFESSIONAL NAVIGATION END */
+
 .disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 
 /* Welcome Animation Styles */
@@ -143,11 +165,24 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 </div>
 
 <div class="bottomWallet">
-  <div class="navBtn" onclick="location.href='refer.html'">📢<div class="nav-label">Refer</div></div>
-  <div class="navBtn" onclick="location.href='wallet.html'">💳<div class="nav-label">Wallet</div></div>
-  <div class="navBtn" onclick="location.href='help.html'">🎧<div class="nav-label">Help</div></div>
-  <div class="navBtn" onclick="logout()">🚪<div class="nav-label">Logout</div></div>
+  <div class="navBtn" onclick="location.href='refer.html'">
+    <span class="nav-icon">📢</span>
+    <div class="nav-label">Refer</div>
+  </div>
+  <div class="navBtn active" onclick="location.href='wallet.html'">
+    <span class="nav-icon">💳</span>
+    <div class="nav-label">Wallet</div>
+  </div>
+  <div class="navBtn" onclick="location.href='help.html'">
+    <span class="nav-icon">🎧</span>
+    <div class="nav-label">Help</div>
+  </div>
+  <div class="navBtn" onclick="logout()">
+    <span class="nav-icon">🚪</span>
+    <div class="nav-label">Logout</div>
+  </div>
 </div>
+
 <div class="betPopup" id="betPopup">
   <div class="betBox">
     <h3 id="betTitle" style="color:var(--primary); margin-top:0;">SELECT AMOUNT</h3>
