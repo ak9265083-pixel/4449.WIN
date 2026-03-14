@@ -14,94 +14,39 @@
     --glass: rgba(255, 255, 255, 0.05);
 }
 
-body {
-    font-family: 'Segoe UI', Arial; 
-    background: var(--bg); 
-    color: white; 
-    margin: 0; 
-    display: flex; 
-    flex-direction: column; 
-    min-height: 100vh;
-}
-
-/* Header */
-.header {
-    background: var(--card-bg); 
-    padding: 15px 25px; 
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
-    border-bottom: 2px solid var(--primary);
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-}
+body { font-family: 'Segoe UI', Arial; background: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+.header { background: var(--card-bg); padding: 15px 25px; display: flex; align-items: center; gap: 15px; border-bottom: 2px solid var(--primary); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
 .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); }
 .header span { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--primary); }
 
-/* Nav Bar */
-.nav-bar { 
-    display: flex; 
-    background: #05070a; 
-    justify-content: space-around; 
-    padding: 10px; 
-    position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid var(--glass);
-}
-.nav-item { 
-    padding: 10px 20px; cursor: pointer; border-radius: 12px; 
-    font-weight: 600; color: #8b949e; transition: 0.3s; 
-}
+.nav-bar { display: flex; background: #05070a; justify-content: space-around; padding: 10px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass); }
+.nav-item { padding: 10px 20px; cursor: pointer; border-radius: 12px; font-weight: 600; color: #8b949e; transition: 0.3s; }
 .nav-item.active { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
 
 .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
-.card { 
-    background: var(--card-bg); padding: 20px; margin-bottom: 20px; 
-    border-radius: 20px; border: 1px solid var(--glass);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
+.card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-/* Stats */
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-.stat { 
-    background: var(--card-bg); padding: 20px; border-radius: 15px; 
-    text-align: center; border-top: 4px solid var(--secondary); 
-}
+.stat { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border-top: 4px solid var(--secondary); }
 .stat b { font-size: 28px; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
 
-/* Bet Observer Styling */
 .bet-observer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-.bet-item { 
-    background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; 
-    border-left: 3px solid var(--primary); display: flex; justify-content: space-between; align-items: center;
-}
+.bet-item { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; border-left: 3px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
 .bet-val { color: var(--success); font-weight: bold; font-size: 14px; }
 .bet-per { color: var(--secondary); font-size: 11px; }
 
-.cat-header { 
-    grid-column: span 2; color: var(--primary); font-size: 12px; 
-    text-transform: uppercase; margin-top: 10px; border-bottom: 1px solid var(--glass); padding-bottom: 5px;
-}
+.cat-header { grid-column: span 2; color: var(--primary); font-size: 12px; text-transform: uppercase; margin-top: 10px; border-bottom: 1px solid var(--glass); padding-bottom: 5px; }
 
-/* Result Buttons */
 .result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-.result-grid button { 
-    padding: 15px; background: #0b0e14; border: 1px solid var(--primary); 
-    color: var(--primary); border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s;
-}
+.result-grid button { padding: 15px; background: #0b0e14; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
 .result-grid button:hover { background: var(--primary); color: black; box-shadow: 0 0 15px var(--primary); }
 
-/* Tables */
-.search-box { 
-    width: 100%; padding: 12px; background: #05070a; border: 1px solid var(--glass); 
-    border-radius: 10px; color: white; margin-bottom: 15px; outline: none;
-}
+.search-box { width: 100%; padding: 12px; background: #05070a; border: 1px solid var(--glass); border-radius: 10px; color: white; margin-bottom: 15px; outline: none; }
 table { width: 100%; border-collapse: collapse; }
 th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
 td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 
-.ref-badge { 
-    background: rgba(255, 0, 122, 0.1); color: var(--secondary); 
-    padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;
-}
+.ref-badge { background: rgba(255, 0, 122, 0.1); color: var(--secondary); padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
 
 .edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
 .del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
@@ -111,10 +56,7 @@ td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 .section.active { display: block; animation: fadeIn 0.5s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.item-request { 
-    background: #05070a; padding: 15px; border-radius: 12px; margin-bottom: 10px; 
-    display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary);
-}
+.item-request { background: #05070a; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary); }
 </style>
 </head>
 <body>
@@ -138,13 +80,11 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
 </div>
 
 <div class="container">
-
     <div id="dash" class="section active">
         <div class="stats">
             <div class="stat">TOTAL USERS<br><b id="totalUsers">0</b></div>
             <div class="stat">ONLINE NOW<br><b id="activeUsers">0</b></div>
         </div>
-
         <div class="card">
             <h3 style="color:var(--primary); margin-top:0; display:flex; justify-content:space-between; align-items:center;">
                 📊 LIVE MARKET LOAD
@@ -154,7 +94,6 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
                 <div class="bet-item" style="grid-column: span 2;"><span>Fetching real-time bets...</span></div>
             </div>
         </div>
-
         <div class="card">
             <h3 style="color:var(--primary)">🎯 CONTROL NEXT RESULT</h3>
             <div class="result-grid">
@@ -173,7 +112,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
             <input type="text" id="userSearch" class="search-box" placeholder="Search User..." oninput="filterUsers()">
             <div style="overflow-x:auto;">
                 <table id="userTable">
-                    <thead><tr><th>Status</th><th>User Info</th><th>Balance</th><th>Refers</th><th>Action</th></tr></thead>
+                    <thead><tr><th>Status</th><th>User Info</th><th>Balance / Winning</th><th>Refers</th><th>Action</th></tr></thead>
                     <tbody id="userTableBody"></tbody>
                 </table>
             </div>
@@ -190,9 +129,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
 
     <div id="issues" class="section">
         <div class="card"><h3>📩 TICKETS</h3><div id="ticketList"></div></div>
-        <div class="card"><h3>📸 SCREENSHOTS</h3><div id="screenshotList"></div></div>
     </div>
-
 </div>
 
 <script type="module">
@@ -210,7 +147,6 @@ window.showSection = function(id) {
     if(event) event.currentTarget.classList.add('active');
 }
 
-// BET OBSERVER LOGIC
 onSnapshot(collection(db, "bets"), (snap) => {
     let dataPool = { numbers: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}, size: { "Big": 0, "Small": 0 }, color: { "Red": 0, "Green": 0, "Violet": 0 } };
     let totalAll = 0;
@@ -221,8 +157,7 @@ onSnapshot(collection(db, "bets"), (snap) => {
         if(b.color) dataPool.color[b.color] += amt;
     });
     document.getElementById("totalBetAmount").innerText = "Total: ₹" + totalAll;
-    const list = document.getElementById("betObserverList");
-    list.innerHTML = "";
+    const list = document.getElementById("betObserverList"); list.innerHTML = "";
     const renderBetItem = (label, val, total) => {
         let p = total > 0 ? ((val/total)*100).toFixed(1) : 0;
         return `<div class="bet-item"><span>${label}</span><div style="text-align:right"><div class="bet-val">₹${val}</div><div class="bet-per">${p}%</div></div></div>`;
@@ -238,7 +173,6 @@ onSnapshot(collection(db, "bets"), (snap) => {
     list.innerHTML += renderBetItem("<span style='color:#a4b0be'>VIOLET</span>", dataPool.color["Violet"], totalAll);
 });
 
-// Result Setting
 window.setResult = async (num) => {
     try {
         await setDoc(doc(db, "wingo", "result"), { number: num, time: Date.now(), manual: true });
@@ -246,7 +180,6 @@ window.setResult = async (num) => {
     } catch (e) { alert("Error: " + e.message); }
 };
 
-// Search Logic
 window.filterUsers = function() {
     let input = document.getElementById("userSearch").value.toUpperCase();
     let tr = document.getElementById("userTableBody").getElementsByTagName("tr");
@@ -256,64 +189,59 @@ window.filterUsers = function() {
     }
 }
 
-// User Listener
 onSnapshot(collection(db, "users"), async (snap) => {
-    const body = document.getElementById("userTableBody");
-    body.innerHTML = ""; let online = 0;
+    const body = document.getElementById("userTableBody"); body.innerHTML = ""; let online = 0;
     document.getElementById("totalUsers").innerText = snap.size;
-    for (const d of snap.docs) {
+    snap.docs.forEach(d => {
         const u = d.data(); const uid = d.id;
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         if(isOnline) online++;
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
             <td><small>${u.email || uid}</small><br><small style="color:var(--primary)">${uid}</small></td>
-            <td>₹${u.balance || 0}</td>
+            <td>Bal: ₹${u.balance || 0}<br><span style="color:var(--success); font-size:11px;">Win: ₹${u.winning || 0}</span></td>
             <td><span class="ref-badge">Refs</span></td>
             <td>
-                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance})">Edit</button>
+                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance}, ${u.winning || 0})">Edit</button>
                 <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
             </td>
         </tr>`;
-    }
+    });
     document.getElementById("activeUsers").innerText = online;
 });
 
-// REJECT WITH REASON + REFUND LOGIC (UPDATED)
+// REJECT WITH REASON + REFUND WINNING
 window.rejectWithReason = async (coll, id) => {
-    let reason = prompt("Enter rejection reason (e.g. Wrong UPI, Play more games):");
+    let reason = prompt("Enter rejection reason:");
     if(reason === null) return; 
     if(reason === "") reason = "Request Rejected by Admin";
 
     try {
         const reqRef = doc(db, coll, id);
         const reqSnap = await getDoc(reqRef);
-        
         if (reqSnap.exists()) {
             const reqData = reqSnap.data();
-            
-            // Refund only for withdrawals
             if(coll === "withdrawRequests") {
                 const userRef = doc(db, "users", reqData.user);
                 const userSnap = await getDoc(userRef);
                 if(userSnap.exists()) {
                     const currentBal = Number(userSnap.data().balance || 0);
+                    const currentWin = Number(userSnap.data().winning || 0);
                     const refundAmt = Number(reqData.amount || 0);
-                    await updateDoc(userRef, { balance: currentBal + refundAmt });
+                    await updateDoc(userRef, { 
+                        balance: currentBal + refundAmt,
+                        winning: currentWin + refundAmt 
+                    });
                 }
             }
-
-            await updateDoc(reqRef, { 
-                status: "rejected",
-                reason: reason 
-            });
-            alert("Rejected & Amount Refunded!");
+            await updateDoc(reqRef, { status: "rejected", reason: reason });
+            alert("Rejected & Refunded to Winning!");
         }
     } catch(e) { alert("Error: " + e.message); }
 };
 
-// Actions
 window.deleteUser = async (uid) => { if(confirm("Delete?")) await deleteDoc(doc(db, "users", uid)); };
+
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db,"users",user); const snap = await getDoc(ref);
     if(snap.exists()){
@@ -322,25 +250,30 @@ window.approveDeposit = async (id, user, amt) => {
         alert("Approved!");
     }
 };
+
 window.approveWithdraw = async (id, user, amt) => {
     await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
     alert("Withdrawal Approved!");
 };
-window.editBal = async (uid, old) => {
-    let n = prompt("New Balance", old);
-    if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
+
+window.editBal = async (uid, oldBal, oldWin) => {
+    let b = prompt("New Total Balance", oldBal);
+    let w = prompt("New Winning Balance (Withdrawable)", oldWin);
+    if(b !== null && w !== null) {
+        await updateDoc(doc(db, "users", uid), { 
+            balance: parseInt(b),
+            winning: parseInt(w)
+        });
+    }
 };
 
 function listenRequests(coll, elementId, action) {
     onSnapshot(collection(db, coll), (snap) => {
-        const list = document.getElementById(elementId);
-        list.innerHTML = "";
+        const list = document.getElementById(elementId); list.innerHTML = "";
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
-                // Determine which reject function to use
                 let rejectFn = coll === "withdrawRequests" ? `rejectWithReason('${coll}','${d.id}')` : `rejectRequest('${coll}','${d.id}')`;
-                
                 list.innerHTML += `<div class="item-request">
                     <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
                     <div>
