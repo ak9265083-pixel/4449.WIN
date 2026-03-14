@@ -46,7 +46,7 @@ table { width: 100%; border-collapse: collapse; }
 th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
 td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 
-.ref-badge { background: rgba(255, 0, 122, 0.1); color: var(--secondary); padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+.ref-badge { background: rgba(255, 0, 122, 0.1); color: var(--secondary); padding: 2px 8px; border-radius: 50px; font-size: 11px; font-weight: bold; }
 
 .edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
 .del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
@@ -109,7 +109,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div id="users" class="section">
         <div class="card">
             <h3>👥 USER DATABASE</h3>
-            <input type="text" id="userSearch" class="search-box" placeholder="Search User..." oninput="filterUsers()">
+            <input type="text" id="userSearch" class="search-box" placeholder="Search User (UID or Email)..." oninput="filterUsers()">
             <div style="overflow-x:auto;">
                 <table id="userTable">
                     <thead><tr><th>Status</th><th>User Info</th><th>Balance / Winning</th><th>Refers</th><th>Action</th></tr></thead>
@@ -198,11 +198,11 @@ onSnapshot(collection(db, "users"), async (snap) => {
         if(isOnline) online++;
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
-            <td><small>${u.email || uid}</small><br><small style="color:var(--primary)">${uid}</small></td>
-            <td>Bal: ₹${u.balance || 0}<br><span style="color:var(--success); font-size:11px;">Win: ₹${u.winning || 0}</span></td>
+            <td><small>${u.email || 'No Email'}</small><br><small style="color:var(--primary)">${uid}</small></td>
+            <td>Bal: ₹${(u.balance || 0).toFixed(2)}<br><span style="color:var(--success); font-size:11px;">Win: ₹${(u.winning || 0).toFixed(2)}</span></td>
             <td><span class="ref-badge">Refs</span></td>
             <td>
-                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance}, ${u.winning || 0})">Edit</button>
+                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance || 0}, ${u.winning || 0})">Edit</button>
                 <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
             </td>
         </tr>`;
@@ -240,7 +240,7 @@ window.rejectWithReason = async (coll, id) => {
     } catch(e) { alert("Error: " + e.message); }
 };
 
-window.deleteUser = async (uid) => { if(confirm("Delete?")) await deleteDoc(doc(db, "users", uid)); };
+window.deleteUser = async (uid) => { if(confirm("Delete this user permanently?")) await deleteDoc(doc(db, "users", uid)); };
 
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db,"users",user); const snap = await getDoc(ref);
@@ -256,14 +256,22 @@ window.approveWithdraw = async (id, user, amt) => {
     alert("Withdrawal Approved!");
 };
 
-window.editBal = async (uid, oldBal, oldWin) => {
-    let b = prompt("New Total Balance", oldBal);
-    let w = prompt("New Winning Balance (Withdrawable)", oldWin);
-    if(b !== null && w !== null) {
+// IMPROVED EDIT BALANCE FUNCTION
+window.editBal = async (uid, currentBal, currentWin) => {
+    let b = prompt("Update Total Balance (Current: ₹" + currentBal + ")", currentBal);
+    if(b === null) return;
+    
+    let w = prompt("Update Winning Balance (Current: ₹" + currentWin + ")", currentWin);
+    if(w === null) return;
+
+    try {
         await updateDoc(doc(db, "users", uid), { 
-            balance: parseInt(b),
-            winning: parseInt(w)
+            balance: parseFloat(b),
+            winning: parseFloat(w)
         });
+        alert("User updated successfully!");
+    } catch(e) {
+        alert("Error updating user: " + e.message);
     }
 };
 
@@ -285,7 +293,7 @@ function listenRequests(coll, elementId, action) {
         });
     });
 }
-window.rejectRequest = async (coll, id) => { if(confirm("Reject?")) await updateDoc(doc(db, coll, id), { status: "rejected" }); };
+window.rejectRequest = async (coll, id) => { if(confirm("Reject this request?")) await updateDoc(doc(db, coll, id), { status: "rejected" }); };
 
 listenRequests("depositRequests", "depositList", "approveDeposit");
 listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
@@ -297,7 +305,7 @@ onSnapshot(collection(db, "tickets"), (snap) => {
         list.innerHTML += `<div class="item-request"><div><b>${t.name}:</b> ${t.message}</div><button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button></div>`;
     });
 });
-window.deleteDocData = async (coll, id) => { if(confirm("Delete?")) await deleteDoc(doc(db, coll, id)); };
+window.deleteDocData = async (coll, id) => { if(confirm("Delete this ticket?")) await deleteDoc(doc(db, coll, id)); };
 </script>
 </body>
 </html>
