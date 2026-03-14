@@ -9,66 +9,49 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .app { width: 420px; background: var(--bg); min-height: 100vh; text-align: center; padding-bottom: 110px; overflow-x: hidden; border-left: 1px solid rgba(0, 242, 255, 0.1); border-right: 1px solid rgba(0, 242, 255, 0.1); position: relative; }
 .header { background: rgba(22, 27, 34, 0.95); padding: 12px 15px; font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--primary); }
 .logo-top { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); }
-
 .box { background: var(--card-bg); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
 .box::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
-
 .timer-section { display: flex; justify-content: space-between; align-items: center; margin: 15px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; border: 1px solid var(--glass); }
 #time { font-size: 32px; font-weight: 900; color: var(--primary); font-variant-numeric: tabular-nums; text-shadow: 0 0 15px rgba(0,242,255,0.4); }
-
 .ball-container { position: relative; height: 120px; display: flex; justify-content: center; align-items: center; margin: 20px 0; }
 .ball { width: 90px; height: 90px; background: radial-gradient(circle at 30% 30%, #333, #000); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 45px; font-weight: 900; color: white; border: 4px solid var(--glass); box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 -10px 20px rgba(0,0,0,0.5); transition: 0.5s; }
 .ball.animate { animation: bounce 0.6s infinite alternate; filter: blur(2px); }
 @keyframes bounce { from { transform: translateY(0) scale(1.05); } to { transform: translateY(-30px) scale(0.95); } }
-
 .bs-badge { position: absolute; bottom: -5px; background: var(--primary); color: black; padding: 4px 15px; border-radius: 50px; font-weight: 900; font-size: 12px; transform: scale(0); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .bs-badge.show { transform: scale(1); }
-
 .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 15px; }
 .num-btn { aspect-ratio: 1; border-radius: 15px; border: 1px solid var(--glass); font-size: 20px; font-weight: 900; cursor: pointer; display: flex; justify-content: center; align-items: center; color: white; transition: 0.2s; background: rgba(255,255,255,0.05); }
 .num-btn:active { transform: scale(0.9); }
 .num-btn.green { background: linear-gradient(135deg, #2ecc71, #27ae60); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3); }
 .num-btn.red { background: linear-gradient(135deg, #e74c3c, #c0392b); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3); }
 .num-btn.violet { background: linear-gradient(135deg, #9b59b6, #8e44ad); box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3); }
-
 .bs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 15px; }
 .bs-btn { padding: 15px; border-radius: 15px; font-weight: 900; font-size: 18px; cursor: pointer; border: none; letter-spacing: 2px; transition: 0.3s; }
 .big { background: var(--big-color); color: black; box-shadow: 0 5px 15px rgba(252, 207, 49, 0.3); }
 .small { background: var(--primary); color: black; box-shadow: 0 5px 15px rgba(0, 242, 255, 0.3); }
-
 .history-card { background: var(--card-bg); margin: 15px; border-radius: 20px; border: 1px solid var(--glass); overflow: hidden; }
 .history-header { padding: 15px; background: rgba(255,255,255,0.02); font-weight: bold; border-bottom: 1px solid var(--glass); color: var(--primary); }
 table { width: 100%; border-collapse: collapse; }
 th { font-size: 11px; opacity: 0.5; padding: 12px; text-transform: uppercase; }
 td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.02); }
 .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-
 .bet-modal { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 420px; background: #1c2333; border-radius: 30px 30px 0 0; z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 25px; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(0,0,0,0.8); border-top: 2px solid var(--primary); }
 .bet-modal.active { bottom: 0; }
 .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1500; display: none; backdrop-filter: blur(5px); }
 .overlay.active { display: block; }
-
 .amt-input { width: 100%; padding: 15px; background: #0b0e14; border: 1px solid var(--primary); border-radius: 15px; color: white; font-size: 20px; font-weight: bold; text-align: center; margin: 15px 0; outline: none; box-shadow: inset 0 0 10px rgba(0,242,255,0.1); }
 .confirm-btn { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--primary); color: black; font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,242,255,0.3); }
-
-/* Win Loss Popup */
 .win-loss-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 320px; background: #1c2333; border-radius: 25px; z-index: 5000; padding: 30px; display: none; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,1); border: 2px solid var(--glass); transition: 0.3s; }
 .win-loss-popup.show { display: block; transform: translate(-50%, -50%) scale(1); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-
 .win-title { color: #fccf31; font-size: 32px; font-weight: 900; margin-bottom: 10px; text-shadow: 0 0 20px rgba(252,207,49,0.5); }
 .loss-title { color: #ff4757; font-size: 32px; font-weight: 900; margin-bottom: 10px; }
 .pill-group { display: flex; justify-content: center; gap: 8px; margin: 15px 0; }
 .pill { padding: 5px 15px; border-radius: 50px; font-size: 12px; font-weight: 900; color: black; }
-
 .bottom-nav { position: fixed; bottom: 0; width: 420px; background: rgba(22, 27, 34, 0.98); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--glass); backdrop-filter: blur(10px); z-index: 1000; }
 .nav-item { color: #8b949e; text-decoration: none; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; gap: 5px; opacity: 0.6; transition: 0.3s; }
 .nav-item.active { color: var(--primary); opacity: 1; }
 .nav-item img { width: 22px; height: 22px; }
-
-/* USER INFO STYLE */
-.user-info { display: flex; flex-direction: column; align-items: flex-start; }
-.uid-text { font-size: 10px; opacity: 0.5; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -113,10 +96,7 @@ td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.02); }
 <div class="app">
     <div class="header">
         <img src="logo.png" class="logo-top">
-        <div class="user-info">
-            <span>4449 WIN</span>
-            <span class="uid-text" id="userUID">Loading...</span>
-        </div>
+        <span>4449 WIN</span>
     </div>
 
     <div class="box" style="margin-top:20px; text-align:left;">
@@ -195,7 +175,6 @@ let autoCloseTimer;
 onAuthStateChanged(auth, async (user) => {
     if(user){
         userId = user.uid;
-        document.getElementById("userUID").innerText = "UID: " + userId;
         const ref = doc(db, "users", userId);
         onSnapshot(ref, (snap) => {
             if(snap.exists()){
@@ -206,7 +185,6 @@ onAuthStateChanged(auth, async (user) => {
     } else { window.location = "login.html"; }
 });
 
-// Timer Logic
 setInterval(() => {
     let now = new Date();
     let sec = now.getSeconds();
@@ -250,15 +228,12 @@ window.placeBet = async () => {
         await addDoc(collection(db, "bets"), betObj);
         
         closeBet();
-        alert("Bet Placed: ₹" + amt);
     } catch(e) { alert("Error placing bet"); }
 };
 
-// --- UPDATED RESULT PROCESSING FOR WINNING BALANCE ---
 async function processResult(){
     let box = document.getElementById("ball"), badge = document.getElementById("bsBadge"), resText = document.getElementById("ball");
-    box.classList.add("animate");
-    badge.classList.remove("show");
+    box.classList.add("animate"); badge.classList.remove("show");
     
     let result;
     try {
@@ -266,9 +241,7 @@ async function processResult(){
         if (adminSnap.exists() && adminSnap.data().manual === true) {
             result = adminSnap.data().number;
             await updateDoc(doc(db, "wingo", "result"), { manual: false });
-        } else {
-            result = Math.floor(Math.random() * 10);
-        }
+        } else { result = Math.floor(Math.random() * 10); }
     } catch (e) { result = Math.floor(Math.random() * 10); }
 
     let color = (result === 0 || result === 5) ? "violet" : ([1, 3, 7, 9].includes(result) ? "green" : "red");
@@ -277,10 +250,8 @@ async function processResult(){
     await addDoc(collection(db, "history"), { num: result, color: color, bigsmall: bs, createdAt: serverTimestamp() });
     
     setTimeout(async () => {
-        box.classList.remove("animate");
-        resText.innerText = result;
-        badge.innerText = bs;
-        badge.className = "bs-badge show";
+        box.classList.remove("animate"); resText.innerText = result;
+        badge.innerText = bs; badge.className = "bs-badge show";
         badge.style.background = (bs === "BIG" ? "var(--big-color)" : "var(--primary)");
         
         if(activeBets.length > 0){
@@ -288,89 +259,61 @@ async function processResult(){
             let wonAnyBet = false;
 
             activeBets.forEach(bet => {
-                let choice = bet.choice;
                 let isWin = false;
-                let multiplier = 2;
-
-                if(!isNaN(choice)) { // Number bet
-                    if(parseInt(choice) === result) { isWin = true; multiplier = 9; }
-                } else if(choice === 'big' || choice === 'small') { // Size bet
-                    if(choice.toUpperCase() === bs) { isWin = true; multiplier = 2; }
-                } else { // Color bet
-                    if(choice === color) { isWin = true; multiplier = 2; }
-                }
+                if(!isNaN(bet.choice)) { if(parseInt(bet.choice) === result) isWin = true; }
+                else if(bet.choice === 'big' || bet.choice === 'small') { if(bet.choice.toUpperCase() === bs) isWin = true; }
+                else { if(bet.choice === color) isWin = true; }
 
                 if(isWin) {
                     wonAnyBet = true;
+                    let multiplier = (!isNaN(bet.choice)) ? 9 : 2;
                     totalWinAmount += (bet.amount * multiplier);
                 }
             });
 
             if(wonAnyBet) {
-                // Winning Paisa 'balance' aur 'winning' dono mein jayega
+                // FIXED: Adding to BOTH balance and winning field
                 const userRef = doc(db, "users", userId);
                 const userSnap = await getDoc(userRef);
                 if(userSnap.exists()){
-                    let currentWinBalance = userSnap.data().winning || 0;
-                    let currentTotalBalance = userSnap.data().balance || 0;
-                    
-                    await updateDoc(userRef, {
-                        balance: currentTotalBalance + totalWinAmount,
-                        winning: currentWinBalance + totalWinAmount
+                    let currentWin = userSnap.data().winning || 0;
+                    balance += totalWinAmount; 
+                    await updateDoc(userRef, { 
+                        balance: balance,
+                        winning: currentWin + totalWinAmount 
                     });
-                    showUpgradedPopup(totalWinAmount, true, result, color, bs);
+                    showWinLossPopup(totalWinAmount, true, result, color, bs);
                 }
-            } else {
-                showUpgradedPopup(0, false, result, color, bs);
-            }
+            } else { showWinLossPopup(0, false, result, color, bs); }
             activeBets = [];
         }
     }, 1000);
 }
 
-function showUpgradedPopup(amt, isWin, result, color, bs) {
-    let pop = document.getElementById("winLossPopup");
-    let winCont = document.getElementById("winContainer");
-    let lossCont = document.getElementById("lossContainer");
-    
-    winCont.style.display = "none";
-    lossCont.style.display = "none";
-
-    if(isWin) {
-        document.getElementById("popWinAmt").innerText = "₹" + amt.toFixed(2);
-        winCont.style.display = "block";
-    } else {
-        lossCont.style.display = "block";
-    }
-
-    document.getElementById("popNumPill").innerText = result;
-    document.getElementById("popNumPill").style.background = (result===0||result===5)?'var(--violet)':([1,3,7,9].includes(result)?'var(--green)':'var(--red)');
-    document.getElementById("popColorPill").innerText = color.toUpperCase();
-    document.getElementById("popColorPill").style.background = `var(--${color})`;
-    document.getElementById("popBsPill").innerText = bs;
-    document.getElementById("popBsPill").style.background = (bs==='BIG'?'var(--big-color)':'var(--primary)');
-    
-    pop.classList.add("show");
+function showWinLossPopup(amt, isWin, result, color, bs) {
+    let pop = document.getElementById("winLossPopup"), winCont = document.getElementById("winContainer"), lossCont = document.getElementById("lossContainer");
+    winCont.style.display = \"none\"; lossCont.style.display = \"none\";
+    if(isWin) { 
+        document.getElementById(\"popWinAmt\").innerText = \"₹\" + amt.toFixed(2);
+        winCont.style.display = \"block\";
+    } else { lossCont.style.display = \"block\"; }
+    document.getElementById(\"popNumPill\").innerText = result;
+    document.getElementById(\"popNumPill\").style.background = (result===0||result===5)?'var(--violet)':([1,3,7,9].includes(result)?'var(--green)':'var(--red)');
+    document.getElementById(\"popColorPill\").innerText = color.toUpperCase();
+    document.getElementById(\"popColorPill\").style.background = `var(--${color})`;
+    document.getElementById(\"popBsPill\").innerText = bs;
+    document.getElementById(\"popBsPill\").style.background = (bs==='BIG'?'var(--big-color)':'var(--primary)');
+    pop.classList.add(\"show\"); 
     autoCloseTimer = setTimeout(closeWinLossPopup, 5000);
 }
 
-window.closeWinLossPopup = () => {
-    document.getElementById("winLossPopup").classList.remove("show");
-    if(autoCloseTimer) clearTimeout(autoCloseTimer);
-};
+window.closeWinLossPopup = () => { document.getElementById("winLossPopup").classList.remove("show"); if (autoCloseTimer) clearTimeout(autoCloseTimer); }
 
-// History Loader
 onSnapshot(query(collection(db, "history"), orderBy("createdAt", "desc"), limit(10)), (snap) => {
-    const list = document.getElementById("history");
-    list.innerHTML = "";
+    const list = document.getElementById("history"); list.innerHTML = "";
     snap.forEach(d => {
         let h = d.data();
-        list.innerHTML += `<tr>
-            <td><small>${d.id.substring(0,6)}</small></td>
-            <td style="font-weight:900;">${h.num}</td>
-            <td style="font-size:10px;">${h.bigsmall}</td>
-            <td><span class="dot" style="background:var(--${h.color})"></span></td>
-        </tr>`;
+        list.innerHTML += `<tr><td><small>${d.id.substring(0,6)}</small></td><td style="font-weight:900;">${h.num}</td><td style="font-size:10px;">${h.bigsmall}</td><td><span class="dot" style="background:var(--${h.color})"></span></td></tr>`;
     });
 });
 </script>
