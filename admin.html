@@ -26,6 +26,41 @@ body { font-family: 'Segoe UI', Arial; background: var(--bg); color: white; marg
 .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
 .card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
+/* --- EDIT POPUP STYLE --- */
+.edit-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1c2128;
+    padding: 25px;
+    border-radius: 15px;
+    border: 2px solid var(--primary);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 999;
+}
+.edit-modal h3 { margin-top:0; color: var(--primary); }
+.edit-modal input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    background: #0b0e14;
+    border: 1px solid var(--glass);
+    color: white;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
 .stat { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border-top: 4px solid var(--secondary); }
 .stat b { font-size: 28px; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
@@ -46,7 +81,7 @@ table { width: 100%; border-collapse: collapse; }
 th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
 td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 
-.ref-badge { background: rgba(255, 0, 122, 0.1); color: var(--secondary); padding: 2px 8px; border-radius: 50px; font-size: 11px; font-weight: bold; }
+.ref-badge { background: rgba(255, 0, 122, 0.1); color: var(--secondary); padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; }
 
 .edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
 .del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
@@ -65,6 +100,20 @@ td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 var password = prompt("Enter Admin Password");
 if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.html"; }
 </script>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeEditModal()"></div>
+<div class="edit-modal" id="editModal">
+    <h3>Edit User Balance</h3>
+    <small id="editUidDisp" style="color:var(--secondary)"></small>
+    <label>Account Balance (Total):</label>
+    <input type="number" id="editAccBal">
+    <label>Winning Balance (Withdrawable):</label>
+    <input type="number" id="editWinBal">
+    <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="edit-btn" style="flex:1" onclick="saveBalances()">Save Changes</button>
+        <button class="rej-btn" style="flex:1" onclick="closeEditModal()">Cancel</button>
+    </div>
+</div>
 
 <div class="header">
     <img src="logo.png" alt="Logo" class="header-logo">
@@ -109,7 +158,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div id="users" class="section">
         <div class="card">
             <h3>👥 USER DATABASE</h3>
-            <input type="text" id="userSearch" class="search-box" placeholder="Search User (UID or Email)..." oninput="filterUsers()">
+            <input type="text" id="userSearch" class="search-box" placeholder="Search User..." oninput="filterUsers()">
             <div style="overflow-x:auto;">
                 <table id="userTable">
                     <thead><tr><th>Status</th><th>User Info</th><th>Balance / Winning</th><th>Refers</th><th>Action</th></tr></thead>
@@ -140,6 +189,8 @@ const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authD
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let currentEditingUid = "";
+
 window.showSection = function(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-bar .nav-item').forEach(n => n.classList.remove('active'));
@@ -147,6 +198,60 @@ window.showSection = function(id) {
     if(event) event.currentTarget.classList.add('active');
 }
 
+// User List Snapshot
+onSnapshot(collection(db, "users"), async (snap) => {
+    const body = document.getElementById("userTableBody"); body.innerHTML = ""; let online = 0;
+    document.getElementById("totalUsers").innerText = snap.size;
+    snap.docs.forEach(d => {
+        const u = d.data(); const uid = d.id;
+        const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
+        if(isOnline) online++;
+        body.innerHTML += `<tr>
+            <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
+            <td><small>${u.email || uid}</small><br><small style="color:var(--primary)">${uid}</small></td>
+            <td>Bal: ₹${u.balance || 0}<br><span style="color:var(--success); font-size:11px;">Win: ₹${u.winning || 0}</span></td>
+            <td><span class="ref-badge">Refs</span></td>
+            <td>
+                <button class="edit-btn" onclick="openEditModal('${uid}', ${u.balance || 0}, ${u.winning || 0})">Edit</button>
+                <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
+            </td>
+        </tr>`;
+    });
+    document.getElementById("activeUsers").innerText = online;
+});
+
+// --- NEW MODAL FUNCTIONS ---
+window.openEditModal = (uid, bal, win) => {
+    currentEditingUid = uid;
+    document.getElementById("editUidDisp").innerText = "UID: " + uid;
+    document.getElementById("editAccBal").value = bal;
+    document.getElementById("editWinBal").value = win;
+    document.getElementById("modalOverlay").style.display = "block";
+    document.getElementById("editModal").style.display = "block";
+};
+
+window.closeEditModal = () => {
+    document.getElementById("modalOverlay").style.display = "none";
+    document.getElementById("editModal").style.display = "none";
+};
+
+window.saveBalances = async () => {
+    const newBal = parseFloat(document.getElementById("editAccBal").value);
+    const newWin = parseFloat(document.getElementById("editWinBal").value);
+    
+    if(isNaN(newBal) || isNaN(newWin)) return alert("Please enter valid numbers");
+
+    try {
+        await updateDoc(doc(db, "users", currentEditingUid), {
+            balance: newBal,
+            winning: newWin
+        });
+        alert("Balance Updated!");
+        closeEditModal();
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+// ... Rest of your original functions (setResult, filterUsers, etc.) ...
 onSnapshot(collection(db, "bets"), (snap) => {
     let dataPool = { numbers: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}, size: { "Big": 0, "Small": 0 }, color: { "Red": 0, "Green": 0, "Violet": 0 } };
     let totalAll = 0;
@@ -189,58 +294,7 @@ window.filterUsers = function() {
     }
 }
 
-onSnapshot(collection(db, "users"), async (snap) => {
-    const body = document.getElementById("userTableBody"); body.innerHTML = ""; let online = 0;
-    document.getElementById("totalUsers").innerText = snap.size;
-    snap.docs.forEach(d => {
-        const u = d.data(); const uid = d.id;
-        const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
-        if(isOnline) online++;
-        body.innerHTML += `<tr>
-            <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
-            <td><small>${u.email || 'No Email'}</small><br><small style="color:var(--primary)">${uid}</small></td>
-            <td>Bal: ₹${(u.balance || 0).toFixed(2)}<br><span style="color:var(--success); font-size:11px;">Win: ₹${(u.winning || 0).toFixed(2)}</span></td>
-            <td><span class="ref-badge">Refs</span></td>
-            <td>
-                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance || 0}, ${u.winning || 0})">Edit</button>
-                <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
-            </td>
-        </tr>`;
-    });
-    document.getElementById("activeUsers").innerText = online;
-});
-
-// REJECT WITH REASON + REFUND WINNING
-window.rejectWithReason = async (coll, id) => {
-    let reason = prompt("Enter rejection reason:");
-    if(reason === null) return; 
-    if(reason === "") reason = "Request Rejected by Admin";
-
-    try {
-        const reqRef = doc(db, coll, id);
-        const reqSnap = await getDoc(reqRef);
-        if (reqSnap.exists()) {
-            const reqData = reqSnap.data();
-            if(coll === "withdrawRequests") {
-                const userRef = doc(db, "users", reqData.user);
-                const userSnap = await getDoc(userRef);
-                if(userSnap.exists()) {
-                    const currentBal = Number(userSnap.data().balance || 0);
-                    const currentWin = Number(userSnap.data().winning || 0);
-                    const refundAmt = Number(reqData.amount || 0);
-                    await updateDoc(userRef, { 
-                        balance: currentBal + refundAmt,
-                        winning: currentWin + refundAmt 
-                    });
-                }
-            }
-            await updateDoc(reqRef, { status: "rejected", reason: reason });
-            alert("Rejected & Refunded to Winning!");
-        }
-    } catch(e) { alert("Error: " + e.message); }
-};
-
-window.deleteUser = async (uid) => { if(confirm("Delete this user permanently?")) await deleteDoc(doc(db, "users", uid)); };
+window.deleteUser = async (uid) => { if(confirm("Delete?")) await deleteDoc(doc(db, "users", uid)); };
 
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db,"users",user); const snap = await getDoc(ref);
@@ -254,25 +308,6 @@ window.approveDeposit = async (id, user, amt) => {
 window.approveWithdraw = async (id, user, amt) => {
     await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
     alert("Withdrawal Approved!");
-};
-
-// IMPROVED EDIT BALANCE FUNCTION
-window.editBal = async (uid, currentBal, currentWin) => {
-    let b = prompt("Update Total Balance (Current: ₹" + currentBal + ")", currentBal);
-    if(b === null) return;
-    
-    let w = prompt("Update Winning Balance (Current: ₹" + currentWin + ")", currentWin);
-    if(w === null) return;
-
-    try {
-        await updateDoc(doc(db, "users", uid), { 
-            balance: parseFloat(b),
-            winning: parseFloat(w)
-        });
-        alert("User updated successfully!");
-    } catch(e) {
-        alert("Error updating user: " + e.message);
-    }
 };
 
 function listenRequests(coll, elementId, action) {
@@ -293,7 +328,7 @@ function listenRequests(coll, elementId, action) {
         });
     });
 }
-window.rejectRequest = async (coll, id) => { if(confirm("Reject this request?")) await updateDoc(doc(db, coll, id), { status: "rejected" }); };
+window.rejectRequest = async (coll, id) => { if(confirm("Reject?")) await updateDoc(doc(db, coll, id), { status: "rejected" }); };
 
 listenRequests("depositRequests", "depositList", "approveDeposit");
 listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
@@ -305,7 +340,8 @@ onSnapshot(collection(db, "tickets"), (snap) => {
         list.innerHTML += `<div class="item-request"><div><b>${t.name}:</b> ${t.message}</div><button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button></div>`;
     });
 });
-window.deleteDocData = async (coll, id) => { if(confirm("Delete this ticket?")) await deleteDoc(doc(db, coll, id)); };
+window.deleteDocData = async (coll, id) => { if(confirm("Delete?")) await deleteDoc(doc(db, coll, id)); };
+
 </script>
 </body>
 </html>
