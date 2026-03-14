@@ -5,6 +5,11 @@
     <meta name="google-site-verification" content="8mGNrLs_MQIxb5axw0tFUpU4HSSktCEYAVg3vklU0" />
     <title>4449 WIN - Official Register & Gaming Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0b0e14">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <style>
         :root { --primary: #00f2ff; --secondary: #ff007a; --bg: #0b0e14; --card-bg: #161b22; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -25,7 +30,7 @@
         .login-text { font-size: 13px; color: #8b949e; }
         .login-link { color: var(--secondary); text-decoration: none; font-weight: bold; margin-left: 5px; transition: 0.3s; }
         .login-link:hover { text-decoration: underline; color: #ff3399; }
-        .success-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--card-bg); border: 2px solid var(--primary); color: var(--primary); padding: 20px 40px; border-radius: 15px; display: none; z-index: 1000; text-align: center; }
+        .success-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--card-bg); border: 2px solid var(--primary); color: var(--primary); padding: 20px 40px; border-radius: 15px; display: none; z-1000; text-align: center; }
     </style>
 </head>
 <body>
@@ -76,7 +81,6 @@
 
         if(!email || !password) { alert("Please fill details!"); return; }
 
-        // BUTTON DISABLE (Taaki double-click na ho)
         btn.disabled = true;
         btn.innerText = "PROCESSING...";
 
@@ -113,11 +117,21 @@
         } catch(err) { 
             console.error("Signup Error:", err.code);
             alert(err.message);
-            // Error aane par button wapas chalu kar dena
             btn.disabled = false;
             btn.innerText = "SIGN UP";
         }
     }
 </script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registered!'))
+        .catch(err => console.log('Service Worker failed', err));
+    });
+  }
+</script>
+
 </body>
 </html>
