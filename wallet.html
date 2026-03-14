@@ -56,27 +56,15 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
     justify-content: center;
 }
 .z-btn {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    flex: 1;
+    padding: 10px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; flex: 1;
 }
 .z-copy { background: white; color: black; }
 .z-pay { background: var(--primary); color: black; }
 .close-scan {
-    margin-top: 25px;
-    background: var(--secondary);
-    color: white;
-    border: none;
-    padding: 10px 40px;
-    border-radius: 50px;
-    font-weight: bold;
-    cursor: pointer;
+    margin-top: 25px; background: var(--secondary); color: white; border: none; padding: 10px 40px; border-radius: 50px; font-weight: bold; cursor: pointer;
 }
 
-/* --- Original CSS --- */
+/* --- Header & Boxes --- */
 .header { background: rgba(22, 27, 34, 0.95); padding: 15px; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--primary); color: var(--primary); backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(0,242,255,0.3); position: sticky; top: 0; z-index: 1000; }
 .logo-top { position: absolute; top: 8px; left: 15px; width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 10px var(--primary); background: white; }
 
@@ -99,16 +87,15 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .upi-id-text { font-weight: bold; color: var(--primary); font-size: 15px; }
 .copy-btn-small { font-size: 10px; background: var(--primary); color: black; padding: 2px 8px; border-radius: 5px; margin-left: 10px; font-weight: bold; }
 
+/* --- History Styles --- */
 .history-box { margin: 15px; padding: 15px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass); text-align: left; }
 .history-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; }
 .history-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 .history-details { font-size: 11px; color: #8b949e; margin-top: 2px; }
 
-.history-pending { color: #fccf31; text-shadow: 0 0 5px #fccf31; }
-.history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
-.history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
-
-.reject-msg { color: #ff7675; font-size: 10px; margin-top: 5px; background: rgba(231, 76, 60, 0.1); padding: 4px 8px; border-radius: 4px; border-left: 2px solid #e74c3c; }
+.history-pending { color: #fccf31; text-shadow: 0 0 5px #fccf31; font-weight: bold; }
+.history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; font-weight: bold; }
+.history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; font-weight: bold; }
 
 .bet-popup { 
     position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
@@ -169,7 +156,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
         <h3 style="color:var(--primary); font-size: 14px; margin-top:0;">WITHDRAWAL REQUEST</h3>
         <p style="font-size:10px; color:#8b949e;">Min: ₹110 | Max: Your Winning Amount</p>
         <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:15px;">
-            <span style="font-size:11px; display:block; opacity:0.7;">WITHDRAWABLE AMOUNT</span>
+            <span style="font-size:11px; display:block; opacity:0.7;">AVAILABLE FOR WITHDRAWAL</span>
             <span style="color:var(--primary); font-weight:bold;">₹ <span id="wWinning">0.00</span></span>
         </div>
         <input type="number" id="wamt" placeholder="Enter Amount">
@@ -185,40 +172,25 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
                 <span class="pkg-amt">₹100</span>
                 <span class="pkg-bonus">+20% BONUS</span>
             </div>
-            <div class="pkg-card" onclick="selectPkg(200)">
-                <span class="pkg-amt">₹200</span>
-                <span class="pkg-bonus">+25% BONUS</span>
-            </div>
-            <div class="pkg-card" onclick="selectPkg(300)">
-                <span class="pkg-amt">₹300</span>
-                <span class="pkg-bonus">+30% BONUS</span>
-            </div>
             <div class="pkg-card" onclick="selectPkg(500)">
                 <span class="pkg-amt">₹500</span>
                 <span class="pkg-bonus">+50% BONUS</span>
             </div>
         </div>
-        
-        <p style="font-size: 10px; color: var(--primary); margin-bottom: 5px;">Click scanner to zoom</p>
         <img src="ui.png" onclick="openScanner()" style="width:140px; border:2px solid white; border-radius:10px; margin:5px 0; cursor: zoom-in;">
-        
         <div class="upi-copy-box" onclick="payViaUPI()">
-            <span style="display:block; font-size:10px; opacity:0.8; margin-bottom:5px;">TAP TO PAY OR COPY UPI</span>
-            <span class="upi-id-text" id="upiToCopy">4449winkumar@fam</span>
+            <span class="upi-id-text">4449winkumar@fam</span>
             <span class="copy-btn-small" onclick="copyUPI(event)">COPY</span>
         </div>
-
         <input type="number" id="amt" placeholder="Amount" oninput="calculatePreview()">
         <input type="text" id="utr" placeholder="12 Digit UTR Number">
         <button class="btn btn-submit" onclick="sendDeposit()" style="background:var(--secondary);">Submit Deposit</button>
-        <div id="totalDisplay">Final Amount to Receive: ₹ <span id="finalAmtVal">0</span></div>
+        <div id="totalDisplay">Final Amount: ₹ <span id="finalAmtVal">0</span></div>
     </div>
 
     <div class="history-box" id="historyMain" style="display:none;">
         <h3 id="historyTitle" style="color:var(--primary); font-size: 12px; margin-top:0; border-bottom:1px solid var(--glass); padding-bottom:10px;">HISTORY</h3>
-        <div id="historyList">
-            <p style="font-size:12px; opacity:0.5; text-align:center;">Loading history...</p>
-        </div>
+        <div id="historyList"></div>
     </div>
 
     <div class="bet-popup" id="popupMessage"></div>
@@ -241,13 +213,11 @@ let wBalance = 0;
 onAuthStateChanged(auth, user => {
     if(user) {
         currentUser = user.uid;
-        // Real-time snapshot taaki balance turant update ho
         onSnapshot(doc(db, "users", user.uid), snap => {
             if(snap.exists()) {
                 let data = snap.data();
                 mBalance = data.balance || 0;
                 wBalance = data.winning || 0;
-                // Total Balance dikhayenge
                 document.getElementById("balance").innerText = "₹ " + (mBalance + wBalance).toFixed(2);
                 document.getElementById("winningBalance").innerText = wBalance.toFixed(2);
                 document.getElementById("wWinning").innerText = wBalance.toFixed(2);
@@ -265,18 +235,14 @@ function showPopup(msg) {
 window.copyUPI = (e) => { e.stopPropagation(); navigator.clipboard.writeText("4449winkumar@fam"); showPopup("UPI ID Copied!"); };
 window.payViaUPI = () => { let amt = document.getElementById("amt").value || "0"; window.location.href = `upi://pay?pa=4449winkumar@fam&pn=4449WIN&am=${amt}&cu=INR`; };
 window.selectPkg = (val) => { document.getElementById("amt").value = val; calculatePreview(); };
+window.openScanner = () => { document.getElementById("scannerOverlay").style.display = "flex"; };
+window.closeScanner = () => { document.getElementById("scannerOverlay").style.display = "none"; };
 
 window.calculatePreview = () => {
     let amt = parseInt(document.getElementById("amt").value) || 0;
-    let bonus = 0;
-    if(amt >= 1000) bonus = amt * 0.50;
-    else if(amt >= 500) bonus = amt * 0.50;
-    else if(amt >= 300) bonus = amt * 0.30;
-    else if(amt >= 200) bonus = amt * 0.25;
-    else if(amt >= 100) bonus = amt * 0.20;
-    let total = amt + bonus;
+    let bonus = amt >= 500 ? amt * 0.5 : (amt >= 100 ? amt * 0.2 : 0);
     let display = document.getElementById("totalDisplay");
-    if(amt > 0) { display.style.display = "block"; document.getElementById("finalAmtVal").innerText = total; }
+    if(amt > 0) { display.style.display = "block"; document.getElementById("finalAmtVal").innerText = (amt + bonus); }
     else { display.style.display = "none"; }
 };
 
@@ -291,14 +257,14 @@ window.sendWithdraw = async () => {
     if(amt > wBalance) return showPopup("Insufficient Winning Balance!");
 
     try {
-        // Winning balance se amount deduct hogi
-        let newWinning = wBalance - amt;
-        await updateDoc(doc(db, "users", currentUser), { winning: newWinning });
-        
         await addDoc(collection(db, "withdrawRequests"), {
             user: currentUser, amount: amt, upi: upi, status: "pending", createdAt: serverTimestamp(), time: Date.now() 
         });
-        showPopup("Request Sent!");
+        // Important: Deduction withdrawal approve hone par Admin panel se bhi kar sakte ho, 
+        // par user ko instantly balance kam dikhana hai to ye line rakho:
+        await updateDoc(doc(db, "users", currentUser), { winning: wBalance - amt });
+        
+        showPopup("Request Sent to Admin!");
         document.getElementById("wamt").value = "";
     } catch (e) { showPopup("Error occurred!"); }
 };
@@ -306,19 +272,14 @@ window.sendWithdraw = async () => {
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
-    if(!amt || !utr) return showPopup("Enter Amount & UTR!");
-    let bonus = 0;
-    if(amt >= 1000) bonus = amt * 0.50;
-    else if(amt >= 500) bonus = amt * 0.50;
-    else if(amt >= 300) bonus = amt * 0.30;
-    else if(amt >= 200) bonus = amt * 0.25;
-    else if(amt >= 100) bonus = amt * 0.20;
+    if(!amt || !utr || utr.length < 10) return showPopup("Enter Valid 12 Digit UTR!");
+    let bonus = amt >= 500 ? amt * 0.5 : (amt >= 100 ? amt * 0.2 : 0);
     
     try {
         await addDoc(collection(db, "depositRequests"), {
             user: currentUser, amount: (amt + bonus), utr: utr, status: "pending", createdAt: serverTimestamp(), time: Date.now()
         });
-        showPopup("Deposit Sent!");
+        showPopup("Deposit Sent to Admin!");
         document.getElementById("amt").value = ""; document.getElementById("utr").value = "";
     } catch (e) { showPopup("Error!"); }
 };
@@ -329,14 +290,24 @@ async function loadHistory(colName, title, themeColor) {
     document.getElementById("historyMain").style.display = "block";
     hTitle.innerText = title; hTitle.style.color = themeColor;
     container.innerHTML = "Loading...";
+
     try {
-        const q = query(collection(db, colName), where("user", "==", currentUser), orderBy("createdAt", "desc"), limit(10));
+        // Simple query without complex orderBy to avoid Indexing error
+        const q = query(collection(db, colName), where("user", "==", currentUser));
         const snap = await getDocs(q);
+        
         container.innerHTML = "";
-        if(snap.empty) container.innerHTML = "No Records Found.";
-        snap.forEach(d => {
-            let data = d.data();
+        if(snap.empty) { container.innerHTML = "No Records Found."; return; }
+
+        let docsArr = [];
+        snap.forEach(d => { docsArr.push({ ...d.data() }); });
+        
+        // Manual sorting by time
+        docsArr.sort((a, b) => (b.time || 0) - (a.time || 0));
+
+        docsArr.forEach(data => {
             let status = data.status || "pending";
+            let date = data.createdAt ? data.createdAt.toDate().toLocaleString() : "Just now";
             container.innerHTML += `
                 <div class="history-item">
                     <div class="history-row">
@@ -344,10 +315,10 @@ async function loadHistory(colName, title, themeColor) {
                         <span class="history-${status}">${status.toUpperCase()}</span>
                     </div>
                     <div class="history-details">${data.upi ? 'UPI: '+data.upi : 'UTR: '+data.utr}</div>
-                    <div class="history-details" style="opacity:0.4;">${data.createdAt ? data.createdAt.toDate().toLocaleString() : ''}</div>
+                    <div class="history-details" style="opacity:0.4;">${date}</div>
                 </div>`;
         });
-    } catch (e) { console.log(e); }
+    } catch (e) { console.error(e); container.innerHTML = "Error loading history."; }
 }
 </script>
 </body>
