@@ -108,6 +108,9 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
 .history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
 
+/* NEW REASON STYLE */
+.reject-msg { color: #ff7675; font-size: 10px; margin-top: 5px; background: rgba(231, 76, 60, 0.1); padding: 4px 8px; border-radius: 4px; border-left: 2px solid #e74c3c; }
+
 .bet-popup { 
     position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
     background: var(--secondary); color: white; padding: 12px 25px; 
@@ -228,7 +231,6 @@ const db = getFirestore(app);
 let currentUser = "";
 let balance = 0;
 
-// Zoom Functions
 window.openScanner = () => { document.getElementById("scannerOverlay").style.display = "flex"; };
 window.closeScanner = () => { document.getElementById("scannerOverlay").style.display = "none"; };
 
@@ -368,6 +370,12 @@ async function loadHistory(colName, title, themeColor) {
             let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
             let status = d.status || "pending";
             let subDetail = d.upi ? `UPI: ${d.upi}` : `UTR: ${d.utr}`;
+            
+            // --- YE HAI REASON WALA LOGIC (SAFE) ---
+            let reasonHtml = (status === "rejected" && d.reason) 
+                             ? `<div class="reject-msg">Reason: ${d.reason}</div>` 
+                             : "";
+
             let div = document.createElement("div");
             div.className = "history-item";
             div.innerHTML = `
@@ -376,6 +384,7 @@ async function loadHistory(colName, title, themeColor) {
                     <span class="history-${status}" style="font-size:11px; font-weight:bold; letter-spacing:1px;">${status.toUpperCase()}</span>
                 </div>
                 <div class="history-details">${subDetail}</div>
+                ${reasonHtml}
                 <div class="history-details" style="opacity:0.4;">${date}</div>
             `;
             container.appendChild(div);
