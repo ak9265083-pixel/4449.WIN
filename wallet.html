@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4449 WIN - Wallet</title>
 
 <style>
@@ -108,7 +108,6 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .history-approved { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }
 .history-rejected { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
 
-/* NEW REASON STYLE */
 .reject-msg { color: #ff7675; font-size: 10px; margin-top: 5px; background: rgba(231, 76, 60, 0.1); padding: 4px 8px; border-radius: 4px; border-left: 2px solid #e74c3c; }
 
 .bet-popup { 
@@ -121,6 +120,18 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 .bet-popup.active { top: 30px; }
 
 #totalDisplay { margin-top: 10px; font-size: 14px; font-weight: bold; color: #00ffaa; display: none; }
+
+/* WINNING UI ADDED */
+.winning-badge {
+    background: rgba(0, 255, 170, 0.1);
+    border: 1px solid #00ffaa;
+    color: #00ffaa;
+    font-size: 12px;
+    padding: 5px 15px;
+    border-radius: 50px;
+    display: inline-block;
+    margin-top: 10px;
+}
 </style>
 </head>
 
@@ -145,8 +156,9 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
     </div>
 
     <div class="box">
-        <span style="font-size: 11px; opacity: 0.6; letter-spacing: 2px;">WALLET BALANCE</span>
+        <span style="font-size: 11px; opacity: 0.6; letter-spacing: 2px;">TOTAL BALANCE</span>
         <span id="balance">₹ 0.00</span>
+        <div class="winning-badge">Winning: ₹ <span id="winningBalance">0.00</span></div>
     </div>
 
     <div style="display: flex; justify-content: center; padding: 0 10px;">
@@ -156,7 +168,11 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 
     <div id="withdrawBox" class="box" style="display:none; border-color: var(--primary);">
         <h3 style="color:var(--primary); font-size: 14px; margin-top:0;">WITHDRAWAL REQUEST</h3>
-        <p style="font-size:10px; color:#8b949e;">Minimum Withdrawal: ₹110</p>
+        <p style="font-size:10px; color:#8b949e;">Min: ₹110 | Max: Your Winning Amount</p>
+        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:15px;">
+            <span style="font-size:11px; display:block; opacity:0.7;">WITHDRAWABLE AMOUNT</span>
+            <span style="color:var(--primary); font-weight:bold;">₹ <span id="wWinning">0.00</span></span>
+        </div>
         <input type="number" id="wamt" placeholder="Enter Amount">
         <input type="text" id="upi" placeholder="Enter UPI ID">
         <button class="btn btn-submit" onclick="sendWithdraw()">Confirm Withdrawal</button>
@@ -230,6 +246,7 @@ const db = getFirestore(app);
 
 let currentUser = "";
 let balance = 0;
+let winning = 0; // Winning Balance Variable
 
 window.openScanner = () => { document.getElementById("scannerOverlay").style.display = "flex"; };
 window.closeScanner = () => { document.getElementById("scannerOverlay").style.display = "none"; };
@@ -240,8 +257,12 @@ onAuthStateChanged(auth, async (user) => {
         const ref = doc(db, "users", user.uid);
         const snap = await getDoc(ref);
         if(snap.exists()) {
-            balance = snap.data().balance || 0;
+            let data = snap.data();
+            balance = data.balance || 0;
+            winning = data.winning || 0;
             document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
+            document.getElementById("winningBalance").innerText = winning.toFixed(2);
+            document.getElementById("wWinning").innerText = winning.toFixed(2);
         }
     }
 });
@@ -295,6 +316,7 @@ window.showDeposit = () => {
 window.showWithdraw = () => { 
     document.getElementById("withdrawBox").style.display = "block"; 
     document.getElementById("depositBox").style.display = "none"; 
+    document.getElementById("wWinning").innerText = winning.toFixed(2);
     loadHistory("withdrawRequests", "WITHDRAWAL HISTORY", "var(--primary)");
 };
 
@@ -303,15 +325,25 @@ window.sendWithdraw = async () => {
     let upi = document.getElementById("upi").value;
     if(!amt || !upi) return showPopup("Please enter all details!");
     if(amt < 110) return showPopup("Minimum Withdrawal ₹110");
-    if(amt > balance) return showPopup("Insufficient Credits!");
+    
+    // --- WINNING CHECK LOGIC ---
+    if(amt > winning) return showPopup("Your Winning Balance is low!");
 
     try {
         balance -= amt;
+        winning -= amt; // Winning se bhi katega
         document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
-        await updateDoc(doc(db, "users", currentUser), { balance: balance });
+        document.getElementById("winningBalance").innerText = winning.toFixed(2);
+        
+        await updateDoc(doc(db, "users", currentUser), { 
+            balance: balance,
+            winning: winning
+        });
+        
         await addDoc(collection(db, "withdrawRequests"), {
             user: currentUser, amount: amt, upi: upi, status: "pending", createdAt: serverTimestamp(), time: Date.now() 
         });
+        
         showPopup("Withdrawal Sent Successfully!");
         document.getElementById("wamt").value = "";
         document.getElementById("upi").value = "";
@@ -371,7 +403,6 @@ async function loadHistory(colName, title, themeColor) {
             let status = d.status || "pending";
             let subDetail = d.upi ? `UPI: ${d.upi}` : `UTR: ${d.utr}`;
             
-            // --- YE HAI REASON WALA LOGIC (SAFE) ---
             let reasonHtml = (status === "rejected" && d.reason) 
                              ? `<div class="reject-msg">Reason: ${d.reason}</div>` 
                              : "";
