@@ -98,10 +98,7 @@ table { width: 100%; border-collapse: collapse; }
 th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
 td { padding: 12px; border-bottom: 1px solid var(--glass); font-size: 14px; }
 
-.ref-badge { 
-    background: rgba(255, 0, 122, 0.1); color: var(--secondary); 
-    padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;
-}
+.win-text { color: var(--success); font-size: 11px; font-weight: bold; display: block; margin-top: 2px; }
 
 .edit-btn { background: var(--primary); color: black; border:none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor:pointer; }
 .del-btn { background: var(--secondary); color: white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer; font-weight: bold; }
@@ -173,7 +170,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
             <input type="text" id="userSearch" class="search-box" placeholder="Search User..." oninput="filterUsers()">
             <div style="overflow-x:auto;">
                 <table id="userTable">
-                    <thead><tr><th>Status</th><th>User Info</th><th>Balance</th><th>Refers</th><th>Action</th></tr></thead>
+                    <thead><tr><th>Status</th><th>User Info</th><th>Balance & Win</th><th>Action</th></tr></thead>
                     <tbody id="userTableBody"></tbody>
                 </table>
             </div>
@@ -268,10 +265,12 @@ onSnapshot(collection(db, "users"), async (snap) => {
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
             <td><small>${u.email || uid}</small><br><small style="color:var(--primary)">${uid}</small></td>
-            <td>₹${u.balance || 0}</td>
-            <td><span class="ref-badge">Refs</span></td>
             <td>
-                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance})">Edit</button>
+                <b>₹${u.balance || 0}</b>
+                <span class="win-text">Win: ₹${u.winning || 0}</span>
+            </td>
+            <td>
+                <button class="edit-btn" onclick="editBalanceWin('${uid}', ${u.balance || 0}, ${u.winning || 0})">Edit</button>
                 <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
             </td>
         </tr>`;
@@ -279,36 +278,20 @@ onSnapshot(collection(db, "users"), async (snap) => {
     document.getElementById("activeUsers").innerText = online;
 });
 
-// REJECT WITH REASON + REFUND LOGIC (UPDATED)
-window.rejectWithReason = async (coll, id) => {
-    let reason = prompt("Enter rejection reason (e.g. Wrong UPI, Play more games):");
-    if(reason === null) return; 
-    if(reason === "") reason = "Request Rejected by Admin";
+// Multi-Edit Logic
+window.editBalanceWin = async (uid, oldBal, oldWin) => {
+    let nBal = prompt("Enter New MAIN Balance:", oldBal);
+    if(nBal === null) return;
+    
+    let nWin = prompt("Enter New WINNING Balance:", oldWin);
+    if(nWin === null) return;
 
     try {
-        const reqRef = doc(db, coll, id);
-        const reqSnap = await getDoc(reqRef);
-        
-        if (reqSnap.exists()) {
-            const reqData = reqSnap.data();
-            
-            // Refund only for withdrawals
-            if(coll === "withdrawRequests") {
-                const userRef = doc(db, "users", reqData.user);
-                const userSnap = await getDoc(userRef);
-                if(userSnap.exists()) {
-                    const currentBal = Number(userSnap.data().balance || 0);
-                    const refundAmt = Number(reqData.amount || 0);
-                    await updateDoc(userRef, { balance: currentBal + refundAmt });
-                }
-            }
-
-            await updateDoc(reqRef, { 
-                status: "rejected",
-                reason: reason 
-            });
-            alert("Rejected & Amount Refunded!");
-        }
+        await updateDoc(doc(db, "users", uid), { 
+            balance: parseInt(nBal), 
+            winning: parseInt(nWin) 
+        });
+        alert("Success: Both balances updated!");
     } catch(e) { alert("Error: " + e.message); }
 };
 
@@ -326,10 +309,6 @@ window.approveWithdraw = async (id, user, amt) => {
     await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
     alert("Withdrawal Approved!");
 };
-window.editBal = async (uid, old) => {
-    let n = prompt("New Balance", old);
-    if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
-};
 
 function listenRequests(coll, elementId, action) {
     onSnapshot(collection(db, coll), (snap) => {
@@ -338,9 +317,7 @@ function listenRequests(coll, elementId, action) {
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
-                // Determine which reject function to use
                 let rejectFn = coll === "withdrawRequests" ? `rejectWithReason('${coll}','${d.id}')` : `rejectRequest('${coll}','${d.id}')`;
-                
                 list.innerHTML += `<div class="item-request">
                     <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
                     <div>
@@ -352,6 +329,11 @@ function listenRequests(coll, elementId, action) {
         });
     });
 }
+window.rejectWithReason = async (coll, id) => {
+    let reason = prompt("Reason:");
+    if(reason === null) return;
+    await updateDoc(doc(db, coll, id), { status: "rejected", reason: reason });
+};
 window.rejectRequest = async (coll, id) => { if(confirm("Reject?")) await updateDoc(doc(db, coll, id), { status: "rejected" }); };
 
 listenRequests("depositRequests", "depositList", "approveDeposit");
