@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel | 4449 WIN</title>
 <style>
 :root { 
@@ -10,6 +10,7 @@
     --bg: #0b0e14; 
     --card-bg: #161b22; 
     --success: #2ecc71;
+    --violet: #9b59b6;
     --glass: rgba(255, 255, 255, 0.05);
 }
 
@@ -65,6 +66,20 @@ body {
     text-align: center; border-top: 4px solid var(--secondary); 
 }
 .stat b { font-size: 28px; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
+
+/* NEW: Bet Observer Styling */
+.bet-observer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+.bet-item { 
+    background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; 
+    border-left: 3px solid var(--primary); display: flex; justify-content: space-between; align-items: center;
+}
+.bet-val { color: var(--success); font-weight: bold; font-size: 14px; }
+.bet-per { color: var(--secondary); font-size: 11px; }
+
+.cat-header { 
+    grid-column: span 2; color: var(--primary); font-size: 12px; 
+    text-transform: uppercase; margin-top: 10px; border-bottom: 1px solid var(--glass); padding-bottom: 5px;
+}
 
 /* Result Buttons */
 .result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
@@ -129,6 +144,18 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
             <div class="stat">TOTAL USERS<br><b id="totalUsers">0</b></div>
             <div class="stat">ONLINE NOW<br><b id="activeUsers">0</b></div>
         </div>
+
+        <div class="card">
+            <h3 style="color:var(--primary); margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                📊 LIVE MARKET LOAD
+                <span id="totalBetAmount" style="color:var(--success); font-size:16px;">₹0</span>
+            </h3>
+            
+            <div id="betObserverList" class="bet-observer-grid">
+                <div class="bet-item" style="grid-column: span 2;"><span>Fetching real-time bets...</span></div>
+            </div>
+        </div>
+
         <div class="card">
             <h3 style="color:var(--primary)">🎯 CONTROL NEXT RESULT</h3>
             <div class="result-grid">
@@ -144,7 +171,7 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
     <div id="users" class="section">
         <div class="card">
             <h3>👥 USER DATABASE</h3>
-            <input type="text" id="userSearch" class="search-box" placeholder="Type User ID or Email to search..." oninput="filterUsers()">
+            <input type="text" id="userSearch" class="search-box" placeholder="Search User..." oninput="filterUsers()">
             <div style="overflow-x:auto;">
                 <table id="userTable">
                     <thead><tr><th>Status</th><th>User Info</th><th>Balance</th><th>Refers</th><th>Action</th></tr></thead>
@@ -181,17 +208,59 @@ window.showSection = function(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-bar .nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.currentTarget.classList.add('active');
+    if(event) event.currentTarget.classList.add('active');
 }
 
-// Result Setting
+// --- FULL BET OBSERVER LOGIC ---
+onSnapshot(collection(db, "bets"), (snap) => {
+    let dataPool = {
+        numbers: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0},
+        size: { "Big": 0, "Small": 0 },
+        color: { "Red": 0, "Green": 0, "Violet": 0 }
+    };
+    let totalAll = 0;
+
+    snap.forEach(doc => {
+        const b = doc.data();
+        const amt = Number(b.amount || 0);
+        totalAll += amt;
+
+        // Check if it's a number bet
+        if(b.number !== undefined) dataPool.numbers[b.number] += amt;
+        // Check if it's a size bet
+        if(b.size) dataPool.size[b.size] += amt;
+        // Check if it's a color bet
+        if(b.color) dataPool.color[b.color] += amt;
+    });
+
+    document.getElementById("totalBetAmount").innerText = "Total: ₹" + totalAll;
+    const list = document.getElementById("betObserverList");
+    list.innerHTML = "";
+
+    // Helper to render items
+    const renderBetItem = (label, val, total) => {
+        let p = total > 0 ? ((val/total)*100).toFixed(1) : 0;
+        return `<div class="bet-item"><span>${label}</span><div style="text-align:right"><div class="bet-val">₹${val}</div><div class="bet-per">${p}%</div></div></div>`;
+    };
+
+    // Render Categories
+    list.innerHTML += `<div class="cat-header">Numbers (0-9)</div>`;
+    for(let i=0; i<=9; i++) list.innerHTML += renderBetItem(`Num <b>${i}</b>`, dataPool.numbers[i], totalAll);
+
+    list.innerHTML += `<div class="cat-header">Size (Big/Small)</div>`;
+    list.innerHTML += renderBetItem("BIG", dataPool.size["Big"], totalAll);
+    list.innerHTML += renderBetItem("SMALL", dataPool.size["Small"], totalAll);
+
+    list.innerHTML += `<div class="cat-header">Colors</div>`;
+    list.innerHTML += renderBetItem("<span style='color:#ff4757'>RED</span>", dataPool.color["Red"], totalAll);
+    list.innerHTML += renderBetItem("<span style='color:#2ed573'>GREEN</span>", dataPool.color["Green"], totalAll);
+    list.innerHTML += renderBetItem("<span style='color:#a4b0be'>VIOLET</span>", dataPool.color["Violet"], totalAll);
+});
+
+// Original Result Setting
 window.setResult = async (num) => {
     try {
-        await setDoc(doc(db, "wingo", "result"), { 
-            number: num, 
-            time: Date.now(),
-            manual: true 
-        });
+        await setDoc(doc(db, "wingo", "result"), { number: num, time: Date.now(), manual: true });
         alert("Success: Next result fixed to " + num);
     } catch (e) { alert("Error: " + e.message); }
 };
@@ -199,117 +268,78 @@ window.setResult = async (num) => {
 // Search Logic
 window.filterUsers = function() {
     let input = document.getElementById("userSearch").value.toUpperCase();
-    let table = document.getElementById("userTableBody");
-    let tr = table.getElementsByTagName("tr");
+    let tr = document.getElementById("userTableBody").getElementsByTagName("tr");
     for (let i = 0; i < tr.length; i++) {
         let td = tr[i].getElementsByTagName("td")[1]; 
         if (td) {
             let txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(input) > -1) { tr[i].style.display = ""; } 
-            else { tr[i].style.display = "none"; }
+            tr[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
         }
     }
 }
 
-// Listeners & REFERRAL LOGIC
+// User & Refer Listener
 onSnapshot(collection(db, "users"), async (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = ""; let online = 0;
     document.getElementById("totalUsers").innerText = snap.size;
-    const usersData = [];
-    snap.forEach(d => usersData.push({id: d.id, ...d.data()}));
-
-    for (const u of usersData) {
+    
+    for (const d of snap.docs) {
+        const u = d.data();
+        const uid = d.id;
         const q = query(collection(db, "users"), where("invitedBy", "==", u.referralCode || "---"));
         const refSnap = await getDocs(q);
-        const refCount = refSnap.size;
-
-        if(refCount >= 10 && !u.referralBonusClaimed) {
-            await updateDoc(doc(db, "users", u.id), {
-                balance: (u.balance || 0) + 500,
-                referralBonusClaimed: true
-            });
-        }
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         if(isOnline) online++;
 
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
-            <td><small>${u.email || u.id}</small><br><small style="color:var(--primary)">${u.id}</small></td>
+            <td><small>${u.email || uid}</small><br><small style="color:var(--primary)">${uid}</small></td>
             <td>₹${u.balance || 0}</td>
-            <td><span class="ref-badge">${refCount} Refs</span></td>
+            <td><span class="ref-badge">${refSnap.size} Refs</span></td>
             <td>
-                <button class="edit-btn" onclick="editBal('${u.id}', ${u.balance})">Edit</button>
-                <button class="del-btn" onclick="deleteUser('${u.id}')">Delete</button>
+                <button class="edit-btn" onclick="editBal('${uid}', ${u.balance})">Edit</button>
+                <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
             </td>
         </tr>`;
     }
     document.getElementById("activeUsers").innerText = online;
-    filterUsers();
 });
 
-// DELETE USER PERMANENTLY
+// Functions for actions
 window.deleteUser = async (uid) => {
-    if(confirm("⚠ WARNING: Are you sure you want to PERMANENTLY delete user " + uid + "? This cannot be undone.")) {
-        try {
-            await deleteDoc(doc(db, "users", uid));
-            alert("User deleted successfully!");
-        } catch(e) {
-            alert("Error deleting user: " + e.message);
-        }
-    }
+    if(confirm("Delete user " + uid + "?")) await deleteDoc(doc(db, "users", uid));
 };
-
-// APPROVE DEPOSIT
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db,"users",user);
     const snap = await getDoc(ref);
     if(snap.exists()){
         await updateDoc(ref, {balance: (snap.data().balance || 0) + amt});
         await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
-        alert("Deposit Approved!");
+        alert("Approved!");
     }
 };
-
-// REJECT REQUEST (COMMON)
 window.rejectRequest = async (coll, id) => {
-    if(confirm("Are you sure you want to REJECT this request?")) {
-        try {
-            await updateDoc(doc(db, coll, id), { status: "rejected" });
-            alert("Request Rejected!");
-        } catch(e) { alert("Error: " + e.message); }
-    }
+    if(confirm("Reject?")) await updateDoc(doc(db, coll, id), { status: "rejected" });
 };
-
-// APPROVE WITHDRAW
 window.approveWithdraw = async (id, user, amt) => {
-    if(confirm("Mark this withdrawal as paid?")) {
-        try {
-            await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
-            alert("Withdrawal Approved!");
-        } catch(e) { alert("Error: " + e.message); }
-    }
+    await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
+    alert("Withdrawal Approved!");
 };
-
 window.editBal = async (uid, old) => {
-    let n = prompt("New Balance for " + uid, old);
-    if(n !== null && n !== "") await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
+    let n = prompt("New Balance", old);
+    if(n !== null) await updateDoc(doc(db, "users", uid), { balance: parseInt(n) });
 };
 
-// MODIFIED LISTENER FOR BOTH
 function listenRequests(coll, elementId, action) {
     onSnapshot(collection(db, coll), (snap) => {
         const list = document.getElementById(elementId);
         list.innerHTML = "";
-        if(snap.empty) { list.innerHTML = "No requests found."; return; }
-        
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
-                let info = data.upi ? `<br><small style="color:var(--secondary)">UPI: ${data.upi}</small>` : (data.utr ? `<br><small style="color:var(--primary)">UTR: ${data.utr}</small>` : "");
-                
                 list.innerHTML += `<div class="item-request">
-                    <div><b>₹${data.amount}</b><br><small>${data.user}</small>${info}</div>
+                    <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
                     <div>
                         <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
                         <button class="rej-btn" onclick='rejectRequest("${coll}","${d.id}")'>Reject</button>
@@ -317,11 +347,9 @@ function listenRequests(coll, elementId, action) {
                 </div>`;
             }
         });
-        if(list.innerHTML === "") list.innerHTML = "No pending requests.";
     });
 }
 
-// Start Listeners
 listenRequests("depositRequests", "depositList", "approveDeposit");
 listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
 
@@ -330,15 +358,12 @@ onSnapshot(collection(db, "tickets"), (snap) => {
     list.innerHTML = "";
     snap.forEach(d => {
         const t = d.data();
-        list.innerHTML += `<div class="item-request" style="flex-direction:column; align-items:flex-start;">
-            <p><b>User:</b> ${t.name} | <b>Message:</b> ${t.message}</p>
-            <button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button>
-        </div>`;
+        list.innerHTML += `<div class="item-request"><div><b>${t.name}:</b> ${t.message}</div><button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button></div>`;
     });
 });
 
 window.deleteDocData = async (coll, id) => {
-    if(confirm("Delete this?")) await deleteDoc(doc(db, coll, id));
+    if(confirm("Delete?")) await deleteDoc(doc(db, coll, id));
 };
 </script>
 </body>
