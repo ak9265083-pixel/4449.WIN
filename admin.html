@@ -36,6 +36,14 @@
         .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
         .card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
+        /* Search Box Styling */
+        .search-container { margin-bottom: 15px; position: relative; }
+        .search-input { 
+            width: 100%; padding: 12px 15px; background: #0b0e14; border: 1px solid var(--primary); 
+            border-radius: 10px; color: white; outline: none; box-sizing: border-box; font-size: 14px;
+        }
+        .search-input::placeholder { color: #555; }
+
         /* Table Styling */
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; color: var(--primary); font-size: 11px; text-transform: uppercase; padding: 12px; border-bottom: 1px solid var(--glass); }
@@ -136,6 +144,11 @@
     <div id="users" class="section">
         <div class="card">
             <h3 style="color:var(--primary)">👥 USER MANAGEMENT</h3>
+            
+            <div class="search-container">
+                <input type="text" id="userSearch" class="search-input" placeholder="Search by UID or Email..." onkeyup="filterUsers()">
+            </div>
+
             <div style="overflow-x:auto;">
                 <table>
                     <thead>
@@ -168,6 +181,22 @@ import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, d
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Search Functionality
+window.filterUsers = () => {
+    let input = document.getElementById("userSearch").value.toUpperCase();
+    let table = document.getElementById("userTableBody");
+    let rows = table.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        let textContent = rows[i].innerText.toUpperCase();
+        if (textContent.indexOf(input) > -1) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+};
 
 // Navigation
 window.showSection = (id) => {
@@ -205,6 +234,8 @@ onSnapshot(collection(db, "users"), (snap) => {
             </td>
         </tr>`;
     });
+    // Re-filter if search input has value
+    filterUsers();
 });
 
 // MODAL CONTROLS
