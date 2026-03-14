@@ -172,7 +172,6 @@ onAuthStateChanged(auth, user => {
           mBalance=data.balance||0; 
           wBalance=data.winning||0;
           firstBetDone = data.firstBetDone || false;
-          // UI me total dikhayenge
           document.getElementById("balance").innerText="₹ " + (mBalance + wBalance).toFixed(2); 
           document.getElementById("myReferCode").innerText = data.referralCode || user.uid.substring(0,6).toUpperCase();
       }
@@ -194,23 +193,24 @@ window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="no
 window.setBetAmt=(a)=>{ document.getElementById("betInput").value=a; }
 window.multiplyAmt=(m)=>{ let val=parseInt(document.getElementById("betInput").value)||10; document.getElementById("betInput").value=val*m; }
 
-// --- FIXED BET DEDUCTION LOGIC ---
+// --- UPDATED BET DEDUCTION LOGIC (DEPOSIT FIRST) ---
 window.placeBet=async()=>{
   let amt=parseInt(document.getElementById("betInput").value);
   let totalFunds = mBalance + wBalance;
   
   if(totalFunds < amt || amt <= 0){ alert("Inadequate Credits!"); return; }
   
-  // Naya Logic: Winning se pehle kaato
-  let newWBal = wBalance;
   let newMBal = mBalance;
+  let newWBal = wBalance;
 
-  if (newWBal >= amt) {
-      newWBal -= amt;
+  // Pehle Main Balance (Deposit/Bonus) se kaato
+  if (newMBal >= amt) {
+      newMBal -= amt;
   } else {
-      let remaining = amt - newWBal;
-      newWBal = 0;
-      newMBal -= remaining;
+      // Agar mBalance kam hai, toh bacha hua Winning se kaato
+      let remaining = amt - newMBal;
+      newMBal = 0;
+      newWBal -= remaining;
   }
   
   activeBets.push({ choice: selectedValue, amount: amt });
@@ -251,10 +251,16 @@ async function processResult(){
         let wonAnyBet = false;
 
         activeBets.forEach(bet => {
-            let isWin = (bet.choice === result || bet.choice === color || bet.choice === bs.toLowerCase());
+            let isWin = false;
+            if (typeof bet.choice === 'number') { if (bet.choice === result) isWin = true; }
+            else if (bet.choice === color) isWin = true;
+            else if (bet.choice === bs.toLowerCase()) isWin = true;
+
             if(isWin) {
                 wonAnyBet = true;
-                let multiplier = (bet.choice === result) ? 9 : 2;
+                let multiplier = (typeof bet.choice === 'number') ? 9 : 2;
+                if (bet.choice === 'violet' && (result === 0 || result === 5)) multiplier = 4.5;
+                if ((result === 0 || result === 5) && (bet.choice === 'red' || bet.choice === 'green')) multiplier = 1.5;
                 totalWinAmount += (bet.amount * multiplier);
             }
         });
@@ -264,10 +270,7 @@ async function processResult(){
           const userSnap = await getDoc(userRef);
           if(userSnap.exists()){
               let currentWin = userSnap.data().winning || 0;
-              // Winning amount hamesha Winning wallet me jayegi
-              await updateDoc(userRef, { 
-                  winning: currentWin + totalWinAmount 
-              });
+              await updateDoc(userRef, { winning: currentWin + totalWinAmount });
               showUpgradedPopup(totalWinAmount, true, result, color, bs);
           }
         } else { 
