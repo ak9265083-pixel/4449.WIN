@@ -74,7 +74,7 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 <div class="app">
   <div class="header"><img src="logo.png" alt="Logo" class="header-logo"><span>4449 WIN</span></div>
   <div class="profile-card">
-    <p>Current Credits</p>
+    <p>Total Balance (Main + Win)</p>
     <h2 id="balance">₹ 0.00</h2>
     <div class="uid-box" onclick="copyUID()"><span>ID: <span id="displayUid">...</span></span><span style="color: var(--primary);">📋</span></div>
   </div>
@@ -147,7 +147,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let balance=0, userId="", activeBets=[], selectedValue=null, firstBetDone=false;
+let mBalance=0, wBalance=0, userId="", activeBets=[], selectedValue=null, firstBetDone=false;
 
 function updateTimer() {
     const remaining = 30 - (new Date().getSeconds() % 30);
@@ -169,9 +169,11 @@ onAuthStateChanged(auth, user => {
           if(data.currentSessionId && localSess && data.currentSessionId !== localSess){
               alert("Logged in on another device!"); logout(); return;
           }
-          balance=data.balance||0; 
+          mBalance=data.balance||0; 
+          wBalance=data.winning||0;
           firstBetDone = data.firstBetDone || false;
-          document.getElementById("balance").innerText="₹ " + balance.toFixed(2); 
+          // UI me total dikhayenge
+          document.getElementById("balance").innerText="₹ " + (mBalance + wBalance).toFixed(2); 
           document.getElementById("myReferCode").innerText = data.referralCode || user.uid.substring(0,6).toUpperCase();
       }
     });
@@ -192,16 +194,30 @@ window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="no
 window.setBetAmt=(a)=>{ document.getElementById("betInput").value=a; }
 window.multiplyAmt=(m)=>{ let val=parseInt(document.getElementById("betInput").value)||10; document.getElementById("betInput").value=val*m; }
 
+// --- FIXED BET DEDUCTION LOGIC ---
 window.placeBet=async()=>{
   let amt=parseInt(document.getElementById("betInput").value);
-  if(balance<amt || amt<=0){ alert("Inadequate Credits!"); return; }
+  let totalFunds = mBalance + wBalance;
+  
+  if(totalFunds < amt || amt <= 0){ alert("Inadequate Credits!"); return; }
+  
+  // Naya Logic: Winning se pehle kaato
+  let newWBal = wBalance;
+  let newMBal = mBalance;
+
+  if (newWBal >= amt) {
+      newWBal -= amt;
+  } else {
+      let remaining = amt - newWBal;
+      newWBal = 0;
+      newMBal -= remaining;
+  }
   
   activeBets.push({ choice: selectedValue, amount: amt });
   document.getElementById("betPopup").style.display="none";
 
   try {
-      balance-=amt; document.getElementById("balance").innerText="₹ "+balance.toFixed(2);
-      let updateData = { balance: balance };
+      let updateData = { balance: newMBal, winning: newWBal };
       if (amt >= 20 && !firstBetDone) { updateData.firstBetDone = true; }
       await updateDoc(doc(db,"users",userId), updateData);
   } catch(e) { 
@@ -248,9 +264,8 @@ async function processResult(){
           const userSnap = await getDoc(userRef);
           if(userSnap.exists()){
               let currentWin = userSnap.data().winning || 0;
-              balance += totalWinAmount; 
+              // Winning amount hamesha Winning wallet me jayegi
               await updateDoc(userRef, { 
-                  balance: balance,
                   winning: currentWin + totalWinAmount 
               });
               showUpgradedPopup(totalWinAmount, true, result, color, bs);
