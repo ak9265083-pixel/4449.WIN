@@ -71,6 +71,7 @@
         /* Control Buttons */
         .edit-btn { background: var(--primary); color: black; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor:pointer; margin-right: 5px; }
         .del-btn { background: var(--secondary); color: white; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor:pointer; }
+        .rej-btn { background: #ff4757; color: white; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor:pointer; }
         
         .result-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .result-grid button { padding: 15px; background: #0b0e14; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: bold; cursor: pointer; }
@@ -162,7 +163,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
@@ -218,47 +219,49 @@ window.closeModal = () => {
     document.getElementById('editModal').style.display = 'none';
 };
 
-// SAVE BUTTON LOGIC
 document.getElementById('saveBtn').onclick = async () => {
     const uid = document.getElementById('editUid').value;
     const newBal = parseInt(document.getElementById('editMainBal').value) || 0;
     const newWin = parseInt(document.getElementById('editWinBal').value) || 0;
-
     try {
-        await updateDoc(doc(db, "users", uid), {
-            balance: newBal,
-            winning: newWin
-        });
+        await updateDoc(doc(db, "users", uid), { balance: newBal, winning: newWin });
         closeModal();
-        alert("Balances updated successfully!");
-    } catch(e) { alert("Update failed: " + e.message); }
+        alert("Balances updated!");
+    } catch(e) { alert("Failed: " + e.message); }
 };
 
-// Actions
 window.deleteUser = async (uid) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, "users", uid)); };
 
-// Real-time Requests Logic
-function listenReq(coll, el, act) {
+// Generic Listener for Requests
+function listenReq(coll, el, approveAct, rejectAct) {
     onSnapshot(collection(db, coll), (snap) => {
         const list = document.getElementById(el);
         list.innerHTML = "";
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
-                list.innerHTML += `<div style="background:#0b0e14; padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--glass);">
-                    <div>
-                        <b style="color:var(--success)">₹${data.amount}</b><br>
-                        <small style="opacity:0.6;">User: ${data.user}</small><br>
-                        <small style="color:var(--primary)">${data.upi ? 'UPI: '+data.upi : 'UTR: '+data.utr}</small>
+                list.innerHTML += `
+                <div style="background:#0b0e14; padding:15px; border-radius:12px; margin-bottom:10px; border:1px solid var(--glass);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <b style="color:var(--success); font-size:18px;">₹${data.amount}</b><br>
+                            <small style="opacity:0.6;">User: ${data.user}</small>
+                        </div>
+                        <div>
+                            <button class="edit-btn" onclick="${approveAct}('${d.id}','${data.user}',${data.amount})">Approve</button>
+                            ${rejectAct ? `<button class="rej-btn" onclick="${rejectAct}('${d.id}','${data.user}',${data.amount})">Reject</button>` : ''}
+                        </div>
                     </div>
-                    <button class="edit-btn" onclick="${act}('${d.id}','${data.user}',${data.amount})">Approve</button>
+                    <div style="margin-top:10px; color:var(--primary); font-size:12px;">
+                        ${data.upi ? '<b>UPI:</b> '+data.upi : '<b>UTR:</b> '+data.utr}
+                    </div>
                 </div>`;
             }
         });
     });
 }
 
-// Deposit Approve
+// Handlers
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db, "users", user);
     const snap = await getDoc(ref);
@@ -269,18 +272,26 @@ window.approveDeposit = async (id, user, amt) => {
     }
 };
 
-// Withdrawal Approve 
 window.approveWithdraw = async (id, user, amt) => {
-    if(!confirm("Approve this withdrawal?")) return;
-    try {
-        await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
-        alert("Withdrawal Approved!");
-    } catch(e) { alert("Error: " + e.message); }
+    if(!confirm("Approve Withdrawal?")) return;
+    await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
+    alert("Withdrawal Approved!");
 };
 
-// START LISTENING
-listenReq("depositRequests", "depositList", "approveDeposit");
-listenReq("withdrawRequests", "withdrawList", "approveWithdraw");
+window.rejectWithdraw = async (id, user, amt) => {
+    if(!confirm("Reject & Refund Amount?")) return;
+    const ref = doc(db, "users", user);
+    const snap = await getDoc(ref);
+    if(snap.exists()) {
+        await updateDoc(ref, { winning: (snap.data().winning || 0) + amt });
+        await updateDoc(doc(db, "withdrawRequests", id), { status: "rejected" });
+        alert("Rejected & Refunded!");
+    }
+};
+
+// Start
+listenReq("depositRequests", "depositList", "approveDeposit", null);
+listenReq("withdrawRequests", "withdrawList", "approveWithdraw", "rejectWithdraw");
 
 </script>
 </body>
