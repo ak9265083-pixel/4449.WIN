@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-site-verification" content="8mGNrLs_MQIxb5axw0z2tFUpU4HSSktCEYAVg3vklU0" />
-    
+    <meta name="google-site-verification" content="8mGNrLs_MQIxb5axw0tFUpU4HSSktCEYAVg3vklU0" />
     <title>4449 WIN - Official Register & Gaming Portal</title>
-    <meta name="description" content="Register on 4449 WIN today. The official portal for online gaming and rewards. Create your account and start winning now!">
-    <meta name="keywords" content="4449 WIN, 4449 win register, 4449 win login, 4449 win official, online gaming portal">
-    <meta name="author" content="4449 WIN">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root { --primary: #00f2ff; --secondary: #ff007a; --bg: #0b0e14; --card-bg: #161b22; }
@@ -25,6 +20,7 @@
         .input-box:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
         .signup-btn { width: 100%; padding: 16px; border-radius: 12px; background: transparent; border: 1px solid var(--primary); color: var(--primary); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-bottom: 15px; }
         .signup-btn:hover { background: var(--primary); color: black; box-shadow: 0 0 20px var(--primary); }
+        .signup-btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
         .login-box { text-align: center; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 5px; }
         .login-text { font-size: 13px; color: #8b949e; }
         .login-link { color: var(--secondary); text-decoration: none; font-weight: bold; margin-left: 5px; transition: 0.3s; }
@@ -44,7 +40,7 @@
             <input type="password" class="input-box" id="password" placeholder="Enter password">
             <label>Invite Code (Auto-filled)</label>
             <input type="text" class="input-box" id="invite" placeholder="No code detected">
-            <button class="signup-btn" onclick="signup()">SIGN UP</button>
+            <button class="signup-btn" id="submitBtn" onclick="signup()">SIGN UP</button>
             <div class="login-box">
                 <span class="login-text">Already have an account?</span>
                 <a href="login.html" class="login-link">Login Now</a>
@@ -69,17 +65,20 @@
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
         const ref = params.get('ref');
-        if (ref) { 
-            document.getElementById("invite").value = ref.toUpperCase();
-        }
+        if (ref) { document.getElementById("invite").value = ref.toUpperCase(); }
     };
 
     window.signup = async function() {
+        const btn = document.getElementById("submitBtn");
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const inviteCode = document.getElementById("invite").value.trim().toUpperCase();
 
         if(!email || !password) { alert("Please fill details!"); return; }
+
+        // BUTTON DISABLE (Taaki double-click na ho)
+        btn.disabled = true;
+        btn.innerText = "PROCESSING...";
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -102,15 +101,9 @@
                 const usersRef = collection(db, "users");
                 const q = query(usersRef, where("referralCode", "==", inviteCode));
                 const querySnapshot = await getDocs(q);
-                
                 if (!querySnapshot.empty) {
                     const referrerDoc = querySnapshot.docs[0];
-                    await updateDoc(doc(db, "users", referrerDoc.id), {
-                        totalRefer: increment(1)
-                    });
-                    console.log("Referrer count updated for:", inviteCode);
-                } else {
-                    console.log("Invite code not found in DB");
+                    await updateDoc(doc(db, "users", referrerDoc.id), { totalRefer: increment(1) });
                 }
             }
 
@@ -118,8 +111,11 @@
             setTimeout(() => { window.location.href = "login.html"; }, 1500);
 
         } catch(err) { 
-            console.error("Signup Error:", err);
-            alert(err.message); 
+            console.error("Signup Error:", err.code);
+            alert(err.message);
+            // Error aane par button wapas chalu kar dena
+            btn.disabled = false;
+            btn.innerText = "SIGN UP";
         }
     }
 </script>
