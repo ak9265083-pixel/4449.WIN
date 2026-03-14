@@ -3,6 +3,11 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>4449 WIN </title>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b0e14">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 <style>
 :root { --primary: #00f2ff; --secondary: #ff007a; --big-color: #fccf31; --bg: #0b0e14; --card-bg: #161b22; --green: #2ecc71; --red: #e74c3c; --violet: #9b59b6; --glass: rgba(255, 255, 255, 0.05); }
 body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); display: flex; justify-content: center; color: white; }
@@ -68,6 +73,9 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .navBtn { display: flex; flex-direction: column; align-items: center; color: #8b949e; cursor: pointer; text-decoration: none; }
 .nav-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
 .disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+
+/* Download Pop-up Style (Added) */
+#install-banner { display: none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; background: #1c2333; border: 1px solid var(--primary); padding: 12px; border-radius: 15px; z-index: 10000; box-shadow: 0 5px 20px rgba(0,0,0,0.8); align-items: center; justify-content: space-between; }
 </style>
 </head>
 <body>
@@ -94,6 +102,19 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
   </div>
   <div class="history"><h4 style="margin:0 0 15px 0; color:var(--primary); font-size: 13px; text-transform: uppercase;">Live Game History</h4><div id="historyList"></div></div>
 </div>
+
+<div id="install-banner">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span onclick="document.getElementById('install-banner').style.display='none'" style="cursor:pointer; color:#8b949e; font-weight:bold; padding-right:5px;">✕</span>
+        <img src="icon-192.png" style="width: 35px; height: 35px; border-radius: 8px;">
+        <div>
+            <div style="color: var(--primary); font-weight: bold; font-size: 13px;">4449 WIN APP</div>
+            <div style="color: #fff; font-size: 10px;">Fast Gaming Experience</div>
+        </div>
+    </div>
+    <button id="install-button" style="background: var(--primary); color: #000; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px;">INSTALL</button>
+</div>
+
 <div class="bottomWallet">
   <div class="navBtn" onclick="location.href='refer.html'">📢<div class="nav-label">Refer</div></div>
   <div class="navBtn" onclick="location.href='wallet.html'">💳<div class="nav-label">Wallet</div></div>
@@ -193,7 +214,6 @@ window.closeBetPopup=()=>{ document.getElementById("betPopup").style.display="no
 window.setBetAmt=(a)=>{ document.getElementById("betInput").value=a; }
 window.multiplyAmt=(m)=>{ let val=parseInt(document.getElementById("betInput").value)||10; document.getElementById("betInput").value=val*m; }
 
-// --- UPDATED BET DEDUCTION LOGIC (DEPOSIT FIRST) ---
 window.placeBet=async()=>{
   let amt=parseInt(document.getElementById("betInput").value);
   let totalFunds = mBalance + wBalance;
@@ -203,11 +223,9 @@ window.placeBet=async()=>{
   let newMBal = mBalance;
   let newWBal = wBalance;
 
-  // Pehle Main Balance (Deposit/Bonus) se kaato
   if (newMBal >= amt) {
       newMBal -= amt;
   } else {
-      // Agar mBalance kam hai, toh bacha hua Winning se kaato
       let remaining = amt - newMBal;
       newMBal = 0;
       newWBal -= remaining;
@@ -308,5 +326,37 @@ window.copyUID = () => { navigator.clipboard.writeText(userId); alert("UID Copie
 window.copyReferCode = () => { navigator.clipboard.writeText(document.getElementById("myReferCode").innerText); alert("Code Copied!"); }
 window.logout=()=>{ signOut(auth).then(() => { localStorage.removeItem("user_session_id"); window.location.href="login.html"; }); }
 </script>
+
+<script>
+  let deferredPrompt;
+  const installBanner = document.getElementById('install-banner');
+  const installButton = document.getElementById('install-button');
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed', err));
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.style.display = 'flex';
+  });
+
+  installButton.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBanner.style.display = 'none';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBanner.style.display = 'none';
+  });
+</script>
+
 </body>
 </html>
