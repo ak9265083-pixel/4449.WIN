@@ -121,7 +121,6 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 
 #totalDisplay { margin-top: 10px; font-size: 14px; font-weight: bold; color: #00ffaa; display: none; }
 
-/* WINNING UI ADDED */
 .winning-badge {
     background: rgba(0, 255, 170, 0.1);
     border: 1px solid #00ffaa;
@@ -158,7 +157,7 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
     <div class="box">
         <span style="font-size: 11px; opacity: 0.6; letter-spacing: 2px;">TOTAL BALANCE</span>
         <span id="balance">₹ 0.00</span>
-        <div class="winning-badge">Winning: ₹ <span id="winningBalance">0.00</span></div>
+        <div class="winning-badge">Withdrawable: ₹ <span id="winningBalance">0.00</span></div>
     </div>
 
     <div style="display: flex; justify-content: center; padding: 0 10px;">
@@ -198,10 +197,6 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
                 <span class="pkg-amt">₹500</span>
                 <span class="pkg-bonus">+50% BONUS</span>
             </div>
-            <div class="pkg-card" onclick="selectPkg(1000)" style="grid-column: span 2; border-style: dashed; background: rgba(0, 242, 255, 0.05); border-color: var(--primary);">
-                <span class="pkg-amt">₹1000</span>
-                <span class="pkg-bonus">+50% PREMIUM BONUS</span>
-            </div>
         </div>
         
         <p style="font-size: 10px; color: var(--primary); margin-bottom: 5px;">Click scanner to zoom</p>
@@ -232,197 +227,128 @@ input { padding: 12px; width: 85%; background: #05070a; border: 1px solid rgba(0
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, getDocs, query, where, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A",
-    authDomain: "win2-512e1.firebaseapp.com",
-    projectId: "win2-512e1"
-};
-
+const firebaseConfig = { apiKey: "AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain: "win2-512e1.firebaseapp.com", projectId: "win2-512e1" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = "";
-let balance = 0;
-let winning = 0; // Winning Balance Variable
+let mBalance = 0;
+let wBalance = 0;
 
-window.openScanner = () => { document.getElementById("scannerOverlay").style.display = "flex"; };
-window.closeScanner = () => { document.getElementById("scannerOverlay").style.display = "none"; };
-
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, user => {
     if(user) {
         currentUser = user.uid;
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
-        if(snap.exists()) {
-            let data = snap.data();
-            balance = data.balance || 0;
-            winning = data.winning || 0;
-            document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
-            document.getElementById("winningBalance").innerText = winning.toFixed(2);
-            document.getElementById("wWinning").innerText = winning.toFixed(2);
-        }
-    }
+        // Real-time snapshot taaki balance turant update ho
+        onSnapshot(doc(db, "users", user.uid), snap => {
+            if(snap.exists()) {
+                let data = snap.data();
+                mBalance = data.balance || 0;
+                wBalance = data.winning || 0;
+                // Total Balance dikhayenge
+                document.getElementById("balance").innerText = "₹ " + (mBalance + wBalance).toFixed(2);
+                document.getElementById("winningBalance").innerText = wBalance.toFixed(2);
+                document.getElementById("wWinning").innerText = wBalance.toFixed(2);
+            }
+        });
+    } else { window.location.href="login.html"; }
 });
 
 function showPopup(msg) {
     let p = document.getElementById("popupMessage");
-    p.innerText = msg;
-    p.classList.add("active");
+    p.innerText = msg; p.classList.add("active");
     setTimeout(() => { p.classList.remove("active"); }, 3000);
 }
 
-window.copyUPI = (e) => {
-    e.stopPropagation();
-    let upiText = "4449winkumar@fam";
-    navigator.clipboard.writeText(upiText);
-    showPopup("UPI ID Copied!");
-};
-
-window.payViaUPI = () => {
-    let amt = document.getElementById("amt").value || "0";
-    let upiId = "4449winkumar@fam";
-    let url = `upi://pay?pa=${upiId}&pn=4449WIN&am=${amt}&cu=INR`;
-    window.location.href = url;
-};
-
-window.selectPkg = (val) => {
-    document.getElementById("amt").value = val;
-    window.calculatePreview();
-};
+window.copyUPI = (e) => { e.stopPropagation(); navigator.clipboard.writeText("4449winkumar@fam"); showPopup("UPI ID Copied!"); };
+window.payViaUPI = () => { let amt = document.getElementById("amt").value || "0"; window.location.href = `upi://pay?pa=4449winkumar@fam&pn=4449WIN&am=${amt}&cu=INR`; };
+window.selectPkg = (val) => { document.getElementById("amt").value = val; calculatePreview(); };
 
 window.calculatePreview = () => {
     let amt = parseInt(document.getElementById("amt").value) || 0;
     let bonus = 0;
-    if(amt === 100) bonus = amt * 0.20;
-    else if(amt === 200) bonus = amt * 0.25;
-    else if(amt === 300) bonus = amt * 0.30;
-    else if(amt === 500) bonus = amt * 0.50;
-    else if(amt === 1000) bonus = amt * 0.50;
+    if(amt >= 1000) bonus = amt * 0.50;
+    else if(amt >= 500) bonus = amt * 0.50;
+    else if(amt >= 300) bonus = amt * 0.30;
+    else if(amt >= 200) bonus = amt * 0.25;
+    else if(amt >= 100) bonus = amt * 0.20;
     let total = amt + bonus;
     let display = document.getElementById("totalDisplay");
     if(amt > 0) { display.style.display = "block"; document.getElementById("finalAmtVal").innerText = total; }
     else { display.style.display = "none"; }
 };
 
-window.showDeposit = () => { 
-    document.getElementById("depositBox").style.display = "block"; 
-    document.getElementById("withdrawBox").style.display = "none"; 
-    loadHistory("depositRequests", "DEPOSIT HISTORY", "var(--secondary)");
-};
-
-window.showWithdraw = () => { 
-    document.getElementById("withdrawBox").style.display = "block"; 
-    document.getElementById("depositBox").style.display = "none"; 
-    document.getElementById("wWinning").innerText = winning.toFixed(2);
-    loadHistory("withdrawRequests", "WITHDRAWAL HISTORY", "var(--primary)");
-};
+window.showDeposit = () => { document.getElementById("depositBox").style.display = "block"; document.getElementById("withdrawBox").style.display = "none"; loadHistory("depositRequests", "DEPOSIT HISTORY", "var(--secondary)"); };
+window.showWithdraw = () => { document.getElementById("withdrawBox").style.display = "block"; document.getElementById("depositBox").style.display = "none"; loadHistory("withdrawRequests", "WITHDRAWAL HISTORY", "var(--primary)"); };
 
 window.sendWithdraw = async () => {
     let amt = parseInt(document.getElementById("wamt").value);
     let upi = document.getElementById("upi").value;
-    if(!amt || !upi) return showPopup("Please enter all details!");
-    if(amt < 110) return showPopup("Minimum Withdrawal ₹110");
-    
-    // --- WINNING CHECK LOGIC ---
-    if(amt > winning) return showPopup("Your Winning Balance is low!");
+    if(!amt || !upi) return showPopup("Enter all details!");
+    if(amt < 110) return showPopup("Min Withdrawal ₹110");
+    if(amt > wBalance) return showPopup("Insufficient Winning Balance!");
 
     try {
-        balance -= amt;
-        winning -= amt; // Winning se bhi katega
-        document.getElementById("balance").innerText = "₹ " + balance.toFixed(2);
-        document.getElementById("winningBalance").innerText = winning.toFixed(2);
-        
-        await updateDoc(doc(db, "users", currentUser), { 
-            balance: balance,
-            winning: winning
-        });
+        // Winning balance se amount deduct hogi
+        let newWinning = wBalance - amt;
+        await updateDoc(doc(db, "users", currentUser), { winning: newWinning });
         
         await addDoc(collection(db, "withdrawRequests"), {
             user: currentUser, amount: amt, upi: upi, status: "pending", createdAt: serverTimestamp(), time: Date.now() 
         });
-        
-        showPopup("Withdrawal Sent Successfully!");
+        showPopup("Request Sent!");
         document.getElementById("wamt").value = "";
-        document.getElementById("upi").value = "";
-        showWithdraw(); 
-    } catch (e) { showPopup("Error: Check Connection"); }
+    } catch (e) { showPopup("Error occurred!"); }
 };
 
 window.sendDeposit = async () => {
     let amt = parseInt(document.getElementById("amt").value);
     let utr = document.getElementById("utr").value;
     if(!amt || !utr) return showPopup("Enter Amount & UTR!");
-    if(amt < 100) return showPopup("Minimum Deposit ₹100");
-
     let bonus = 0;
-    if(amt === 100) bonus = amt * 0.20;
-    else if(amt === 200) bonus = amt * 0.25;
-    else if(amt === 300) bonus = amt * 0.30;
-    else if(amt === 500) bonus = amt * 0.50;
-    else if(amt === 1000) bonus = amt * 0.50;
-    let finalAmount = amt + bonus;
-
+    if(amt >= 1000) bonus = amt * 0.50;
+    else if(amt >= 500) bonus = amt * 0.50;
+    else if(amt >= 300) bonus = amt * 0.30;
+    else if(amt >= 200) bonus = amt * 0.25;
+    else if(amt >= 100) bonus = amt * 0.20;
+    
     try {
         await addDoc(collection(db, "depositRequests"), {
-            user: currentUser, amount: finalAmount, utr: utr, status: "pending", createdAt: serverTimestamp(), time: Date.now()
+            user: currentUser, amount: (amt + bonus), utr: utr, status: "pending", createdAt: serverTimestamp(), time: Date.now()
         });
-        showPopup("Deposit Request Sent!");
-        document.getElementById("amt").value = "";
-        document.getElementById("utr").value = "";
-        document.getElementById("totalDisplay").style.display = "none";
-        showDeposit(); 
-    } catch (e) { showPopup("Error submitting deposit"); }
+        showPopup("Deposit Sent!");
+        document.getElementById("amt").value = ""; document.getElementById("utr").value = "";
+    } catch (e) { showPopup("Error!"); }
 };
 
 async function loadHistory(colName, title, themeColor) {
-    const historyMain = document.getElementById("historyMain");
     const container = document.getElementById("historyList");
     const hTitle = document.getElementById("historyTitle");
-    historyMain.style.display = "block";
-    hTitle.innerText = title;
-    hTitle.style.color = themeColor;
-    container.innerHTML = "<p style='font-size:12px; opacity:0.5; text-align:center;'>Loading...</p>";
+    document.getElementById("historyMain").style.display = "block";
+    hTitle.innerText = title; hTitle.style.color = themeColor;
+    container.innerHTML = "Loading...";
     try {
-        const snap = await getDocs(collection(db, colName));
-        let docsArray = [];
+        const q = query(collection(db, colName), where("user", "==", currentUser), orderBy("createdAt", "desc"), limit(10));
+        const snap = await getDocs(q);
+        container.innerHTML = "";
+        if(snap.empty) container.innerHTML = "No Records Found.";
         snap.forEach(d => {
             let data = d.data();
-            if(data.user === currentUser) docsArray.push(data);
-        });
-        if (docsArray.length === 0) {
-            container.innerHTML = "<p style='font-size:12px; opacity:0.4; text-align:center;'>No records found.</p>";
-            return;
-        }
-        docsArray.sort((a, b) => (b.time || 0) - (a.time || 0));
-        container.innerHTML = "";
-        docsArray.forEach(d => {
-            let date = d.createdAt ? d.createdAt.toDate().toLocaleString() : "Processing...";
-            let status = d.status || "pending";
-            let subDetail = d.upi ? `UPI: ${d.upi}` : `UTR: ${d.utr}`;
-            
-            let reasonHtml = (status === "rejected" && d.reason) 
-                             ? `<div class="reject-msg">Reason: ${d.reason}</div>` 
-                             : "";
-
-            let div = document.createElement("div");
-            div.className = "history-item";
-            div.innerHTML = `
-                <div class="history-row">
-                    <span style="font-weight:900; color:white; font-size:16px;">₹${d.amount}</span>
-                    <span class="history-${status}" style="font-size:11px; font-weight:bold; letter-spacing:1px;">${status.toUpperCase()}</span>
-                </div>
-                <div class="history-details">${subDetail}</div>
-                ${reasonHtml}
-                <div class="history-details" style="opacity:0.4;">${date}</div>
-            `;
-            container.appendChild(div);
+            let status = data.status || "pending";
+            container.innerHTML += `
+                <div class="history-item">
+                    <div class="history-row">
+                        <span style="font-weight:900; font-size:16px;">₹${data.amount}</span>
+                        <span class="history-${status}">${status.toUpperCase()}</span>
+                    </div>
+                    <div class="history-details">${data.upi ? 'UPI: '+data.upi : 'UTR: '+data.utr}</div>
+                    <div class="history-details" style="opacity:0.4;">${data.createdAt ? data.createdAt.toDate().toLocaleString() : ''}</div>
+                </div>`;
         });
     } catch (e) { console.log(e); }
 }
 </script>
-
 </body>
 </html>
