@@ -74,11 +74,38 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
 .nav-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
 .disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 
-/* Download Pop-up Style (Added) */
+/* Welcome Animation Styles */
+#welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0e14; z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease-out; }
+.welcome-logo { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #00f2ff; box-shadow: 0 0 30px #00f2ff; animation: welcomePulse 2s infinite; }
+.welcome-text { color: #00f2ff; margin-top: 25px; font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; animation: neonText 1.5s ease-in-out infinite alternate; text-align: center; }
+@keyframes welcomePulse { 0% { transform: scale(1); box-shadow: 0 0 20px #00f2ff; } 50% { transform: scale(1.05); box-shadow: 0 0 40px #00f2ff; } 100% { transform: scale(1); box-shadow: 0 0 20px #00f2ff; } }
+@keyframes neonText { from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #00f2ff; } to { text-shadow: 0 0 10px #fff, 0 0 20px #ff007a, 0 0 30px #ff007a; } }
+
+/* Download Pop-up Style */
 #install-banner { display: none; position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; background: #1c2333; border: 1px solid var(--primary); padding: 12px; border-radius: 15px; z-index: 10000; box-shadow: 0 5px 20px rgba(0,0,0,0.8); align-items: center; justify-content: space-between; }
 </style>
 </head>
 <body>
+
+<div id="welcome-screen">
+    <img src="logo.png" class="welcome-logo">
+    <h2 class="welcome-text">Welcome in 4449 WIN</h2>
+    <div style="width: 150px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 20px; overflow: hidden;">
+        <div style="width: 100%; height: 100%; background: #00f2ff; animation: loadBar 2s linear infinite;"></div>
+    </div>
+</div>
+<script>
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const screen = document.getElementById('welcome-screen');
+            screen.style.opacity = '0';
+            setTimeout(() => { screen.style.display = 'none'; }, 800);
+        }, 2500); 
+    });
+</script>
+<style> @keyframes loadBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } } </style>
+
+
 <div class="app">
   <div class="header"><img src="logo.png" alt="Logo" class="header-logo"><span>4449 WIN</span></div>
   <div class="profile-card">
@@ -126,7 +153,7 @@ body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--
     <h3 id="betTitle" style="color:var(--primary); margin-top:0;">SELECT AMOUNT</h3>
     <input type="number" id="betInput" value="10">
     <div class="preset-btns"><button onclick="setBetAmt(10)">10</button><button onclick="setBetAmt(50)">50</button><button onclick="setBetAmt(100)">100</button><button onclick="setBetAmt(500)">500</button></div>
-    <div class="multiplier-btns"><button onclick="multiplyAmt(1)">x1</button><button onclick="multiplyAmt(5)">x5</button><button onclick="multiplyAmt(10)">x10</button></div>
+    <div class="multiplier-btns"><button onclick="multiplyAmt(1)">x1</button><button onclick="multiplierAmt(5)">x5</button><button onclick="multiplyAmt(10)">x10</button></div>
     <div style="display:flex; gap:10px;"><button onclick="closeBetPopup()" style="flex:1; padding:15px; border-radius:10px; border:none; background:#333; color:white;">CANCEL</button><button onclick="placeBet()" style="flex:2; padding:15px; border-radius:10px; border:none; background:var(--primary); color:black; font-weight:bold;">CONFIRM BET</button></div>
   </div>
 </div>
