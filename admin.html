@@ -67,7 +67,7 @@ body {
 }
 .stat b { font-size: 28px; color: var(--secondary); text-shadow: 0 0 10px var(--secondary); }
 
-/* NEW: Bet Observer Styling */
+/* Bet Observer Styling */
 .bet-observer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
 .bet-item { 
     background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; 
@@ -150,7 +150,6 @@ if(password !== "@1Aankit"){ alert("Wrong Password"); window.location = "index.h
                 📊 LIVE MARKET LOAD
                 <span id="totalBetAmount" style="color:var(--success); font-size:16px;">₹0</span>
             </h3>
-            
             <div id="betObserverList" class="bet-observer-grid">
                 <div class="bet-item" style="grid-column: span 2;"><span>Fetching real-time bets...</span></div>
             </div>
@@ -211,53 +210,35 @@ window.showSection = function(id) {
     if(event) event.currentTarget.classList.add('active');
 }
 
-// --- FULL BET OBSERVER LOGIC ---
+// BET OBSERVER LOGIC
 onSnapshot(collection(db, "bets"), (snap) => {
-    let dataPool = {
-        numbers: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0},
-        size: { "Big": 0, "Small": 0 },
-        color: { "Red": 0, "Green": 0, "Violet": 0 }
-    };
+    let dataPool = { numbers: {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0}, size: { "Big": 0, "Small": 0 }, color: { "Red": 0, "Green": 0, "Violet": 0 } };
     let totalAll = 0;
-
     snap.forEach(doc => {
-        const b = doc.data();
-        const amt = Number(b.amount || 0);
-        totalAll += amt;
-
-        // Check if it's a number bet
+        const b = doc.data(); const amt = Number(b.amount || 0); totalAll += amt;
         if(b.number !== undefined) dataPool.numbers[b.number] += amt;
-        // Check if it's a size bet
         if(b.size) dataPool.size[b.size] += amt;
-        // Check if it's a color bet
         if(b.color) dataPool.color[b.color] += amt;
     });
-
     document.getElementById("totalBetAmount").innerText = "Total: ₹" + totalAll;
     const list = document.getElementById("betObserverList");
     list.innerHTML = "";
-
-    // Helper to render items
     const renderBetItem = (label, val, total) => {
         let p = total > 0 ? ((val/total)*100).toFixed(1) : 0;
         return `<div class="bet-item"><span>${label}</span><div style="text-align:right"><div class="bet-val">₹${val}</div><div class="bet-per">${p}%</div></div></div>`;
     };
-
-    // Render Categories
     list.innerHTML += `<div class="cat-header">Numbers (0-9)</div>`;
     for(let i=0; i<=9; i++) list.innerHTML += renderBetItem(`Num <b>${i}</b>`, dataPool.numbers[i], totalAll);
-
     list.innerHTML += `<div class="cat-header">Size (Big/Small)</div>`;
     list.innerHTML += renderBetItem("BIG", dataPool.size["Big"], totalAll);
     list.innerHTML += renderBetItem("SMALL", dataPool.size["Small"], totalAll);
-
     list.innerHTML += `<div class="cat-header">Colors</div>`;
     list.innerHTML += renderBetItem("<span style='color:#ff4757'>RED</span>", dataPool.color["Red"], totalAll);
     list.innerHTML += renderBetItem("<span style='color:#2ed573'>GREEN</span>", dataPool.color["Green"], totalAll);
     list.innerHTML += renderBetItem("<span style='color:#a4b0be'>VIOLET</span>", dataPool.color["Violet"], totalAll);
 });
 
-// Original Result Setting
+// Result Setting
 window.setResult = async (num) => {
     try {
         await setDoc(doc(db, "wingo", "result"), { number: num, time: Date.now(), manual: true });
@@ -271,32 +252,24 @@ window.filterUsers = function() {
     let tr = document.getElementById("userTableBody").getElementsByTagName("tr");
     for (let i = 0; i < tr.length; i++) {
         let td = tr[i].getElementsByTagName("td")[1]; 
-        if (td) {
-            let txtValue = td.textContent || td.innerText;
-            tr[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
-        }
+        if (td) tr[i].style.display = td.innerText.toUpperCase().indexOf(input) > -1 ? "" : "none";
     }
 }
 
-// User & Refer Listener
+// User Listener
 onSnapshot(collection(db, "users"), async (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = ""; let online = 0;
     document.getElementById("totalUsers").innerText = snap.size;
-    
     for (const d of snap.docs) {
-        const u = d.data();
-        const uid = d.id;
-        const q = query(collection(db, "users"), where("invitedBy", "==", u.referralCode || "---"));
-        const refSnap = await getDocs(q);
+        const u = d.data(); const uid = d.id;
         const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
         if(isOnline) online++;
-
         body.innerHTML += `<tr>
             <td>${isOnline ? '<span style="color:var(--success)">●</span>' : '<span style="color:gray">○</span>'}</td>
             <td><small>${u.email || uid}</small><br><small style="color:var(--primary)">${uid}</small></td>
             <td>₹${u.balance || 0}</td>
-            <td><span class="ref-badge">${refSnap.size} Refs</span></td>
+            <td><span class="ref-badge">Refs</span></td>
             <td>
                 <button class="edit-btn" onclick="editBal('${uid}', ${u.balance})">Edit</button>
                 <button class="del-btn" onclick="deleteUser('${uid}')">Delete</button>
@@ -306,21 +279,30 @@ onSnapshot(collection(db, "users"), async (snap) => {
     document.getElementById("activeUsers").innerText = online;
 });
 
-// Functions for actions
-window.deleteUser = async (uid) => {
-    if(confirm("Delete user " + uid + "?")) await deleteDoc(doc(db, "users", uid));
+// REJECT WITH REASON LOGIC
+window.rejectWithReason = async (coll, id) => {
+    let reason = prompt("Enter rejection reason (e.g. Wrong UPI, Play more games):");
+    if(reason === null) return; // Cancelled
+    if(reason === "") reason = "Request Rejected by Admin";
+
+    try {
+        await updateDoc(doc(db, coll, id), { 
+            status: "rejected",
+            reason: reason 
+        });
+        alert("Rejected with reason: " + reason);
+    } catch(e) { alert("Error: " + e.message); }
 };
+
+// Actions
+window.deleteUser = async (uid) => { if(confirm("Delete?")) await deleteDoc(doc(db, "users", uid)); };
 window.approveDeposit = async (id, user, amt) => {
-    const ref = doc(db,"users",user);
-    const snap = await getDoc(ref);
+    const ref = doc(db,"users",user); const snap = await getDoc(ref);
     if(snap.exists()){
         await updateDoc(ref, {balance: (snap.data().balance || 0) + amt});
         await updateDoc(doc(db,"depositRequests",id), {status:"approved"});
         alert("Approved!");
     }
-};
-window.rejectRequest = async (coll, id) => {
-    if(confirm("Reject?")) await updateDoc(doc(db, coll, id), { status: "rejected" });
 };
 window.approveWithdraw = async (id, user, amt) => {
     await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
@@ -338,33 +320,33 @@ function listenRequests(coll, elementId, action) {
         snap.forEach(d => {
             const data = d.data();
             if(data.status === "pending") {
+                // Determine which reject function to use
+                let rejectFn = coll === "withdrawRequests" ? `rejectWithReason('${coll}','${d.id}')` : `rejectRequest('${coll}','${d.id}')`;
+                
                 list.innerHTML += `<div class="item-request">
                     <div><b>₹${data.amount}</b><br><small>${data.user}</small></div>
                     <div>
                         <button class="edit-btn" onclick='${action}("${d.id}","${data.user}",${data.amount})'>Approve</button>
-                        <button class="rej-btn" onclick='rejectRequest("${coll}","${d.id}")'>Reject</button>
+                        <button class="rej-btn" onclick="${rejectFn}">Reject</button>
                     </div>
                 </div>`;
             }
         });
     });
 }
+window.rejectRequest = async (coll, id) => { if(confirm("Reject?")) await updateDoc(doc(db, coll, id), { status: "rejected" }); };
 
 listenRequests("depositRequests", "depositList", "approveDeposit");
 listenRequests("withdrawRequests", "withdrawList", "approveWithdraw");
 
 onSnapshot(collection(db, "tickets"), (snap) => {
-    const list = document.getElementById("ticketList");
-    list.innerHTML = "";
+    const list = document.getElementById("ticketList"); list.innerHTML = "";
     snap.forEach(d => {
         const t = d.data();
         list.innerHTML += `<div class="item-request"><div><b>${t.name}:</b> ${t.message}</div><button class="del-btn" onclick="deleteDocData('tickets','${d.id}')">Delete</button></div>`;
     });
 });
-
-window.deleteDocData = async (coll, id) => {
-    if(confirm("Delete?")) await deleteDoc(doc(db, coll, id));
-};
+window.deleteDocData = async (coll, id) => { if(confirm("Delete?")) await deleteDoc(doc(db, coll, id)); };
 </script>
 </body>
 </html>
