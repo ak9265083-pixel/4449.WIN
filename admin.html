@@ -36,6 +36,33 @@
         .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
         .card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
+        /* Stats Styling */
+        .stats-toggle-btn { 
+            width: 100%; padding: 15px; margin-bottom: 15px; background: linear-gradient(45deg, #161b22, #2a2f3a); 
+            color: var(--primary); border: 1px solid var(--primary); border-radius: 12px; font-weight: bold; 
+            cursor: pointer; transition: 0.3s; 
+        }
+        .stats-toggle-btn:hover { background: var(--primary); color: black; }
+
+        .stats-container { 
+            display: none; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; 
+            animation: slideDown 0.4s ease-out;
+        }
+        .stat-card { 
+            background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; 
+            text-align: center; border: 1px solid var(--glass); position: relative; overflow: hidden;
+        }
+        .stat-card h4 { margin: 0; font-size: 12px; color: #8b949e; text-transform: uppercase; }
+        .stat-card .value { font-size: 28px; font-weight: 800; color: white; margin-top: 5px; display: block; }
+        .stat-card.live::after {
+            content: ''; position: absolute; top: 10px; right: 10px; width: 8px; height: 8px; 
+            background: var(--success); border-radius: 50%; box-shadow: 0 0 10px var(--success);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* Search Box Styling */
         .search-container { margin-bottom: 15px; position: relative; }
         .search-input { 
@@ -129,6 +156,19 @@
 
 <div class="container">
     <div id="dash" class="section active">
+        <button class="stats-toggle-btn" onclick="toggleStats()">📊 SHOW LIVE STATISTICS</button>
+        
+        <div class="stats-container" id="statsBox">
+            <div class="stat-card">
+                <h4>Total Users</h4>
+                <span class="value" id="countTotal">0</span>
+            </div>
+            <div class="stat-card live">
+                <h4>Online Now</h4>
+                <span class="value" id="countLive" style="color:var(--success)">0</span>
+            </div>
+        </div>
+
         <div class="card">
             <h3 style="color:var(--primary)">🎯 CONTROL NEXT RESULT</h3>
             <div class="result-grid">
@@ -144,11 +184,9 @@
     <div id="users" class="section">
         <div class="card">
             <h3 style="color:var(--primary)">👥 USER MANAGEMENT</h3>
-            
             <div class="search-container">
                 <input type="text" id="userSearch" class="search-input" placeholder="Search by UID or Email..." onkeyup="filterUsers()">
             </div>
-
             <div style="overflow-x:auto;">
                 <table>
                     <thead>
@@ -182,19 +220,20 @@ const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authD
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Toggle Stats Visibility
+window.toggleStats = () => {
+    const box = document.getElementById('statsBox');
+    box.style.display = (box.style.display === 'grid') ? 'none' : 'grid';
+};
+
 // Search Functionality
 window.filterUsers = () => {
     let input = document.getElementById("userSearch").value.toUpperCase();
     let table = document.getElementById("userTableBody");
     let rows = table.getElementsByTagName("tr");
-
     for (let i = 0; i < rows.length; i++) {
         let textContent = rows[i].innerText.toUpperCase();
-        if (textContent.indexOf(input) > -1) {
-            rows[i].style.display = "";
-        } else {
-            rows[i].style.display = "none";
-        }
+        rows[i].style.display = (textContent.indexOf(input) > -1) ? "" : "none";
     }
 };
 
@@ -203,7 +242,7 @@ window.showSection = (id) => {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(event) event.currentTarget.classList.add('active');
+    if(window.event) window.event.currentTarget.classList.add('active');
 };
 
 // Result Control
@@ -214,13 +253,21 @@ window.setResult = async (num) => {
     } catch(e) { alert("Error: " + e.message); }
 };
 
-// Fetch Users
+// Fetch Users & Real-time Stats
 onSnapshot(collection(db, "users"), (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = "";
+    
+    let total = 0;
+    let online = 0;
+    const now = Date.now();
+
     snap.forEach(d => {
+        total++;
         const u = d.data(); const uid = d.id;
-        const isOnline = (Date.now() - (u.lastActive || 0)) < 120000;
+        const isOnline = (now - (u.lastActive || 0)) < 120000;
+        if(isOnline) online++;
+
         body.innerHTML += `<tr>
             <td><span style="color:${isOnline ? 'var(--success)' : '#555'}">●</span></td>
             <td><small>${u.email || uid}</small><br><code style="color:var(--primary); font-size:10px;">${uid}</code></td>
@@ -234,7 +281,11 @@ onSnapshot(collection(db, "users"), (snap) => {
             </td>
         </tr>`;
     });
-    // Re-filter if search input has value
+
+    // Update Dashboard Stats
+    document.getElementById('countTotal').innerText = total;
+    document.getElementById('countLive').innerText = online;
+
     filterUsers();
 });
 
@@ -263,7 +314,6 @@ document.getElementById('saveBtn').onclick = async () => {
 
 window.deleteUser = async (uid) => { if(confirm("Are you sure?")) await deleteDoc(doc(db, "users", uid)); };
 
-// Generic Listener for Requests
 function listenReq(coll, el, approveAct, rejectAct) {
     onSnapshot(collection(db, coll), (snap) => {
         const list = document.getElementById(el);
@@ -292,7 +342,6 @@ function listenReq(coll, el, approveAct, rejectAct) {
     });
 }
 
-// Handlers
 window.approveDeposit = async (id, user, amt) => {
     const ref = doc(db, "users", user);
     const snap = await getDoc(ref);
@@ -320,7 +369,6 @@ window.rejectWithdraw = async (id, user, amt) => {
     }
 };
 
-// Start
 listenReq("depositRequests", "depositList", "approveDeposit", null);
 listenReq("withdrawRequests", "withdrawList", "approveWithdraw", "rejectWithdraw");
 
