@@ -36,7 +36,7 @@
         .container { max-width: 1000px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; box-sizing: border-box; }
         .card { background: var(--card-bg); padding: 20px; margin-bottom: 20px; border-radius: 20px; border: 1px solid var(--glass); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* --- Stats Section Styling --- */
+        /* Stats Section Styling */
         .stats-btn {
             width: 100%; padding: 15px; margin-bottom: 15px; 
             background: linear-gradient(90deg, #161b22, #1f2630);
@@ -68,7 +68,6 @@
 
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        /* ---------------------------- */
 
         .search-container { margin-bottom: 15px; position: relative; }
         .search-input { width: 100%; padding: 12px 15px; background: #0b0e14; border: 1px solid var(--primary); border-radius: 10px; color: white; outline: none; box-sizing: border-box; font-size: 14px; }
@@ -96,6 +95,10 @@
         .section { display: none; }
         .section.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Live Bet Tags */
+        .bet-big { color: var(--secondary); font-weight: 900; }
+        .bet-small { color: var(--primary); font-weight: 900; }
     </style>
 </head>
 <body>
@@ -127,6 +130,7 @@
 
 <div class="nav-bar">
     <div class="nav-item active" onclick="showSection('dash')">Dash</div>
+    <div class="nav-item" onclick="showSection('liveBets')">Live Bets</div>
     <div class="nav-item" onclick="showSection('users')">Users</div>
     <div class="nav-item" onclick="showSection('deposits')">Deposit</div>
     <div class="nav-item" onclick="showSection('withdraws')">Withdraw</div>
@@ -162,6 +166,30 @@
         </div>
     </div>
 
+    <div id="liveBets" class="section">
+        <div class="card">
+            <h3 style="color:var(--primary)">🔥 LIVE BETTING MONITOR</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <div style="flex:1; background:#0b0e14; padding:15px; border-radius:15px; border-left:4px solid var(--secondary); text-align:center;">
+                    <small style="color:#8b949e;">Total on BIG</small><br>
+                    <b id="totalBigAmt" style="font-size:20px; color:var(--secondary);">₹0</b>
+                </div>
+                <div style="flex:1; background:#0b0e14; padding:15px; border-radius:15px; border-left:4px solid var(--primary); text-align:center;">
+                    <small style="color:#8b949e;">Total on SMALL</small><br>
+                    <b id="totalSmallAmt" style="font-size:20px; color:var(--primary);">₹0</b>
+                </div>
+            </div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr><th>User ID</th><th>Choice</th><th>Amount</th><th>Time</th></tr>
+                    </thead>
+                    <tbody id="liveBetTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div id="users" class="section">
         <div class="card">
             <h3 style="color:var(--primary)">👥 USER MANAGEMENT</h3>
@@ -190,7 +218,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = { apiKey:"AIzaSyAqL8jdzvLLnjdTYPO0Gjg6WF0m4w9K79A", authDomain:"win2-512e1.firebaseapp.com", projectId:"win2-512e1" };
 const app = initializeApp(firebaseConfig);
@@ -227,11 +255,36 @@ window.setResult = async (num) => {
     } catch(e) { alert("Error: " + e.message); }
 };
 
-// REAL-TIME USER FETCH & AUTO-LIVE CALCULATION
+// LIVE BETS MONITOR LOGIC
+onSnapshot(collection(db, "bets"), (snap) => {
+    const tableBody = document.getElementById("liveBetTableBody");
+    tableBody.innerHTML = "";
+    let bigSum = 0;
+    let smallSum = 0;
+
+    snap.forEach(d => {
+        const bet = d.data();
+        if(bet.status === "pending") {
+            if(bet.choice === "big") bigSum += bet.amount;
+            if(bet.choice === "small") smallSum += bet.amount;
+
+            tableBody.innerHTML += `<tr>
+                <td><code style="color:var(--primary)">${bet.user.slice(-6)}</code></td>
+                <td><span class="bet-${bet.choice}">${bet.choice.toUpperCase()}</span></td>
+                <td><b>₹${bet.amount}</b></td>
+                <td><small>${new Date(bet.time).toLocaleTimeString()}</small></td>
+            </tr>`;
+        }
+    });
+
+    document.getElementById("totalBigAmt").innerText = "₹" + bigSum;
+    document.getElementById("totalSmallAmt").innerText = "₹" + smallSum;
+});
+
+// REAL-TIME USER FETCH
 onSnapshot(collection(db, "users"), (snap) => {
     const body = document.getElementById("userTableBody");
     body.innerHTML = "";
-    
     let total = 0;
     let dbOnline = 0;
     const now = Date.now();
@@ -239,7 +292,7 @@ onSnapshot(collection(db, "users"), (snap) => {
     snap.forEach(d => {
         total++;
         const u = d.data(); const uid = d.id;
-        const isOnline = (now - (u.lastActive || 0)) < 120000; // 2 min threshold
+        const isOnline = (now - (u.lastActive || 0)) < 120000;
         if(isOnline) dbOnline++;
 
         body.innerHTML += `<tr>
@@ -253,17 +306,9 @@ onSnapshot(collection(db, "users"), (snap) => {
         </tr>`;
     });
 
-    // Update Counts
     document.getElementById('totalUserCount').innerText = total;
-    
-    // Smart Display Logic
-    let displayOnline = dbOnline;
-    if(dbOnline === 0 && total > 0) {
-        displayOnline = Math.floor(total * 0.15) + Math.floor(Math.random() * 3);
-        if(displayOnline === 0) displayOnline = 1;
-    }
+    let displayOnline = dbOnline || (total > 0 ? Math.floor(total * 0.15) + 1 : 0);
     document.getElementById('liveUserCount').innerText = displayOnline;
-
     filterUsers();
 });
 
@@ -323,7 +368,6 @@ window.approveDeposit = async (id, user, amt) => {
     }
 };
 
-// NEW: Reject Deposit Function
 window.rejectDeposit = async (id, user, amt) => {
     if(confirm("Reject this deposit?")) {
         try {
@@ -348,7 +392,6 @@ window.rejectWithdraw = async (id, user, amt) => {
     }
 };
 
-// Updated Listeners: Deposit mein ab reject ka option hai
 listenReq("depositRequests", "depositList", "approveDeposit", "rejectDeposit");
 listenReq("withdrawRequests", "withdrawList", "approveWithdraw", "rejectWithdraw");
 
