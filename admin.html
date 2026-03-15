@@ -256,12 +256,11 @@ onSnapshot(collection(db, "users"), (snap) => {
     // Update Counts
     document.getElementById('totalUserCount').innerText = total;
     
-    // Smart Display Logic: Agar DB mein koi online nahi hai (aapke case ki tarah), 
-    // toh total users ka ek random percentage dikhayega animation ke liye.
+    // Smart Display Logic
     let displayOnline = dbOnline;
     if(dbOnline === 0 && total > 0) {
-        displayOnline = Math.floor(total * 0.15) + Math.floor(Math.random() * 3); // 15% users + small random
-        if(displayOnline === 0) displayOnline = 1; // Kam se kam 1 (Aap khud)
+        displayOnline = Math.floor(total * 0.15) + Math.floor(Math.random() * 3);
+        if(displayOnline === 0) displayOnline = 1;
     }
     document.getElementById('liveUserCount').innerText = displayOnline;
 
@@ -324,6 +323,16 @@ window.approveDeposit = async (id, user, amt) => {
     }
 };
 
+// NEW: Reject Deposit Function
+window.rejectDeposit = async (id, user, amt) => {
+    if(confirm("Reject this deposit?")) {
+        try {
+            await updateDoc(doc(db, "depositRequests", id), { status: "rejected" });
+            alert("Deposit Rejected!");
+        } catch(e) { alert("Error"); }
+    }
+};
+
 window.approveWithdraw = async (id, user, amt) => {
     await updateDoc(doc(db, "withdrawRequests", id), { status: "approved" });
     alert("Approved!");
@@ -339,7 +348,8 @@ window.rejectWithdraw = async (id, user, amt) => {
     }
 };
 
-listenReq("depositRequests", "depositList", "approveDeposit", null);
+// Updated Listeners: Deposit mein ab reject ka option hai
+listenReq("depositRequests", "depositList", "approveDeposit", "rejectDeposit");
 listenReq("withdrawRequests", "withdrawList", "approveWithdraw", "rejectWithdraw");
 
 </script>
