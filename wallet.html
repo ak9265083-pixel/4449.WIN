@@ -249,7 +249,6 @@ window.selectPkg = (val) => { document.getElementById("amt").value = val; calcul
 window.openScanner = () => { document.getElementById("scannerOverlay").style.display = "flex"; };
 window.closeScanner = () => { document.getElementById("scannerOverlay").style.display = "none"; };
 
-// UPDATED CALCULATION LOGIC FOR NEW PACKAGES
 window.calculatePreview = () => {
     let amt = parseInt(document.getElementById("amt").value) || 0;
     let bonus = 0;
@@ -288,7 +287,6 @@ window.sendDeposit = async () => {
     let utr = document.getElementById("utr").value;
     if(!amt || !utr || utr.length < 10) return showPopup("Enter Valid 12 Digit UTR!");
     
-    // Final Calculation for Admin Request
     let bonus = 0;
     if (amt >= 500) bonus = amt * 0.5;
     else if (amt >= 300) bonus = amt * 0.35;
@@ -313,28 +311,30 @@ async function loadHistory(colName, title, themeColor) {
     container.innerHTML = "Loading...";
 
     try {
+        // Updated: onSnapshot use karein taaki status live update dikhe bina refresh ke
         const q = query(collection(db, colName), where("user", "==", currentUser));
-        const snap = await getDocs(q);
-        
-        container.innerHTML = "";
-        if(snap.empty) { container.innerHTML = "No Records Found."; return; }
+        onSnapshot(q, (snap) => {
+            container.innerHTML = "";
+            if(snap.empty) { container.innerHTML = "No Records Found."; return; }
 
-        let docsArr = [];
-        snap.forEach(d => { docsArr.push({ ...d.data() }); });
-        docsArr.sort((a, b) => (b.time || 0) - (a.time || 0));
+            let docsArr = [];
+            snap.forEach(d => { docsArr.push({ ...d.data() }); });
+            docsArr.sort((a, b) => (b.time || 0) - (a.time || 0));
 
-        docsArr.forEach(data => {
-            let status = data.status || "pending";
-            let date = data.createdAt ? data.createdAt.toDate().toLocaleString() : "Just now";
-            container.innerHTML += `
-                <div class="history-item">
-                    <div class="history-row">
-                        <span style="font-weight:900; font-size:16px;">₹${data.amount}</span>
-                        <span class="history-${status}">${status.toUpperCase()}</span>
-                    </div>
-                    <div class="history-details">${data.upi ? 'UPI: '+data.upi : 'UTR: '+data.utr}</div>
-                    <div class="history-details" style="opacity:0.4;">${date}</div>
-                </div>`;
+            docsArr.forEach(data => {
+                let status = data.status || "pending";
+                let date = data.createdAt ? data.createdAt.toDate().toLocaleString() : "Just now";
+                // Yahan history-${status} class use hogi (pending, approved, rejected)
+                container.innerHTML += `
+                    <div class="history-item">
+                        <div class="history-row">
+                            <span style="font-weight:900; font-size:16px;">₹${data.amount}</span>
+                            <span class="history-${status}">${status.toUpperCase()}</span>
+                        </div>
+                        <div class="history-details">${data.upi ? 'UPI: '+data.upi : 'UTR: '+data.utr}</div>
+                        <div class="history-details" style="opacity:0.4;">${date}</div>
+                    </div>`;
+            });
         });
     } catch (e) { console.error(e); container.innerHTML = "Error loading history."; }
 }
